@@ -25,5 +25,5 @@ jobs:
     - uses: codecov/codecov-action@v2
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./api/target/site/jacoco/jacoco.xml,./archive/target/site/jacoco/jacoco.xml./common/target/site/jacoco/jacoco.xml./operator/target/site/jacoco/jacoco.xml
+        files: ./api/target/site/jacoco/jacoco.xml,./archive/target/site/jacoco/jacoco.xml,./common/target/site/jacoco/jacoco.xml,./operator/target/site/jacoco/jacoco.xml
         verbose: true
