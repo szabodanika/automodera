@@ -1,6 +1,6 @@
 package uk.ac.uws.danielszabo.common.hashing;
 
-public interface CommonServiceFactory {
+public interface HashServiceFactory {
 
   HashService getHashService();
 }

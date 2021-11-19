@@ -18,7 +18,7 @@ public class HashServiceImplTest {
 
   @BeforeAll
   public static void init() {
-    testObject = new CommonServiceFactoryImpl().getHashService();
+    testObject = new HashServiceFactoryImpl().getHashService();
 
     assertNotNull(testObject);
 

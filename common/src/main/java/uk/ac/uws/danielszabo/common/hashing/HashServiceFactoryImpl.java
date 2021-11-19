@@ -2,7 +2,7 @@ package uk.ac.uws.danielszabo.common.hashing;
 
 import java.util.Objects;
 
-public class CommonServiceFactoryImpl implements CommonServiceFactory {
+public class HashServiceFactoryImpl implements HashServiceFactory {
 
   private static final int BIT_RESOLUTION = 32;
 

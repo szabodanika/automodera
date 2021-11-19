@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CommonServiceFactoryImplTest {
+public class HashServiceFactoryImplTest {
 
-  private static CommonServiceFactory testObject;
+  private static HashServiceFactory testObject;
 
   @BeforeAll
   public static void init() {
-    testObject = new CommonServiceFactoryImpl();
+    testObject = new HashServiceFactoryImpl();
   }
 
   @Test
