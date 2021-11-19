@@ -22,14 +22,8 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-
-  coverage:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./api/target/site/jacoco/jacoco.xml,./archive/target/site/jacoco/jacoco.xml./common/target/site/jacoco/jacoco.xml./operator/target/site/jacoco/jacoco.xml
-          verbose: true
+    - uses: codecov/codecov-action@v2
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./api/target/site/jacoco/jacoco.xml,./archive/target/site/jacoco/jacoco.xml./common/target/site/jacoco/jacoco.xml./operator/target/site/jacoco/jacoco.xml
+        verbose: true
