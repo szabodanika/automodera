@@ -37,23 +37,17 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 public class Topic {
-    // unique identifier for this topic
-    @Id
-    @XmlID
-    @XmlAttribute
-    @NonNull
-    private String id;
+  // unique identifier for this topic
+  @Id @XmlID @XmlAttribute @NonNull private String id;
 
-    // display name
-    @NonNull
-    private String name;
+  // display name
+  @NonNull private String name;
 
-    @ManyToMany(mappedBy = "topicList")
-    @NonNull
-    @XmlIDREF
-    @XmlElementWrapper(name = "hashCollectionList")
-    @XmlElement(name="hashCollection")
-    @ToString.Exclude
-    private List<HashCollection> hashCollectionList;
-
+  @ManyToMany(mappedBy = "topicList")
+  @NonNull
+  @XmlIDREF
+  @XmlElementWrapper(name = "hashCollectionList")
+  @XmlElement(name = "hashCollection")
+  @ToString.Exclude
+  private List<HashCollection> hashCollectionList;
 }

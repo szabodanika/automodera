@@ -41,32 +41,22 @@ import java.sql.Date;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 public class Image {
-    // unique identifier of this image
-    // consists of archive id and local incremental count
-    // eg. 44-123
-    // where 44 is the archive id and 123 is the number of this image in this archive
-    @Id
-    @XmlID
-    @XmlAttribute
-    @NonNull
-    private String id;
+  // unique identifier of this image
+  // consists of archive id and local incremental count
+  // eg. 44-123
+  // where 44 is the archive id and 123 is the number of this image in this archive
+  @Id @XmlID @XmlAttribute @NonNull private String id;
 
-    // file on the archive's local system
-    @NonNull
-    private File file;
+  // file on the archive's local system
+  @NonNull private File file;
 
-    // date this image was added to the archive
-    @NonNull
-    @XmlJavaTypeAdapter(SQLDateAdapter.class)
-    private Date date;
+  // date this image was added to the archive
+  @NonNull
+  @XmlJavaTypeAdapter(SQLDateAdapter.class)
+  private Date date;
 
-    // generated hash for this image
-    @NonNull
-    private BigInteger hash;
+  // generated hash for this image
+  @NonNull private BigInteger hash;
 
-    @ManyToOne
-    @NonNull
-    @XmlTransient
-    private HashCollection hashCollection;
-
+  @ManyToOne @NonNull @XmlTransient private HashCollection hashCollection;
 }

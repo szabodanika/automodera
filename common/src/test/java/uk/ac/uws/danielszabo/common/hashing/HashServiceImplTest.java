@@ -62,7 +62,8 @@ public class HashServiceImplTest {
           assertNotNull(hash1);
 
           Hash hash2 = testObject.pHash(testImageScooter);
-          // test that the uk.ac.uws.danielszabo.hashnet.operator.service returns different hash objects for different images
+          // test that the uk.ac.uws.danielszabo.hashnet.operator.service returns different hash
+          // objects for different images
           assertNotEquals(hash1, hash2);
 
           // test that two different calls on the same image returns same hash
@@ -70,7 +71,8 @@ public class HashServiceImplTest {
           assertEquals(hash1, hash3);
         });
 
-    // test that the uk.ac.uws.danielszabo.hashnet.operator.service throws IOException for non-existent image
+    // test that the uk.ac.uws.danielszabo.hashnet.operator.service throws IOException for
+    // non-existent image
     assertThrows(
         IOException.class,
         () -> {

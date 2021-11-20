@@ -20,6 +20,4 @@
 
 package uk.ac.uws.danielszabo.hashnet.operator.service;
 
-public interface OperatorService {
-
-}
+public interface OperatorService {}

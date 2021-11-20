@@ -20,13 +20,11 @@
 
 package uk.ac.uws.danielszabo.common.model.images;
 
-
 import lombok.*;
 import uk.ac.uws.danielszabo.common.model.nodes.Node;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.List;
 
 @Getter
@@ -39,33 +37,27 @@ import java.util.List;
 @Entity
 public class HashCollection {
 
-    @Id
-    @XmlID
-    @NonNull
-    private String id;
+  @Id @XmlID @NonNull private String id;
 
-    @NonNull
-    private String name;
+  @NonNull private String name;
 
-    @ManyToOne
-    @NonNull
-    private Node archive;
+  @ManyToOne @NonNull private Node archive;
 
-    @ManyToMany
-    @JoinTable(
-            name = "hashcollection_topic",
-            joinColumns = @JoinColumn(name = "topic_id"),
-            inverseJoinColumns = @JoinColumn(name = "hashcollection_id"))
-    @XmlElementWrapper(name = "topicList")
-    @XmlElement(name="topic")
-    @ToString.Exclude
-    @NonNull
-    private List<Topic> topicList;
+  @ManyToMany
+  @JoinTable(
+      name = "hashcollection_topic",
+      joinColumns = @JoinColumn(name = "topic_id"),
+      inverseJoinColumns = @JoinColumn(name = "hashcollection_id"))
+  @XmlElementWrapper(name = "topicList")
+  @XmlElement(name = "topic")
+  @ToString.Exclude
+  @NonNull
+  private List<Topic> topicList;
 
-    @OneToMany
-    @ToString.Exclude
-    @XmlElementWrapper(name = "imageList")
-    @XmlElement(name="image")
-    @NonNull
-    private List<Image> imageList;
+  @OneToMany
+  @ToString.Exclude
+  @XmlElementWrapper(name = "imageList")
+  @XmlElement(name = "image")
+  @NonNull
+  private List<Image> imageList;
 }

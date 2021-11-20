@@ -43,54 +43,45 @@ import java.util.List;
 @Entity
 public class Node {
 
-    // unique identifier in the network
-    @Id
-    @XmlID
-    @XmlAttribute
-    @NonNull
-    private String id;
+  // unique identifier in the network
+  @Id @XmlID @XmlAttribute @NonNull private String id;
 
-    // display name
-    @NonNull
-    private String name;
+  // display name
+  @NonNull private String name;
 
-    // type of node (INTEGRATOR,ARCHIVE,OPERATOR)
-    @NonNull
-    private NodeType nodeType;
+  // type of node (INTEGRATOR,ARCHIVE,OPERATOR)
+  @NonNull private NodeType nodeType;
 
-    // URL that other nodes will communicate to
-    // (eg. offensive-images-archive.org)
-    @NonNull
-    private String address;
+  // URL that other nodes will communicate to
+  // (eg. offensive-images-archive.org)
+  @NonNull private String address;
 
-    // certificate provided by an operator node
-    // it will be sent with all the messages
-    // and checked by other nodes through the operator
-    // contains id and address
-    @OneToOne
-    @NonNull
-    private NodeCertificate certificate;
+  // certificate provided by an operator node
+  // it will be sent with all the messages
+  // and checked by other nodes through the operator
+  // contains id and address
+  @OneToOne @NonNull private NodeCertificate certificate;
 
-    @NonNull
-    @XmlJavaTypeAdapter(SQLDateAdapter.class)
-    private Date createdAt;
+  @NonNull
+  @XmlJavaTypeAdapter(SQLDateAdapter.class)
+  private Date createdAt;
 
-    // certifications issued by this node
-    // should only contain values if this is an operator node
-    @OneToMany(mappedBy = "issuer")
-    @XmlIDREF
-    @XmlElementWrapper(name = "issuedCertificateList")
-    @XmlElement(name="issuedCertificate")
-    @ToString.Exclude
-    @NonNull
-    private List<NodeCertificate> issuedCertificates;
+  // certifications issued by this node
+  // should only contain values if this is an operator node
+  @OneToMany(mappedBy = "issuer")
+  @XmlIDREF
+  @XmlElementWrapper(name = "issuedCertificateList")
+  @XmlElement(name = "issuedCertificate")
+  @ToString.Exclude
+  @NonNull
+  private List<NodeCertificate> issuedCertificates;
 
-    // hash collections published by this node
-    @OneToMany
-    @XmlIDREF
-    @XmlElementWrapper(name = "hashCollectionList")
-    @XmlElement(name="hashCollection")
-    @ToString.Exclude
-    @NonNull
-    private List<HashCollection> hashCollectionList;
+  // hash collections published by this node
+  @OneToMany
+  @XmlIDREF
+  @XmlElementWrapper(name = "hashCollectionList")
+  @XmlElement(name = "hashCollection")
+  @ToString.Exclude
+  @NonNull
+  private List<HashCollection> hashCollectionList;
 }

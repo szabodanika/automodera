@@ -34,7 +34,6 @@ import uk.ac.uws.danielszabo.common.model.nodes.NodeType;
 import java.io.File;
 import java.math.BigInteger;
 import java.sql.Date;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,85 +42,91 @@ import java.util.List;
 @RequestMapping("/api")
 public class MainWebServiceController {
 
-    @RequestMapping(value = "", produces = "application/XML")
-    public HashCollection getIndex() {
-        System.out.println("ASD1");
-        log.info("index is called");
+  @RequestMapping(value = "", produces = "application/XML")
+  public HashCollection getIndex() {
+    System.out.println("ASD1");
+    log.info("index is called");
 
+    // topics
+    Topic topic1 = new Topic("t1", "Topic1", new ArrayList<>());
+    Topic topic2 = new Topic("t2", "Topic1", new ArrayList<>());
+    Topic topic3 = new Topic("t3", "Topic1", new ArrayList<>());
 
-        // topics
-        Topic topic1 = new Topic("t1", "Topic1", new ArrayList<>());
-        Topic topic2 = new Topic("t2", "Topic1",  new ArrayList<>());
-        Topic topic3 = new Topic("t3", "Topic1",  new ArrayList<>());
+    List<Topic> topicList = new ArrayList<>();
 
-        List<Topic> topicList = new ArrayList<>();
+    topicList.add(topic1);
+    topicList.add(topic2);
+    topicList.add(topic3);
 
-        topicList.add(topic1);
-        topicList.add(topic2);
-        topicList.add(topic3);
+    // images
 
-        // images
+    Image testImage1 =
+        new Image(
+            "123-001",
+            new File("images/image1.jpeg"),
+            new Date(new java.util.Date().getTime()),
+            new BigInteger("1234567"),
+            new HashCollection());
+    Image testImage2 =
+        new Image(
+            "123-002",
+            new File("images/image2.jpeg"),
+            new Date(new java.util.Date().getTime()),
+            new BigInteger("32133"),
+            new HashCollection());
 
-        Image testImage1 = new Image("123-001",
-                new File("images/image1.jpeg"),
-                new Date(new java.util.Date().getTime()),
-                new BigInteger("1234567"),
-                new HashCollection());
-        Image testImage2 = new Image("123-002",
-                new File("images/image2.jpeg"),
-                new Date(new java.util.Date().getTime()),
-                new BigInteger("32133"),
-                new HashCollection());
+    List<Image> imageList = new ArrayList<>();
 
-        List<Image> imageList = new ArrayList<>();
+    imageList.add(testImage1);
+    imageList.add(testImage2);
 
-        imageList.add(testImage1);
-        imageList.add(testImage2);
+    // archive
 
-        // archive
+    List<NetworkRights> networkRightsList = new ArrayList<>();
+    networkRightsList.add(NetworkRights.ISSUE_CERTIFICATE);
+    networkRightsList.add(NetworkRights.VERIFY_CERTIFICATE);
+    networkRightsList.add(NetworkRights.CHECK_CERTIFICATE);
 
-        List<NetworkRights> networkRightsList = new ArrayList<>();
-        networkRightsList.add(NetworkRights.ISSUE_CERTIFICATE);
-        networkRightsList.add(NetworkRights.VERIFY_CERTIFICATE);
-        networkRightsList.add(NetworkRights.CHECK_CERTIFICATE);
+    Node testOperator =
+        new Node(
+            "testOperator1",
+            "Test Operator",
+            NodeType.OPERATOR,
+            "Test Address 1",
+            new NodeCertificate(),
+            new Date(new java.util.Date().getTime()),
+            new ArrayList<>(),
+            new ArrayList<>());
 
-        Node testOperator = new Node("testOperator1", "Test Operator", NodeType.OPERATOR,
-                "Test Address 1",
-                new NodeCertificate(),
-                new Date(new java.util.Date().getTime()),
-                new ArrayList<>(),
-                new ArrayList<>());
+    NodeCertificate testCertificate =
+        new NodeCertificate(
+            "cert1",
+            testOperator,
+            new Date(new java.util.Date().getTime()),
+            new Date(new java.util.Date().getTime()),
+            new Node(), // temporary, replaced in line 110
+            "address.com",
+            topicList,
+            networkRightsList);
 
-        NodeCertificate testCertificate = new NodeCertificate("cert1",
-                testOperator,
-                new Date(new java.util.Date().getTime()),
-                new Date(new java.util.Date().getTime()),
-                new Node(),// temporary, replaced in line 110
-                "address.com",
-                topicList,
-                networkRightsList
-                );
+    Node testArchive =
+        new Node(
+            "testArchive1",
+            "Test Archive",
+            NodeType.ARCHIVE,
+            "Test Address 2",
+            testCertificate,
+            new Date(new java.util.Date().getTime()),
+            new ArrayList<>(),
+            new ArrayList<>());
 
-        Node testArchive = new Node("testArchive1", "Test Archive", NodeType.ARCHIVE,
-                "Test Address 2",
-                testCertificate,
-                new Date(new java.util.Date().getTime()),
-                new ArrayList<>(),
-                new ArrayList<>());
+    testCertificate.setNode(testArchive);
 
-        testCertificate.setNode(testArchive);
+    // collection
 
-        // collection
+    HashCollection testHashCollection =
+        new HashCollection("12", "Test Hash Collection", testArchive, topicList, imageList);
 
-        HashCollection testHashCollection = new HashCollection(
-                "12",
-                "Test Hash Collection",
-                testArchive,
-                topicList,
-                imageList
-        );
-
-        return testHashCollection;
-    }
-
+    return testHashCollection;
+  }
 }

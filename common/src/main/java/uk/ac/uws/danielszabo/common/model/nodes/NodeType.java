@@ -21,7 +21,7 @@
 package uk.ac.uws.danielszabo.common.model.nodes;
 
 public enum NodeType {
-    INTEGRATOR,
-    ARCHIVE,
-    OPERATOR
+  INTEGRATOR,
+  ARCHIVE,
+  OPERATOR
 }

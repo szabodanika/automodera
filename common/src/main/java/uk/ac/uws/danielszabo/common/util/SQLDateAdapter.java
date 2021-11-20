@@ -27,15 +27,15 @@ import java.text.SimpleDateFormat;
 
 public class SQLDateAdapter extends XmlAdapter<String, Date> {
 
-    private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+  private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-    @Override
-    public Date unmarshal(String xml) throws Exception {
-        return (Date) dateFormat.parse(xml);
-    }
+  @Override
+  public Date unmarshal(String xml) throws Exception {
+    return (Date) dateFormat.parse(xml);
+  }
 
-    @Override
-    public String marshal(Date object){
-        return dateFormat.format(object);
-    }
+  @Override
+  public String marshal(Date object) {
+    return dateFormat.format(object);
+  }
 }

@@ -43,126 +43,130 @@ import java.sql.Types;
 
 public class SQLiteDialect extends Dialect {
 
-    public SQLiteDialect() {
-        registerColumnType(Types.BIT, "integer");
-        registerColumnType(Types.TINYINT, "tinyint");
-        registerColumnType(Types.SMALLINT, "smallint");
-        registerColumnType(Types.INTEGER, "integer");
-        registerColumnType(Types.BIGINT, "bigint");
-        registerColumnType(Types.FLOAT, "float");
-        registerColumnType(Types.REAL, "real");
-        registerColumnType(Types.DOUBLE, "double");
-        registerColumnType(Types.NUMERIC, "numeric");
-        registerColumnType(Types.DECIMAL, "decimal");
-        registerColumnType(Types.CHAR, "char");
-        registerColumnType(Types.VARCHAR, "varchar");
-        registerColumnType(Types.LONGVARCHAR, "longvarchar");
-        registerColumnType(Types.DATE, "date");
-        registerColumnType(Types.TIME, "time");
-        registerColumnType(Types.TIMESTAMP, "timestamp");
-        registerColumnType(Types.BINARY, "blob");
-        registerColumnType(Types.VARBINARY, "blob");
-        registerColumnType(Types.LONGVARBINARY, "blob");
-        registerColumnType(Types.BLOB, "blob");
-        registerColumnType(Types.CLOB, "clob");
-        registerColumnType(Types.BOOLEAN, "integer");
-        registerFunction("concat", new VarArgsSQLFunction(StringType.INSTANCE, "", "||", ""));
-        registerFunction("mod", new SQLFunctionTemplate(StringType.INSTANCE, "?1 % ?2"));
-        registerFunction("substr", new StandardSQLFunction("substr", StringType.INSTANCE));
-        registerFunction("substring", new StandardSQLFunction("substr", StringType.INSTANCE));
-    }
+  public SQLiteDialect() {
+    registerColumnType(Types.BIT, "integer");
+    registerColumnType(Types.TINYINT, "tinyint");
+    registerColumnType(Types.SMALLINT, "smallint");
+    registerColumnType(Types.INTEGER, "integer");
+    registerColumnType(Types.BIGINT, "bigint");
+    registerColumnType(Types.FLOAT, "float");
+    registerColumnType(Types.REAL, "real");
+    registerColumnType(Types.DOUBLE, "double");
+    registerColumnType(Types.NUMERIC, "numeric");
+    registerColumnType(Types.DECIMAL, "decimal");
+    registerColumnType(Types.CHAR, "char");
+    registerColumnType(Types.VARCHAR, "varchar");
+    registerColumnType(Types.LONGVARCHAR, "longvarchar");
+    registerColumnType(Types.DATE, "date");
+    registerColumnType(Types.TIME, "time");
+    registerColumnType(Types.TIMESTAMP, "timestamp");
+    registerColumnType(Types.BINARY, "blob");
+    registerColumnType(Types.VARBINARY, "blob");
+    registerColumnType(Types.LONGVARBINARY, "blob");
+    registerColumnType(Types.BLOB, "blob");
+    registerColumnType(Types.CLOB, "clob");
+    registerColumnType(Types.BOOLEAN, "integer");
+    registerFunction("concat", new VarArgsSQLFunction(StringType.INSTANCE, "", "||", ""));
+    registerFunction("mod", new SQLFunctionTemplate(StringType.INSTANCE, "?1 % ?2"));
+    registerFunction("substr", new StandardSQLFunction("substr", StringType.INSTANCE));
+    registerFunction("substring", new StandardSQLFunction("substr", StringType.INSTANCE));
+  }
 
-    public boolean supportsIdentityColumns() {
-        return true;
-    }
+  public boolean supportsIdentityColumns() {
+    return true;
+  }
 
-    public boolean hasDataTypeInIdentityColumn() {
-        return false;
-    }
+  public boolean hasDataTypeInIdentityColumn() {
+    return false;
+  }
 
-    public String getIdentityColumnString() {
-        return "INTEGER";
-    }
+  public String getIdentityColumnString() {
+    return "INTEGER";
+  }
 
-    public String getIdentitySelectString() {
-        return "SELECT last_insert_rowid()";
-    }
+  public String getIdentitySelectString() {
+    return "SELECT last_insert_rowid()";
+  }
 
-    public boolean supportsLimit() {
-        return true;
-    }
+  public boolean supportsLimit() {
+    return true;
+  }
 
-    protected String getLimitString(String query, boolean hasOffset) {
-        return query + (hasOffset ? " LIMIT ? OFFSET ?" : " LIMIT ?");
-    }
+  protected String getLimitString(String query, boolean hasOffset) {
+    return query + (hasOffset ? " LIMIT ? OFFSET ?" : " LIMIT ?");
+  }
 
-    public boolean supportsTemporaryTables() {
-        return true;
-    }
+  public boolean supportsTemporaryTables() {
+    return true;
+  }
 
-    public String getCreateTemporaryTableString() {
-        return "CREATE TEMPORARY TABLE IF NOT EXISTS";
-    }
+  public String getCreateTemporaryTableString() {
+    return "CREATE TEMPORARY TABLE IF NOT EXISTS";
+  }
 
-    public boolean dropTemporaryTableAfterUse() {
-        return false;
-    }
+  public boolean dropTemporaryTableAfterUse() {
+    return false;
+  }
 
-    public boolean supportsCurrentTimestampSelection() {
-        return true;
-    }
+  public boolean supportsCurrentTimestampSelection() {
+    return true;
+  }
 
-    public boolean isCurrentTimestampSelectStringCallable() {
-        return false;
-    }
+  public boolean isCurrentTimestampSelectStringCallable() {
+    return false;
+  }
 
-    public String getCurrentTimestampSelectString() {
-        return "SELECT CURRENT_TIMESTAMP";
-    }
+  public String getCurrentTimestampSelectString() {
+    return "SELECT CURRENT_TIMESTAMP";
+  }
 
-    public boolean supportsUnionAll() {
-        return true;
-    }
+  public boolean supportsUnionAll() {
+    return true;
+  }
 
-    public boolean hasAlterTable() {
-        return false;
-    }
+  public boolean hasAlterTable() {
+    return false;
+  }
 
-    public boolean dropConstraints() {
-        return false;
-    }
+  public boolean dropConstraints() {
+    return false;
+  }
 
-    public String getAddColumnString() {
-        return "ADD COLUMN";
-    }
+  public String getAddColumnString() {
+    return "ADD COLUMN";
+  }
 
-    public String getForUpdateString() {
-        return "";
-    }
+  public String getForUpdateString() {
+    return "";
+  }
 
-    public boolean supportsOuterJoinForUpdate() {
-        return false;
-    }
+  public boolean supportsOuterJoinForUpdate() {
+    return false;
+  }
 
-    public String getDropForeignKeyString() {
-        throw new UnsupportedOperationException("No DROP FOREIGN KEY syntax supported by SQLiteDialect");
-    }
+  public String getDropForeignKeyString() {
+    throw new UnsupportedOperationException(
+        "No DROP FOREIGN KEY syntax supported by SQLiteDialect");
+  }
 
-    public String getAddForeignKeyConstraintString(String constraintName,
-                                                   String[] foreignKey, String referencedTable, String[] primaryKey,
-                                                   boolean referencesPrimaryKey) {
-        throw new UnsupportedOperationException("No ADD FOREIGN KEY syntax supported by SQLiteDialect");
-    }
+  public String getAddForeignKeyConstraintString(
+      String constraintName,
+      String[] foreignKey,
+      String referencedTable,
+      String[] primaryKey,
+      boolean referencesPrimaryKey) {
+    throw new UnsupportedOperationException("No ADD FOREIGN KEY syntax supported by SQLiteDialect");
+  }
 
-    public String getAddPrimaryKeyConstraintString(String constraintName) {
-        throw new UnsupportedOperationException("No ADD PRIMARY KEY syntax supported by SQLiteDialect");
-    }
+  public String getAddPrimaryKeyConstraintString(String constraintName) {
+    throw new UnsupportedOperationException("No ADD PRIMARY KEY syntax supported by SQLiteDialect");
+  }
 
-    public boolean supportsIfExistsBeforeTableName() {
-        return true;
-    }
+  public boolean supportsIfExistsBeforeTableName() {
+    return true;
+  }
 
-    public boolean supportsCascadeDelete() {
-        return false;
-    }
+  public boolean supportsCascadeDelete() {
+    return false;
+  }
 }

@@ -20,5 +20,4 @@
 
 package uk.ac.uws.danielszabo.hashnet.operator.service;
 
-public interface CertificationService {
-}
+public interface CertificationService {}

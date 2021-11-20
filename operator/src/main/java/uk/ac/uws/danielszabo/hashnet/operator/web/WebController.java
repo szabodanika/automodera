@@ -31,11 +31,10 @@ import java.time.LocalDateTime;
 @RequestMapping("/admin")
 public class WebController {
 
-    @GetMapping("")
-    public String getIndex(Model model){
-        System.out.println("ASD1");
-        model.addAttribute("date", LocalDateTime.now());
-        return "index";
-    }
-
+  @GetMapping("")
+  public String getIndex(Model model) {
+    System.out.println("ASD1");
+    model.addAttribute("date", LocalDateTime.now());
+    return "index";
+  }
 }

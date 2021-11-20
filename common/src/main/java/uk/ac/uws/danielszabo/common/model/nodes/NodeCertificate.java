@@ -40,50 +40,38 @@ import java.util.List;
 @Entity
 public class NodeCertificate {
 
-    // unique identifier of certificate
-    @Id
-    @XmlID
-    @XmlAttribute
-    @NonNull
-    private String id;
+  // unique identifier of certificate
+  @Id @XmlID @XmlAttribute @NonNull private String id;
 
-    // id of the issuer operator node
-    @ManyToOne
-    @XmlIDREF
-    @NonNull
-    private Node issuer;
+  // id of the issuer operator node
+  @ManyToOne @XmlIDREF @NonNull private Node issuer;
 
-    // issue and expiration date
-    @NonNull
-    @XmlJavaTypeAdapter(SQLDateAdapter.class)
-    private Date issued, expiration;
+  // issue and expiration date
+  @NonNull
+  @XmlJavaTypeAdapter(SQLDateAdapter.class)
+  private Date issued, expiration;
 
-    // node it was issued to
-    @OneToOne
-    @XmlIDREF
-    @NonNull
-    private Node node;
+  // node it was issued to
+  @OneToOne @XmlIDREF @NonNull private Node node;
 
-    // address where this certificate is valid
-    @NonNull
-    private String address;
+  // address where this certificate is valid
+  @NonNull private String address;
 
-    // topics in which the certified node can operate
-    @ManyToMany
-    @XmlIDREF
-    @XmlElementWrapper(name = "topicList")
-    @XmlElement(name="topic")
-    @ToString.Exclude
-    @NonNull
-    private List<Topic> topicList;
+  // topics in which the certified node can operate
+  @ManyToMany
+  @XmlIDREF
+  @XmlElementWrapper(name = "topicList")
+  @XmlElement(name = "topic")
+  @ToString.Exclude
+  @NonNull
+  private List<Topic> topicList;
 
-    // rights given to this node by certificate issuer
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "networkRights", joinColumns = @JoinColumn(name = "id"))
-    @Enumerated(EnumType.STRING)
-    @XmlElementWrapper(name = "networkRightList")
-    @XmlElement(name="networkRight")
-    @NonNull
-    private List<NetworkRights> networkRights;
-
+  // rights given to this node by certificate issuer
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "networkRights", joinColumns = @JoinColumn(name = "id"))
+  @Enumerated(EnumType.STRING)
+  @XmlElementWrapper(name = "networkRightList")
+  @XmlElement(name = "networkRight")
+  @NonNull
+  private List<NetworkRights> networkRights;
 }

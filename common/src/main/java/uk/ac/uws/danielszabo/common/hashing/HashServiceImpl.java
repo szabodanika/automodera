@@ -38,7 +38,9 @@ public class HashServiceImpl implements HashService {
   private final HashingAlgorithm hasher;
 
   public HashServiceImpl(int bitResolution) {
-    LOG.info("Hash uk.ac.uws.danielszabo.hashnet.operator.service created with bit resolution " + bitResolution);
+    LOG.info(
+        "Hash uk.ac.uws.danielszabo.hashnet.operator.service created with bit resolution "
+            + bitResolution);
     this.bitResolution = bitResolution;
     this.hasher = new PerceptiveHash(bitResolution);
   }
