@@ -18,16 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.hashing;
+package uk.ac.uws.danielszabo.common.util;
 
-import dev.brachtendorf.jimagehash.hash.Hash;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
-import java.io.File;
-import java.io.IOException;
+public class SQLDateAdapter extends XmlAdapter<String, Date> {
 
-public interface HashService {
+    private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-  Hash pHash(File image) throws IOException;
+    @Override
+    public Date unmarshal(String xml) throws Exception {
+        return (Date) dateFormat.parse(xml);
+    }
 
-  double simScore(Hash hash1, Hash hash2);
+    @Override
+    public String marshal(Date object){
+        return dateFormat.format(object);
+    }
 }

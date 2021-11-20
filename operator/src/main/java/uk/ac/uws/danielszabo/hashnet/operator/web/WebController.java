@@ -18,16 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.hashing;
+package uk.ac.uws.danielszabo.hashnet.operator.web;
 
-import dev.brachtendorf.jimagehash.hash.Hash;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.io.File;
-import java.io.IOException;
+import java.time.LocalDateTime;
 
-public interface HashService {
+@Controller
+@RequestMapping("/admin")
+public class WebController {
 
-  Hash pHash(File image) throws IOException;
+    @GetMapping("")
+    public String getIndex(Model model){
+        System.out.println("ASD1");
+        model.addAttribute("date", LocalDateTime.now());
+        return "index";
+    }
 
-  double simScore(Hash hash1, Hash hash2);
 }

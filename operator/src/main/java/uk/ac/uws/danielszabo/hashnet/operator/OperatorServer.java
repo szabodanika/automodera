@@ -18,16 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.hashing;
+package uk.ac.uws.danielszabo.hashnet.operator;
 
-import dev.brachtendorf.jimagehash.hash.Hash;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.io.File;
-import java.io.IOException;
+@SpringBootApplication
+public class OperatorServer {
 
-public interface HashService {
+    public static void main(String[] args) {
+        SpringApplication.run(OperatorServer.class, args);
+    }
 
-  Hash pHash(File image) throws IOException;
-
-  double simScore(Hash hash1, Hash hash2);
 }

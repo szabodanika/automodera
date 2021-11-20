@@ -18,16 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.hashing;
+package uk.ac.uws.danielszabo.hashnet.operator.service;
 
-import dev.brachtendorf.jimagehash.hash.Hash;
+public interface OperatorService {
 
-import java.io.File;
-import java.io.IOException;
-
-public interface HashService {
-
-  Hash pHash(File image) throws IOException;
-
-  double simScore(Hash hash1, Hash hash2);
 }

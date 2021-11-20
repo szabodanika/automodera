@@ -18,16 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.hashing;
+package uk.ac.uws.danielszabo.hashnet.operator.service;
 
-import dev.brachtendorf.jimagehash.hash.Hash;
+import uk.ac.uws.danielszabo.common.model.nodes.Node;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
-public interface HashService {
+public interface NodeService {
 
-  Hash pHash(File image) throws IOException;
+    List<Node> retrieveAllNodes();
 
-  double simScore(Hash hash1, Hash hash2);
+    Optional<Node> retrieveNodeById(String id);
+
+    Node saveNode(Node node);
+
+    boolean deleteNode(Node node);
+
 }
