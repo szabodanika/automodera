@@ -18,32 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.hashing;
+package uk.ac.uws.danielszabo.hashnet.operator.service;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import uk.ac.uws.danielszabo.common.model.nodes.Node;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
+import java.util.Optional;
 
-public class HashServiceFactoryImplTest {
+public interface NodeService {
 
-  private static HashServiceFactory testObject;
+    List<Node> retrieveAllNodes();
 
-  @BeforeAll
-  public static void init() {
-    testObject = new HashServiceFactoryImpl();
-  }
+    Optional<Node> retrieveNodeById(String id);
 
-  @Test
-  public void testGetHashService() {
-    HashService hashService;
+    Node saveNode(Node node);
 
-    hashService = testObject.getHashService();
+    boolean deleteNode(Node node);
 
-    // test that we get a hashService on the first call
-    assertNotNull(hashService);
-
-    // test that we get the same hashService on the second call
-    assertEquals(hashService, testObject.getHashService());
-  }
 }

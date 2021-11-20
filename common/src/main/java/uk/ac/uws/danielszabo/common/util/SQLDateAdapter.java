@@ -18,32 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.hashing;
+package uk.ac.uws.danielszabo.common.util;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
-import static org.junit.jupiter.api.Assertions.*;
+public class SQLDateAdapter extends XmlAdapter<String, Date> {
 
-public class HashServiceFactoryImplTest {
+    private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-  private static HashServiceFactory testObject;
+    @Override
+    public Date unmarshal(String xml) throws Exception {
+        return (Date) dateFormat.parse(xml);
+    }
 
-  @BeforeAll
-  public static void init() {
-    testObject = new HashServiceFactoryImpl();
-  }
-
-  @Test
-  public void testGetHashService() {
-    HashService hashService;
-
-    hashService = testObject.getHashService();
-
-    // test that we get a hashService on the first call
-    assertNotNull(hashService);
-
-    // test that we get the same hashService on the second call
-    assertEquals(hashService, testObject.getHashService());
-  }
+    @Override
+    public String marshal(Date object){
+        return dateFormat.format(object);
+    }
 }

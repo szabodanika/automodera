@@ -18,32 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.hashing;
+package uk.ac.uws.danielszabo.hashnet.operator.web;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.time.LocalDateTime;
 
-public class HashServiceFactoryImplTest {
+@Controller
+@RequestMapping("/admin")
+public class WebController {
 
-  private static HashServiceFactory testObject;
+    @GetMapping("")
+    public String getIndex(Model model){
+        System.out.println("ASD1");
+        model.addAttribute("date", LocalDateTime.now());
+        return "index";
+    }
 
-  @BeforeAll
-  public static void init() {
-    testObject = new HashServiceFactoryImpl();
-  }
-
-  @Test
-  public void testGetHashService() {
-    HashService hashService;
-
-    hashService = testObject.getHashService();
-
-    // test that we get a hashService on the first call
-    assertNotNull(hashService);
-
-    // test that we get the same hashService on the second call
-    assertEquals(hashService, testObject.getHashService());
-  }
 }
