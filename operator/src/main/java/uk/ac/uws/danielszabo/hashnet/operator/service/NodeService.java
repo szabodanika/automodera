@@ -20,18 +20,18 @@
 
 package uk.ac.uws.danielszabo.hashnet.operator.service;
 
-import uk.ac.uws.danielszabo.common.model.nodes.Node;
-
+import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import java.util.List;
 import java.util.Optional;
 
 public interface NodeService {
 
-  List<Node> retrieveAllNodes();
+    List<Node> retrieveAllNodes();
 
-  Optional<Node> retrieveNodeById(String id);
+    Optional<Node> retrieveNodeById(String id);
 
-  Node saveNode(Node node);
+    Node saveNode(Node node);
 
-  boolean deleteNode(Node node);
+    boolean deleteNode(Node node);
+
 }

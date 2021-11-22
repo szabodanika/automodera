@@ -20,13 +20,22 @@
 
 package uk.ac.uws.danielszabo.hashnet.operator;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Import;
+import uk.ac.uws.danielszabo.common.model.network.NetworkConfig;
 
+@Slf4j
+@Import({NetworkConfig.class})
 @SpringBootApplication
-public class OperatorServer {
+@EntityScan(basePackages = {"uk.ac.uws.danielszabo.common", "uk.ac.uws.danielszabo.operator"})
+public class OperatorServer  {
 
   public static void main(String[] args) {
-    SpringApplication.run(OperatorServer.class, args);
+    SpringApplication application = new SpringApplication(OperatorServer.class);
+    application.run(args);
   }
+
 }

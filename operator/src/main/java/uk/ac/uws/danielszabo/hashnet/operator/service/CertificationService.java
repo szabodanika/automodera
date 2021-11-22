@@ -20,4 +20,29 @@
 
 package uk.ac.uws.danielszabo.hashnet.operator.service;
 
-public interface CertificationService {}
+import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
+import uk.ac.uws.danielszabo.common.model.network.node.Node;
+import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface CertificationService {
+
+    List<NodeCertificate> retrieveAllCertificates();
+
+    boolean handleCertificateRequest(CertificateRequest certificateRequest, CertificateRequest.Status newStatus, String message);
+
+    boolean reissueCertificateForNode(Node node);
+
+    boolean revokeCertificateForNode(Node node);
+
+    boolean verifyCertificate(NodeCertificate certificate);
+
+    CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest);
+
+    List<CertificateRequest> retrieveAllCertificateRequests();
+
+    Optional<CertificateRequest> findCertificateRequestById(String id);
+
+}

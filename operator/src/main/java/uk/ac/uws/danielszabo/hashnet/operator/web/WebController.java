@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import uk.ac.uws.danielszabo.hashnet.operator.service.OperatorService;
 
 import java.time.LocalDateTime;
 
@@ -31,9 +32,14 @@ import java.time.LocalDateTime;
 @RequestMapping("/admin")
 public class WebController {
 
+  private final OperatorService operatorService;
+
+  public WebController(OperatorService operatorService) {
+    this.operatorService = operatorService;
+  }
+
   @GetMapping("")
   public String getIndex(Model model) {
-    System.out.println("ASD1");
     model.addAttribute("date", LocalDateTime.now());
     return "index";
   }

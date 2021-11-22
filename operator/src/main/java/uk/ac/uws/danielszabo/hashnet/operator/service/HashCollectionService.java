@@ -20,4 +20,21 @@
 
 package uk.ac.uws.danielszabo.hashnet.operator.service;
 
-public interface HashCollectionService {}
+import uk.ac.uws.danielszabo.common.model.images.HashCollection;
+import uk.ac.uws.danielszabo.common.model.images.Topic;
+import uk.ac.uws.danielszabo.common.model.network.node.Node;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface HashCollectionService {
+
+    List<HashCollection> retrieveAllHashCollections();
+
+    Optional<HashCollection> retrieveHashCollectionById(String id);
+
+    List<HashCollection> retrieveHashCollectionByTopic(Topic topic);
+
+    List<HashCollection> retrieveHashCollectionByArchive(Node topic);
+
+}

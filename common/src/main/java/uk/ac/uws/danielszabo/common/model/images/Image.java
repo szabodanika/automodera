@@ -50,7 +50,7 @@ public class Image {
   // file on the archive's local system
   @NonNull private File file;
 
-  // date this image was added to the archive
+  // date this image was added to collection
   @NonNull
   @XmlJavaTypeAdapter(SQLDateAdapter.class)
   private Date date;

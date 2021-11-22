@@ -39,12 +39,6 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
             <version>2.5.7</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>2.5.7</version>
-        </dependency>
 
         <!-- database engine-->
         <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
@@ -54,16 +48,39 @@
             <version>1.4.200</version>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- shell, im not sure why we need both, makes no sense -->
+        <!-- https://mvnrepository.com/artifact/org.springframework.shell/spring-shell-starter -->
+        <dependency>
+            <groupId>org.springframework.shell</groupId>
+            <artifactId>spring-shell-starter</artifactId>
+            <version>2.0.1.RELEASE</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.shell/spring-shell -->
+        <dependency>
+            <groupId>org.springframework.shell</groupId>
+            <artifactId>spring-shell</artifactId>
+            <version>1.2.0.RELEASE</version>
+        </dependency>
     </dependencies>
 
     <build>
-        <!--       Spring plugin for creating jar and war files-->
+        <!-- Spring plugin for creating jar and war files-->
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+
+        <!-- used to inject maven properties in to application.properties file-->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 
 </project>
