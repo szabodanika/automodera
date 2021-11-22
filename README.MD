@@ -4,6 +4,7 @@
 [![Java CI with Maven](https://github.com/szabodanika/hashnet/actions/workflows/maven.yml/badge.svg)](https://github.com/szabodanika/hashnet/actions/workflows/maven.yml)
 [![Format](https://github.com/szabodanika/hashnet/actions/workflows/google-java-format.yml/badge.svg?branch=master)](https://github.com/szabodanika/hashnet/actions/workflows/google-java-format.yml)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fszabodanika%2Fhashnet.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fszabodanika%2Fhashnet?ref=badge_shield)
+[![wakatime](https://wakatime.com/badge/user/a8d63788-9389-46c8-8e9f-39b229a3b6c1/project/b823e566-542b-4fce-be36-4391011cd82f.svg)](https://wakatime.com/badge/user/a8d63788-9389-46c8-8e9f-39b229a3b6c1/project/b823e566-542b-4fce-be36-4391011cd82f)
 
 A Publish-Subscribe Network for Distributing Perceptual Hashes of Images, written in Java.
 
