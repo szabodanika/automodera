@@ -44,138 +44,149 @@ import java.util.Optional;
 @Service
 public class OperatorServiceImpl implements OperatorService {
 
-    private final NodeCertificateRepository nodeCertificateRepository;
+  private final NodeCertificateRepository nodeCertificateRepository;
 
-    private final NodeRepository nodeRepository;
+  private final NodeRepository nodeRepository;
 
-    private final HashCollectionRepository hashCollectionRepository;
+  private final HashCollectionRepository hashCollectionRepository;
 
-    private final CertificateRequestRepository certificateRequestRepository;
+  private final CertificateRequestRepository certificateRequestRepository;
 
-    private final RestService restService;
+  private final RestService restService;
 
-    private final LocalNodeService localNodeService;
+  private final LocalNodeService localNodeService;
 
-    public OperatorServiceImpl(NodeCertificateRepository nodeCertificateRepository, NodeRepository nodeRepository, HashCollectionRepository hashCollectionRepository, CertificateRequestRepository certificateRequestRepository, RestService restService, LocalNodeService localNodeService) {
-        this.nodeCertificateRepository = nodeCertificateRepository;
-        this.nodeRepository = nodeRepository;
-        this.hashCollectionRepository = hashCollectionRepository;
-        this.certificateRequestRepository = certificateRequestRepository;
-        this.restService = restService;
-        this.localNodeService = localNodeService;
+  public OperatorServiceImpl(
+      NodeCertificateRepository nodeCertificateRepository,
+      NodeRepository nodeRepository,
+      HashCollectionRepository hashCollectionRepository,
+      CertificateRequestRepository certificateRequestRepository,
+      RestService restService,
+      LocalNodeService localNodeService) {
+    this.nodeCertificateRepository = nodeCertificateRepository;
+    this.nodeRepository = nodeRepository;
+    this.hashCollectionRepository = hashCollectionRepository;
+    this.certificateRequestRepository = certificateRequestRepository;
+    this.restService = restService;
+    this.localNodeService = localNodeService;
+  }
+
+  // persist local node in the database as well, because lots of certificates, certificate requests
+  // etc. are going to refer to it
+  @EventListener
+  public void handleLocalNodeUpdatedEvent(LocalNodeUpdatedEvent event) {
+    nodeRepository.save(event.getLocalNode());
+  }
+
+  @Override
+  public List<NodeCertificate> retrieveAllCertificates() {
+    return nodeCertificateRepository.findAll();
+  }
+
+  @Override
+  public boolean handleCertificateRequest(
+      CertificateRequest certificateRequest, CertificateRequest.Status newStatus, String message) {
+    certificateRequest.setStatus(newStatus);
+    if (newStatus == CertificateRequest.Status.ISSUED) {
+      NodeCertificate cert = certificateRequest.getNode().getCertificate();
+      cert.setIssued(new Date(new java.util.Date().getTime()));
+      // TODO this should be configurable, not always 365 days
+      cert.setExpiration(new Date(new java.util.Date().getTime() + (1000L * 60 * 60 * 24 * 365)));
+      cert.setIssuer(localNodeService.getLocalNode());
+
+      // save cert in this operator/origin node's list
+      localNodeService
+          .getLocalNode()
+          .getIssuedCertificates()
+          .add(certificateRequest.getNode().getCertificate());
+      // persist local node
+      localNodeService.saveLocalNode();
+      // persist request
+      certificateRequestRepository.save(certificateRequest);
     }
 
+    certificateRequest.setMessage(message);
 
-    // persist local node in the database as well, because lots of certificates, certificate requests etc. are going to refer to it
-    @EventListener
-    public void handleLocalNodeUpdatedEvent(LocalNodeUpdatedEvent event) {
-        nodeRepository.save(event.getLocalNode());
+    restService.sendProcessedCertificateRequest(
+        certificateRequest.getNode().getHost(), certificateRequest);
+
+    // TODO dont always just return true
+    return true;
+  }
+
+  @Override
+  public boolean reissueCertificateForNode(Node node) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean revokeCertificateForNode(Node node) {
+    if (nodeCertificateRepository.findById(node.getCertificate().getId()).isPresent()) {
+      nodeCertificateRepository.delete(node.getCertificate());
+      return true;
+    } else {
+      return false;
     }
+  }
 
-    @Override
-    public List<NodeCertificate> retrieveAllCertificates() {
-        return nodeCertificateRepository.findAll();
-    }
+  @Override
+  public boolean verifyCertificate(NodeCertificate certificate) {
+    Optional<NodeCertificate> localCert = nodeCertificateRepository.findById(certificate.getId());
+    return localCert.map(nodeCertificate -> nodeCertificate.equals(certificate)).orElse(false);
+  }
 
-    @Override
-    public boolean handleCertificateRequest(CertificateRequest certificateRequest, CertificateRequest.Status newStatus, String message) {
-        certificateRequest.setStatus(newStatus);
-        if (newStatus == CertificateRequest.Status.ISSUED) {
-            NodeCertificate cert = certificateRequest.getNode().getCertificate();
-            cert.setIssued(new Date(new java.util.Date().getTime()));
-            // TODO this should be configurable, not always 365 days
-            cert.setExpiration(new Date(new java.util.Date().getTime() + (1000L * 60 * 60 * 24 * 365)));
-            cert.setIssuer(localNodeService.getLocalNode());
+  @Override
+  public CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest) {
+    return certificateRequestRepository.save(certificateRequest);
+  }
 
-            // save cert in this operator/origin node's list
-            localNodeService.getLocalNode().getIssuedCertificates().add(certificateRequest.getNode().getCertificate());
-            // persist local node
-            localNodeService.saveLocalNode();
-            // persist request
-            certificateRequestRepository.save(certificateRequest);
-        }
+  @Override
+  public List<CertificateRequest> retrieveAllCertificateRequests() {
+    return certificateRequestRepository.findAll();
+  }
 
-        certificateRequest.setMessage(message);
+  @Override
+  public Optional<CertificateRequest> findCertificateRequestById(String id) {
+    return certificateRequestRepository.findById(id);
+  }
 
-        restService.sendProcessedCertificateRequest(certificateRequest.getNode().getHost(), certificateRequest);
+  @Override
+  public List<HashCollection> retrieveAllHashCollections() {
+    return hashCollectionRepository.findAll();
+  }
 
-        // TODO dont always just return true
-        return true;
-    }
+  @Override
+  public Optional<HashCollection> retrieveHashCollectionById(String id) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public boolean reissueCertificateForNode(Node node) {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public List<HashCollection> retrieveHashCollectionByTopic(Topic topic) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public boolean revokeCertificateForNode(Node node) {
-        if (nodeCertificateRepository.findById(node.getCertificate().getId()).isPresent()) {
-            nodeCertificateRepository.delete(node.getCertificate());
-            return true;
-        } else {
-            return false;
-        }
-    }
+  @Override
+  public List<HashCollection> retrieveHashCollectionByArchive(Node topic) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public boolean verifyCertificate(NodeCertificate certificate) {
-        Optional<NodeCertificate> localCert = nodeCertificateRepository.findById(certificate.getId());
-        return localCert.map(nodeCertificate -> nodeCertificate.equals(certificate)).orElse(false);
-    }
+  @Override
+  public List<Node> retrieveAllNodes() {
+    return nodeRepository.findAll();
+  }
 
-    @Override
-    public CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest) {
-        return certificateRequestRepository.save(certificateRequest);
-    }
+  @Override
+  public Optional<Node> retrieveNodeById(String id) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public List<CertificateRequest> retrieveAllCertificateRequests() {
-        return certificateRequestRepository.findAll();
-    }
+  @Override
+  public Node saveNode(Node node) {
+    return nodeRepository.save(node);
+  }
 
-    @Override
-    public Optional<CertificateRequest> findCertificateRequestById(String id) {
-        return certificateRequestRepository.findById(id);
-    }
-
-    @Override
-    public List<HashCollection> retrieveAllHashCollections() {
-        return hashCollectionRepository.findAll();
-    }
-
-    @Override
-    public Optional<HashCollection> retrieveHashCollectionById(String id) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<HashCollection> retrieveHashCollectionByTopic(Topic topic) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<HashCollection> retrieveHashCollectionByArchive(Node topic) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<Node> retrieveAllNodes() {
-        return nodeRepository.findAll();
-    }
-
-    @Override
-    public Optional<Node> retrieveNodeById(String id) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Node saveNode(Node node) {
-        return nodeRepository.save(node);
-    }
-
-    @Override
-    public boolean deleteNode(Node node) {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public boolean deleteNode(Node node) {
+    throw new UnsupportedOperationException();
+  }
 }

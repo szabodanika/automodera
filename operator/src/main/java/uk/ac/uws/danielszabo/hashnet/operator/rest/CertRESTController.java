@@ -23,58 +23,52 @@ package uk.ac.uws.danielszabo.hashnet.operator.rest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
-import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.hashnet.operator.service.OperatorService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import java.util.Enumeration;
 
 @Slf4j
 @RestController
 @RequestMapping("/cert")
 public class CertRESTController {
 
-    private final OperatorService operatorService;
+  private final OperatorService operatorService;
 
-    public CertRESTController(OperatorService operatorService) {
-        this.operatorService = operatorService;
-    }
+  public CertRESTController(OperatorService operatorService) {
+    this.operatorService = operatorService;
+  }
 
-    @PostMapping(value = "/request", consumes = "application/XML")
-    public void postRequest(
-//            HttpServletRequest request,
-            @RequestBody CertificateRequest certificateRequest) {
+  @PostMapping(value = "/request", consumes = "application/XML")
+  public void postRequest(
+      //            HttpServletRequest request,
+      @RequestBody CertificateRequest certificateRequest) {
 
-        log.info("Received certificate signing request from " + certificateRequest.getNode().getId());
-        operatorService.saveCertificateRequest(certificateRequest);
+    log.info("Received certificate signing request from " + certificateRequest.getNode().getId());
+    operatorService.saveCertificateRequest(certificateRequest);
 
-//        this commented bit prints the entire request and the contents
+    //        this commented bit prints the entire request and the contents
 
-//        System.out.println(request.getMethod());
-//        request.
-//        Enumeration<String> headerNames = request.getHeaderNames();
-//        while(headerNames.hasMoreElements()) {
-//            String headerName = headerNames.nextElement();
-//            System.out.println("Header Name - " + headerName + ", Value - " + request.getHeader(headerName));
-//        }
-//        Enumeration<String> params = request.getParameterNames();
-//        while(params.hasMoreElements()){
-//            String paramName = params.nextElement();
-//            System.out.println("Parameter Name - "+paramName+", Value - "+request.getParameter(paramName));
-//        }
-//        try {
-//            Marshaller marshaller = JAXBContext.newInstance(CertificateRequest.class).createMarshaller();
-//            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-//            marshaller.marshal(certificateRequest, System.out);
-//        } catch (JAXBException e) {
-//            e.printStackTrace();
-//        }
+    //        System.out.println(request.getMethod());
+    //        request.
+    //        Enumeration<String> headerNames = request.getHeaderNames();
+    //        while(headerNames.hasMoreElements()) {
+    //            String headerName = headerNames.nextElement();
+    //            System.out.println("Header Name - " + headerName + ", Value - " +
+    // request.getHeader(headerName));
+    //        }
+    //        Enumeration<String> params = request.getParameterNames();
+    //        while(params.hasMoreElements()){
+    //            String paramName = params.nextElement();
+    //            System.out.println("Parameter Name - "+paramName+", Value -
+    // "+request.getParameter(paramName));
+    //        }
+    //        try {
+    //            Marshaller marshaller =
+    // JAXBContext.newInstance(CertificateRequest.class).createMarshaller();
+    //            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+    //            marshaller.marshal(certificateRequest, System.out);
+    //        } catch (JAXBException e) {
+    //            e.printStackTrace();
+    //        }
 
-
-
-    }
-
+  }
 }

@@ -21,16 +21,50 @@
 package uk.ac.uws.danielszabo.common.service.network;
 
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
-import uk.ac.uws.danielszabo.common.model.network.node.NodeType;
 
 public interface NodeFactory {
 
-    Node getOriginNode(String id, String name, String domain, String legalName, String adminEmail, String addressLine1, String addressLine2, String postCode, String country);
+  Node getOriginNode(
+      String id,
+      String name,
+      String domain,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      String addressLine2,
+      String postCode,
+      String country);
 
-    Node getOperatorNode(String id, String name, String domain, String legalName, String adminEmail, String addressLine1, String addressLine2, String postCode, String country);
+  Node getOperatorNode(
+      String id,
+      String name,
+      String domain,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      String addressLine2,
+      String postCode,
+      String country);
 
-    Node getArchiveNode(String id, String name, String domain, String legalName, String adminEmail, String addressLine1, String addressLine2, String postCode, String country);
+  Node getArchiveNode(
+      String id,
+      String name,
+      String domain,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      String addressLine2,
+      String postCode,
+      String country);
 
-    Node getIntegratorNode(String id, String name, String domain, String legalName, String adminEmail, String addressLine1, String addressLine2, String postCode, String country);
-
+  Node getIntegratorNode(
+      String id,
+      String name,
+      String domain,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      String addressLine2,
+      String postCode,
+      String country);
 }

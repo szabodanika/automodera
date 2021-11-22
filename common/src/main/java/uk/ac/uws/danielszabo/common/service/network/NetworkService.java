@@ -28,18 +28,17 @@ import java.util.List;
 
 public interface NetworkService {
 
-    String getNetworkName();
+  String getNetworkName();
 
-    String getNetworkEnvironment();
+  String getNetworkEnvironment();
 
-    String getNetworkVersion();
+  String getNetworkVersion();
 
-    List<String> getOperatorAddresses();
+  List<String> getOperatorAddresses();
 
-    boolean checkCertificate(NodeCertificate certificate);
+  boolean checkCertificate(NodeCertificate certificate);
 
-    NodeStatus getNodeStatus(String address);
+  NodeStatus getNodeStatus(String address);
 
-    CertificateRequest certificateRequest();
-
+  CertificateRequest certificateRequest();
 }

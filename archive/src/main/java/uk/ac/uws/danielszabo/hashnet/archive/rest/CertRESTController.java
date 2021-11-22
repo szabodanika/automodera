@@ -21,7 +21,6 @@
 package uk.ac.uws.danielszabo.hashnet.archive.rest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.service.network.LocalNodeService;
@@ -38,47 +37,53 @@ import java.util.Enumeration;
 @RequestMapping("/cert")
 public class CertRESTController {
 
-    private final ArchiveService archiveService;
+  private final ArchiveService archiveService;
 
-    private final LocalNodeService localNodeService;
+  private final LocalNodeService localNodeService;
 
-    public CertRESTController(ArchiveService archiveService, LocalNodeService localNodeService) {
-        this.archiveService = archiveService;
-        this.localNodeService = localNodeService;
+  public CertRESTController(ArchiveService archiveService, LocalNodeService localNodeService) {
+    this.archiveService = archiveService;
+    this.localNodeService = localNodeService;
+  }
+
+  @PostMapping(value = "/processedrequest", consumes = "application/XML")
+  public void postRequest(
+      HttpServletRequest request, @RequestBody CertificateRequest certificateRequest) {
+    System.out.println(request.getMethod());
+    Enumeration<String> headerNames = request.getHeaderNames();
+    while (headerNames.hasMoreElements()) {
+      String headerName = headerNames.nextElement();
+      System.out.println(
+          "Header Name - " + headerName + ", Value - " + request.getHeader(headerName));
+    }
+    Enumeration<String> params = request.getParameterNames();
+    while (params.hasMoreElements()) {
+      String paramName = params.nextElement();
+      System.out.println(
+          "Parameter Name - " + paramName + ", Value - " + request.getParameter(paramName));
+    }
+    try {
+      Marshaller marshaller = JAXBContext.newInstance(CertificateRequest.class).createMarshaller();
+      marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+      marshaller.marshal(certificateRequest, System.out);
+    } catch (JAXBException e) {
+      e.printStackTrace();
     }
 
-
-    @PostMapping(value = "/processedrequest", consumes = "application/XML")
-    public void postRequest(HttpServletRequest request, @RequestBody CertificateRequest certificateRequest) {
-        System.out.println(request.getMethod());
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String headerName = headerNames.nextElement();
-            System.out.println("Header Name - " + headerName + ", Value - " + request.getHeader(headerName));
-        }
-        Enumeration<String> params = request.getParameterNames();
-        while (params.hasMoreElements()) {
-            String paramName = params.nextElement();
-            System.out.println("Parameter Name - " + paramName + ", Value - " + request.getParameter(paramName));
-        }
-        try {
-            Marshaller marshaller = JAXBContext.newInstance(CertificateRequest.class).createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(certificateRequest, System.out);
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
-
-        switch (certificateRequest.getStatus()) {
-            case WAITING -> log.error("Received invalid processed certificate request: status = WAITING");
-            case ISSUED -> {
-                localNodeService.getLocalNode().setCertificate(certificateRequest.getNode().getCertificate());
-                localNodeService.saveLocalNode();
-                log.info("Certificate request signed by " + certificateRequest.getNode().getCertificate().getIssuer().getId() + " and saved locally.");
-            }
-            case REJECTED -> // TODO option to disable software completely if a request is rejected
-                    log.info("Certificate request rejected: " + certificateRequest.getMessage());
-        }
+    switch (certificateRequest.getStatus()) {
+      case WAITING -> log.error("Received invalid processed certificate request: status = WAITING");
+      case ISSUED -> {
+        localNodeService
+            .getLocalNode()
+            .setCertificate(certificateRequest.getNode().getCertificate());
+        localNodeService.saveLocalNode();
+        log.info(
+            "Certificate request signed by "
+                + certificateRequest.getNode().getCertificate().getIssuer().getId()
+                + " and saved locally.");
+      }
+      case REJECTED -> // TODO option to disable software completely if a request is rejected
+      log.info("Certificate request rejected: " + certificateRequest.getMessage());
     }
-
+  }
 }

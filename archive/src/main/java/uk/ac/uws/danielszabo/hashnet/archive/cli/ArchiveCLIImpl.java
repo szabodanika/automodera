@@ -20,7 +20,6 @@
 
 package uk.ac.uws.danielszabo.hashnet.archive.cli;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Import;
 import org.springframework.shell.standard.ShellComponent;
@@ -36,34 +35,60 @@ import uk.ac.uws.danielszabo.common.service.rest.RestService;
 import uk.ac.uws.danielszabo.common.service.rest.RestServiceImpl;
 import uk.ac.uws.danielszabo.hashnet.archive.service.ArchiveService;
 
-@Import({RestServiceImpl.class, HashServiceImpl.class, LocalNodeServiceImpl.class, NetworkServiceImpl.class})
+@Import({
+  RestServiceImpl.class,
+  HashServiceImpl.class,
+  LocalNodeServiceImpl.class,
+  NetworkServiceImpl.class
+})
 @Slf4j
 @ShellComponent
 public class ArchiveCLIImpl extends BaseNodeCLIImpl {
 
-    private final ArchiveService archiveService;
+  private final ArchiveService archiveService;
 
-    public ArchiveCLIImpl(RestService restService, HashService hashService, LocalNodeService localNodeService, NetworkService networkService, ArchiveService archiveService) {
-        super(restService, hashService, localNodeService, networkService);
-        this.archiveService = archiveService;
-    }
+  public ArchiveCLIImpl(
+      RestService restService,
+      HashService hashService,
+      LocalNodeService localNodeService,
+      NetworkService networkService,
+      ArchiveService archiveService) {
+    super(restService, hashService, localNodeService, networkService);
+    this.archiveService = archiveService;
+  }
 
-    // for example:
-    // init --id testarchive1 --name 'HashNet Test Archive Node 1' --domain archive1.hashnet.test --legal-name 'HashNet Test Organisation' --admin-email contact@archive.test --address-line1 '123 High Street' --post-code AB12CD --country Scotland
-    @ShellMethod("Initialise local node configuration.")
-    @Override
-    public void init(String id, @ShellOption(defaultValue = "ARCHIVE") NodeType type, String name, String domain, String legalName, String adminEmail, String addressLine1, @ShellOption(defaultValue = "N/A") String addressLine2, String postCode, String country) {
-        if(type != NodeType.ARCHIVE) log.warn("You tried to create a non-ARCHIVE node with the init command. I am ignoring this parameter.");
-        NodeFactory nodeFactory = new NodeFactoryImpl();
-        Node node = nodeFactory.getArchiveNode(id, name, domain, legalName, adminEmail, addressLine1, addressLine2, postCode, country);
-        localNodeService.saveLocalNode(node);
-    }
+  // for example:
+  // init --id testarchive1 --name 'HashNet Test Archive Node 1' --domain archive1.hashnet.test
+  // --legal-name 'HashNet Test Organisation' --admin-email contact@archive.test --address-line1
+  // '123 High Street' --post-code AB12CD --country Scotland
+  @ShellMethod("Initialise local node configuration.")
+  @Override
+  public void init(
+      String id,
+      @ShellOption(defaultValue = "ARCHIVE") NodeType type,
+      String name,
+      String domain,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      @ShellOption(defaultValue = "N/A") String addressLine2,
+      String postCode,
+      String country) {
+    if (type != NodeType.ARCHIVE)
+      log.warn(
+          "You tried to create a non-ARCHIVE node with the init command. I am ignoring this"
+              + " parameter.");
+    NodeFactory nodeFactory = new NodeFactoryImpl();
+    Node node =
+        nodeFactory.getArchiveNode(
+            id, name, domain, legalName, adminEmail, addressLine1, addressLine2, postCode, country);
+    localNodeService.saveLocalNode(node);
+  }
 
-    // for example:
-    // hashimages --path /images
-    @ShellMethod("Manage Hash Collections")
-    public void hashcollection(String path) {
-        log.info("Hashing images on path: " + path);
-    }
-
+  // for example:
+  // hashimages --path /images
+  @ShellMethod("Manage Hash Collections")
+  public void hashcollection(String path) {
+    log.info("Hashing images on path: " + path);
+  }
 }

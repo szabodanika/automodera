@@ -35,6 +35,5 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class NodeStatus extends Message {
 
-    @NonNull boolean active;
-
+  @NonNull boolean active;
 }

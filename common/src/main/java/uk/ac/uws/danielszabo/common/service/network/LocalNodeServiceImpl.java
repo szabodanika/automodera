@@ -31,69 +31,73 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
 
-
 @Slf4j
 @Service
 public class LocalNodeServiceImpl implements LocalNodeService {
 
-    private static final String CONFIG_XML_PATH = "./data/netconf.xml";
+  private static final String CONFIG_XML_PATH = "./data/netconf.xml";
 
-    private final ApplicationEventPublisher applicationEventPublisher;
+  private final ApplicationEventPublisher applicationEventPublisher;
 
-    private Node localNode;
+  private Node localNode;
 
-    public LocalNodeServiceImpl(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
+  public LocalNodeServiceImpl(ApplicationEventPublisher applicationEventPublisher) {
+    this.applicationEventPublisher = applicationEventPublisher;
+  }
+
+  private void setLocalNode(Node localNode) {
+    LocalNodeUpdatedEvent event = new LocalNodeUpdatedEvent(this, localNode);
+    applicationEventPublisher.publishEvent(event);
+    this.localNode = localNode;
+  }
+
+  @Override
+  public Node getLocalNode() {
+    if (this.localNode == null) {
+      try {
+        File file = new File(CONFIG_XML_PATH);
+        JAXBContext jaxbContext = JAXBContext.newInstance(Node.class);
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        this.setLocalNode((Node) unmarshaller.unmarshal(file));
+        log.info("Successfully loaded " + CONFIG_XML_PATH);
+        return this.localNode;
+      } catch (Exception e) {
+        log.error("Failed to load " + CONFIG_XML_PATH + " " + e.getMessage());
+        return null;
+      }
+    } else return this.localNode;
+  }
+
+  @Override
+  public Node saveLocalNode(Node self) {
+    if (self == null) {
+      log.warn("Cannot overwrite local config with null.");
+      return null;
+    } else {
+      try {
+        JAXBContext jaxbContext = null;
+        jaxbContext = JAXBContext.newInstance(Node.class);
+        Marshaller marshaller = jaxbContext.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.marshal(self, new File(CONFIG_XML_PATH));
+        this.setLocalNode(self);
+        log.info("Saved " + CONFIG_XML_PATH);
+        return self;
+      } catch (Exception e) {
+        log.error(
+            "Failed to save "
+                + CONFIG_XML_PATH
+                + ": Message: "
+                + e.getMessage()
+                + " Cause: "
+                + e.getCause());
+        return null;
+      }
     }
+  }
 
-    private void setLocalNode(Node localNode) {
-        LocalNodeUpdatedEvent event = new LocalNodeUpdatedEvent(this, localNode);
-        applicationEventPublisher.publishEvent(event);
-        this.localNode = localNode;
-    }
-
-    @Override
-    public Node getLocalNode() {
-        if (this.localNode == null) {
-            try {
-                File file = new File(CONFIG_XML_PATH);
-                JAXBContext jaxbContext = JAXBContext.newInstance(Node.class);
-                Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-                this.setLocalNode((Node) unmarshaller.unmarshal(file));
-                log.info("Successfully loaded " + CONFIG_XML_PATH);
-                return this.localNode;
-            } catch (Exception e) {
-                log.error("Failed to load " + CONFIG_XML_PATH + " " + e.getMessage());
-                return null;
-            }
-        } else return this.localNode;
-    }
-
-    @Override
-    public Node saveLocalNode(Node self) {
-        if (self == null) {
-            log.warn("Cannot overwrite local config with null.");
-            return null;
-        } else {
-            try {
-                JAXBContext jaxbContext = null;
-                jaxbContext = JAXBContext.newInstance(Node.class);
-                Marshaller marshaller = jaxbContext.createMarshaller();
-                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-                marshaller.marshal(self, new File(CONFIG_XML_PATH));
-                this.setLocalNode(self);
-                log.info("Saved " + CONFIG_XML_PATH);
-                return self;
-            } catch (Exception e) {
-                log.error("Failed to save " + CONFIG_XML_PATH + ": Message: " + e.getMessage() + " Cause: " + e.getCause());
-                return null;
-            }
-        }
-    }
-
-    @Override
-    public Node saveLocalNode() {
-        return saveLocalNode(localNode);
-    }
-
+  @Override
+  public Node saveLocalNode() {
+    return saveLocalNode(localNode);
+  }
 }

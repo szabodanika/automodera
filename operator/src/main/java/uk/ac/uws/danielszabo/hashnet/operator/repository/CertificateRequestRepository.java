@@ -23,9 +23,6 @@ package uk.ac.uws.danielszabo.hashnet.operator.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
-import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 
 @Repository
-public interface CertificateRequestRepository extends JpaRepository<CertificateRequest, String> {
-
-}
+public interface CertificateRequestRepository extends JpaRepository<CertificateRequest, String> {}

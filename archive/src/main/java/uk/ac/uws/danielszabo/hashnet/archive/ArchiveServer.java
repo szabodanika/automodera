@@ -33,9 +33,8 @@ import uk.ac.uws.danielszabo.common.model.network.NetworkConfig;
 @EntityScan(basePackages = {"uk.ac.uws.danielszabo.common", "uk.ac.uws.danielszabo.archive"})
 public class ArchiveServer {
 
-    public static void main(String[] args) {
-        SpringApplication application = new SpringApplication(ArchiveServer.class);
-        application.run(args);
-    }
-
+  public static void main(String[] args) {
+    SpringApplication application = new SpringApplication(ArchiveServer.class);
+    application.run(args);
+  }
 }

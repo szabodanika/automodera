@@ -43,45 +43,35 @@ import java.sql.Date;
 @Entity
 public class CertificateRequest implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+  @Serial private static final long serialVersionUID = 1L;
 
-    public enum Status {
-        WAITING,
-        ISSUED,
-        REJECTED
-    }
+  public enum Status {
+    WAITING,
+    ISSUED,
+    REJECTED
+  }
 
-    // should be same as the certificate id
-    @Getter
-    @Id
-    @NonNull String id;
+  // should be same as the certificate id
+  @Getter @Id @NonNull String id;
 
-    // local node data and incomplete certificate request to sign
-    @Getter
-    @OneToOne(cascade = CascadeType.ALL)
-    @NonNull
-    private Node node;
+  // local node data and incomplete certificate request to sign
+  @Getter
+  @OneToOne(cascade = CascadeType.ALL)
+  @NonNull
+  private Node node;
 
-    // date the request was created
-    @Getter
-    @XmlJavaTypeAdapter(SQLDateAdapter.class)
-    @NonNull
-    private Date date = new Date(new java.util.Date().getTime());
+  // date the request was created
+  @Getter
+  @XmlJavaTypeAdapter(SQLDateAdapter.class)
+  @NonNull
+  private Date date = new Date(new java.util.Date().getTime());
 
-    @Getter
-    @Setter
-    @NonNull
-    private Status status = Status.WAITING;
+  @Getter @Setter @NonNull private Status status = Status.WAITING;
 
+  @Getter @Setter private String message;
 
-    @Getter
-    @Setter
-    private String message;
-
-    public CertificateRequest(Node localNode) {
-        this.id = localNode.getId();
-        this.node = localNode;
-    }
-
+  public CertificateRequest(Node localNode) {
+    this.id = localNode.getId();
+    this.node = localNode;
+  }
 }

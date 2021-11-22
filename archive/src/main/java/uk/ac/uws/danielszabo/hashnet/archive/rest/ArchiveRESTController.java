@@ -29,5 +29,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/arch")
 public class ArchiveRESTController {
 
-    // TODO mappings for sending out archive addresses for integrators
+  // TODO mappings for sending out archive addresses for integrators
 }

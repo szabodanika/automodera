@@ -26,84 +26,83 @@ import uk.ac.uws.danielszabo.common.model.message.NodeStatus;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfig;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
-import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.service.rest.RestService;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import java.io.File;
-import java.sql.Date;
 import java.util.List;
 
 @Slf4j
 @Service
 public class NetworkServiceImpl implements NetworkService {
 
-    private final LocalNodeService localNodeService;
+  private final LocalNodeService localNodeService;
 
-    private final NetworkConfig networkConfig;
+  private final NetworkConfig networkConfig;
 
-    private final RestService restService;
+  private final RestService restService;
 
-    public NetworkServiceImpl(NetworkConfig networkConfig, LocalNodeService localNodeService, RestService restService) {
-        this.networkConfig = networkConfig;
-        this.localNodeService = localNodeService;
-        this.restService = restService;
+  public NetworkServiceImpl(
+      NetworkConfig networkConfig, LocalNodeService localNodeService, RestService restService) {
+    this.networkConfig = networkConfig;
+    this.localNodeService = localNodeService;
+    this.restService = restService;
+  }
+
+  @Override
+  public String getNetworkName() {
+    return networkConfig.getName();
+  }
+
+  @Override
+  public String getNetworkEnvironment() {
+    return networkConfig.getEnvironment();
+  }
+
+  @Override
+  public String getNetworkVersion() {
+    return networkConfig.getVersion();
+  }
+
+  @Override
+  public List<String> getOperatorAddresses() {
+    return networkConfig.getOperators();
+  }
+
+  @Override
+  public boolean checkCertificate(NodeCertificate certificate) {
+    return false;
+  }
+
+  @Override
+  public NodeStatus getNodeStatus(String address) {
+    return null;
+  }
+
+  @Override
+  public CertificateRequest certificateRequest() {
+    if (localNodeService.getLocalNode() != null) {
+      // TODO instead of sending all the cert requests to the origin
+      // an operator should be selected from the list
+      CertificateRequest certReq = new CertificateRequest(localNodeService.getLocalNode());
+
+      try {
+        Marshaller marshaller =
+            JAXBContext.newInstance(CertificateRequest.class).createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.marshal(certReq, System.out);
+      } catch (JAXBException e) {
+        e.printStackTrace();
+      }
+
+      restService.sendCertificateRequest(networkConfig.getOrigin(), certReq);
+      log.info("Sent certificate request to " + networkConfig.getOrigin() + ": " + certReq);
+      return certReq;
+    } else {
+      log.error("Cannot send certificate request. Create local node configuration first!");
+      throw new IllegalStateException(
+          "Cannot create certificate request without a local node configuration.");
     }
-
-    @Override
-    public String getNetworkName() {
-        return networkConfig.getName();
-    }
-
-    @Override
-    public String getNetworkEnvironment() {
-        return networkConfig.getEnvironment();
-    }
-
-    @Override
-    public String getNetworkVersion() {
-        return networkConfig.getVersion();
-    }
-
-    @Override
-    public List<String> getOperatorAddresses() {
-        return networkConfig.getOperators();
-    }
-
-    @Override
-    public boolean checkCertificate(NodeCertificate certificate) {
-        return false;
-    }
-
-    @Override
-    public NodeStatus getNodeStatus(String address) {
-        return null;
-    }
-
-    @Override
-    public CertificateRequest certificateRequest() {
-        if (localNodeService.getLocalNode() != null) {
-            // TODO instead of sending all the cert requests to the origin
-            // an operator should be selected from the list
-            CertificateRequest certReq = new CertificateRequest(localNodeService.getLocalNode());
-
-            try {
-                Marshaller marshaller = JAXBContext.newInstance(CertificateRequest.class).createMarshaller();
-                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-                marshaller.marshal(certReq, System.out);
-            } catch (JAXBException e) {
-                e.printStackTrace();
-            }
-
-            restService.sendCertificateRequest(networkConfig.getOrigin(), certReq);
-            log.info("Sent certificate request to " + networkConfig.getOrigin() + ": " + certReq);
-            return certReq;
-        } else {
-            log.error("Cannot send certificate request. Create local node configuration first!");
-            throw new IllegalStateException("Cannot create certificate request without a local node configuration.");
-        }
-    }
-
+  }
 }

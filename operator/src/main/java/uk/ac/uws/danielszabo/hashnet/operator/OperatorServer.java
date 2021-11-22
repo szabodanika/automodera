@@ -31,11 +31,10 @@ import uk.ac.uws.danielszabo.common.model.network.NetworkConfig;
 @Import({NetworkConfig.class})
 @SpringBootApplication
 @EntityScan(basePackages = {"uk.ac.uws.danielszabo.common", "uk.ac.uws.danielszabo.operator"})
-public class OperatorServer  {
+public class OperatorServer {
 
   public static void main(String[] args) {
     SpringApplication application = new SpringApplication(OperatorServer.class);
     application.run(args);
   }
-
 }

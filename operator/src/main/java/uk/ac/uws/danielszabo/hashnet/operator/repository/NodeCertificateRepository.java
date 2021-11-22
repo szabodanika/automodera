@@ -25,6 +25,4 @@ import org.springframework.stereotype.Repository;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 
 @Repository
-public interface NodeCertificateRepository extends JpaRepository<NodeCertificate, String> {
-
-}
+public interface NodeCertificateRepository extends JpaRepository<NodeCertificate, String> {}

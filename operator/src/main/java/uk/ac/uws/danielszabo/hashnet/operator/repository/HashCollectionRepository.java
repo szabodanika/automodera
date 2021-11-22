@@ -25,6 +25,4 @@ import org.springframework.stereotype.Repository;
 import uk.ac.uws.danielszabo.common.model.images.HashCollection;
 
 @Repository
-public interface HashCollectionRepository extends JpaRepository<HashCollection, String> {
-
-}
+public interface HashCollectionRepository extends JpaRepository<HashCollection, String> {}

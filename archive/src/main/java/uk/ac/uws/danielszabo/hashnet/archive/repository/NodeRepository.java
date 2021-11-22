@@ -25,6 +25,4 @@ import org.springframework.stereotype.Repository;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 
 @Repository
-public interface NodeRepository extends JpaRepository<Node, String> {
-
-}
+public interface NodeRepository extends JpaRepository<Node, String> {}

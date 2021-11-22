@@ -23,7 +23,6 @@ package uk.ac.uws.danielszabo.common.model.network.node;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.IndexColumn;
 import uk.ac.uws.danielszabo.common.model.images.HashCollection;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.util.SQLDateAdapter;
@@ -47,7 +46,11 @@ public class Node {
   // unique identifier in the network
   @Setter(AccessLevel.NONE)
   @Column(nullable = false)
-  @Id @XmlID @XmlAttribute @NonNull private String id;
+  @Id
+  @XmlID
+  @XmlAttribute
+  @NonNull
+  private String id;
 
   // display name
   @NonNull private String name;
@@ -55,7 +58,8 @@ public class Node {
   // type of node (INTEGRATOR,ARCHIVE,OPERATOR)
   @Setter(AccessLevel.NONE)
   @Enumerated
-  @NonNull private NodeType nodeType;
+  @NonNull
+  private NodeType nodeType;
 
   // URL that other nodes will communicate to
   // (eg. offensive-images-archive.org)
@@ -65,7 +69,8 @@ public class Node {
   // it will be sent with all the messages
   // and checked by other nodes through the operator
   // contains id and address
-  @OneToOne(cascade = CascadeType.ALL) private NodeCertificate certificate;
+  @OneToOne(cascade = CascadeType.ALL)
+  private NodeCertificate certificate;
 
   // used only locallu
   // non-presistent, obtained via pinging IRT

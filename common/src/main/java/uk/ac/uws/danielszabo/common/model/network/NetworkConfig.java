@@ -39,16 +39,15 @@ import java.util.List;
 @ConfigurationProperties("network")
 public class NetworkConfig {
 
-    // everything in this class is loaded from application.properties
+  // everything in this class is loaded from application.properties
 
-    @NonNull private String name;
+  @NonNull private String name;
 
-    @NonNull private String environment;
+  @NonNull private String environment;
 
-    @NonNull private String version;
+  @NonNull private String version;
 
-    @NonNull private String origin;
+  @NonNull private String origin;
 
-    @NonNull private List<String> operators = new ArrayList<>();
-
+  @NonNull private List<String> operators = new ArrayList<>();
 }

@@ -32,24 +32,26 @@ import uk.ac.uws.danielszabo.common.model.network.node.Node;
 @Component
 public class CustomPromptProvider implements PromptProvider {
 
-    private Node localNode;
+  private Node localNode;
 
-    private final NetworkConfig networkConfig;
+  private final NetworkConfig networkConfig;
 
-    public CustomPromptProvider(NetworkConfig networkConfig) {
-        this.networkConfig = networkConfig;
-    }
+  public CustomPromptProvider(NetworkConfig networkConfig) {
+    this.networkConfig = networkConfig;
+  }
 
-    @Override
-    public AttributedString getPrompt() {
+  @Override
+  public AttributedString getPrompt() {
 
-        String nodeId = localNode == null ? "unknown" : localNode.getId();
-        String networkId = networkConfig == null ? "unknown" : networkConfig.getName();
-        return new AttributedString(nodeId + "@" + networkId + " > ", AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN));
-    }
+    String nodeId = localNode == null ? "unknown" : localNode.getId();
+    String networkId = networkConfig == null ? "unknown" : networkConfig.getName();
+    return new AttributedString(
+        nodeId + "@" + networkId + " > ",
+        AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN));
+  }
 
-    @EventListener
-    public void handle(LocalNodeUpdatedEvent event) {
-        this.localNode = event.getLocalNode();
-    }
+  @EventListener
+  public void handle(LocalNodeUpdatedEvent event) {
+    this.localNode = event.getLocalNode();
+  }
 }

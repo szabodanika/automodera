@@ -29,20 +29,20 @@ import java.util.Optional;
 
 public interface CertificationService {
 
-    List<NodeCertificate> retrieveAllCertificates();
+  List<NodeCertificate> retrieveAllCertificates();
 
-    boolean handleCertificateRequest(CertificateRequest certificateRequest, CertificateRequest.Status newStatus, String message);
+  boolean handleCertificateRequest(
+      CertificateRequest certificateRequest, CertificateRequest.Status newStatus, String message);
 
-    boolean reissueCertificateForNode(Node node);
+  boolean reissueCertificateForNode(Node node);
 
-    boolean revokeCertificateForNode(Node node);
+  boolean revokeCertificateForNode(Node node);
 
-    boolean verifyCertificate(NodeCertificate certificate);
+  boolean verifyCertificate(NodeCertificate certificate);
 
-    CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest);
+  CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest);
 
-    List<CertificateRequest> retrieveAllCertificateRequests();
+  List<CertificateRequest> retrieveAllCertificateRequests();
 
-    Optional<CertificateRequest> findCertificateRequestById(String id);
-
+  Optional<CertificateRequest> findCertificateRequestById(String id);
 }

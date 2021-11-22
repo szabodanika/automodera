@@ -29,5 +29,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/net")
 public class NetworkManagementRESTController {
 
-    // TODO mappings for handling messages related to the operation of the network
+  // TODO mappings for handling messages related to the operation of the network
 }

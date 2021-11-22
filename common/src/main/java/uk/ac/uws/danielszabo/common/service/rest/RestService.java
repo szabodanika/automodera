@@ -22,17 +22,15 @@ package uk.ac.uws.danielszabo.common.service.rest;
 
 import uk.ac.uws.danielszabo.common.model.message.NodeStatus;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
-import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 
 public interface RestService {
 
-    NodeStatus requestStatus(String host);
+  NodeStatus requestStatus(String host);
 
-    Node requestNodeInfo(String host);
+  Node requestNodeInfo(String host);
 
-    void sendCertificateRequest(String host, CertificateRequest certificateRequest);
+  void sendCertificateRequest(String host, CertificateRequest certificateRequest);
 
-    void sendProcessedCertificateRequest(String host, CertificateRequest certificateRequest);
-
+  void sendProcessedCertificateRequest(String host, CertificateRequest certificateRequest);
 }

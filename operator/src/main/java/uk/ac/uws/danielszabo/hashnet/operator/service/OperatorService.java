@@ -20,7 +20,4 @@
 
 package uk.ac.uws.danielszabo.hashnet.operator.service;
 
-public interface OperatorService extends CertificationService, HashCollectionService, NodeService {
-
-}
-
+public interface OperatorService extends CertificationService, HashCollectionService, NodeService {}

@@ -20,8 +20,4 @@
 
 package uk.ac.uws.danielszabo.hashnet.archive.service;
 
-public interface ArchiveService extends CertificationService, HashCollectionService, NodeService{
-
-
-}
-
+public interface ArchiveService extends CertificationService, HashCollectionService, NodeService {}

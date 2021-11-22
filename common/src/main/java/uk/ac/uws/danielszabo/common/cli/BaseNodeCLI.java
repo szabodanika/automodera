@@ -20,29 +20,29 @@
 
 package uk.ac.uws.danielszabo.common.cli;
 
-import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import uk.ac.uws.danielszabo.common.model.network.node.NodeType;
 
 public interface BaseNodeCLI {
 
-    void load();
+  void load();
 
-    void info();
+  void info();
 
-    void init(String id,
-              NodeType type,
-              String name,
-              String domain,
-              String legalName,
-              String adminEmail,
-              String addressLine1,
-              @ShellOption(defaultValue = "N/A") String addressLine2,
-              String postCode,
-              String country);
+  void init(
+      String id,
+      NodeType type,
+      String name,
+      String domain,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      @ShellOption(defaultValue = "N/A") String addressLine2,
+      String postCode,
+      String country);
 
-    void localcert(
-            @ShellOption(defaultValue = "false") boolean show,
-            @ShellOption(defaultValue = "false") boolean request,
-            @ShellOption(defaultValue = "false") boolean reissue);
+  void localcert(
+      @ShellOption(defaultValue = "false") boolean show,
+      @ShellOption(defaultValue = "false") boolean request,
+      @ShellOption(defaultValue = "false") boolean reissue);
 }

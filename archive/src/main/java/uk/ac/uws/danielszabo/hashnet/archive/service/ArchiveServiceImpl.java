@@ -37,80 +37,83 @@ import java.util.Optional;
 @Service
 public class ArchiveServiceImpl implements ArchiveService {
 
-    private final NodeCertificateRepository nodeCertificateRepository;
+  private final NodeCertificateRepository nodeCertificateRepository;
 
-    private final NodeRepository nodeRepository;
+  private final NodeRepository nodeRepository;
 
-    private final HashCollectionRepository hashCollectionRepository;
+  private final HashCollectionRepository hashCollectionRepository;
 
-    public ArchiveServiceImpl(NodeCertificateRepository nodeCertificateRepository, NodeRepository nodeRepository, HashCollectionRepository hashCollectionRepository) {
-        this.nodeCertificateRepository = nodeCertificateRepository;
-        this.nodeRepository = nodeRepository;
-        this.hashCollectionRepository = hashCollectionRepository;
-    }
+  public ArchiveServiceImpl(
+      NodeCertificateRepository nodeCertificateRepository,
+      NodeRepository nodeRepository,
+      HashCollectionRepository hashCollectionRepository) {
+    this.nodeCertificateRepository = nodeCertificateRepository;
+    this.nodeRepository = nodeRepository;
+    this.hashCollectionRepository = hashCollectionRepository;
+  }
 
-    @Override
-    public List<NodeCertificate> retrieveAllCertificates() {
-        return nodeCertificateRepository.findAll();
-    }
+  @Override
+  public List<NodeCertificate> retrieveAllCertificates() {
+    return nodeCertificateRepository.findAll();
+  }
 
-    @Override
-    public NodeCertificate createCertificate(Node node) {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public NodeCertificate createCertificate(Node node) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public boolean reissueCertificateForNode(Node node) {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public boolean reissueCertificateForNode(Node node) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public boolean revokeCertificateForNode(Node node) {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public boolean revokeCertificateForNode(Node node) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public boolean verifyCertificate(NodeCertificate certificate) {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public boolean verifyCertificate(NodeCertificate certificate) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public List<HashCollection> retrieveAllHashCollections() {
-        return hashCollectionRepository.findAll();
-    }
+  @Override
+  public List<HashCollection> retrieveAllHashCollections() {
+    return hashCollectionRepository.findAll();
+  }
 
-    @Override
-    public Optional<HashCollection> retrieveHashCollectionById(String id) {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Optional<HashCollection> retrieveHashCollectionById(String id) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public List<HashCollection> retrieveHashCollectionByTopic(Topic topic) {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public List<HashCollection> retrieveHashCollectionByTopic(Topic topic) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public List<HashCollection> retrieveHashCollectionByArchive(Node topic) {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public List<HashCollection> retrieveHashCollectionByArchive(Node topic) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public List<Node> retrieveAllNodes() {
-        return nodeRepository.findAll();
-    }
+  @Override
+  public List<Node> retrieveAllNodes() {
+    return nodeRepository.findAll();
+  }
 
-    @Override
-    public Optional<Node> retrieveNodeById(String id) {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Optional<Node> retrieveNodeById(String id) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public Node saveNode(Node node) {
-        return nodeRepository.save(node);
-    }
+  @Override
+  public Node saveNode(Node node) {
+    return nodeRepository.save(node);
+  }
 
-    @Override
-    public boolean deleteNode(Node node) {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public boolean deleteNode(Node node) {
+    throw new UnsupportedOperationException();
+  }
 }

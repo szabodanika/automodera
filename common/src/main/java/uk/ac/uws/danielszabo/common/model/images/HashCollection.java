@@ -40,63 +40,53 @@ import java.util.List;
 @Entity
 public class HashCollection {
 
-    @Id
-    @XmlID
-    @NonNull
-    private String id;
+  @Id @XmlID @NonNull private String id;
 
-    @NonNull
-    private String name;
+  @NonNull private String name;
 
-    // simple counter for updates
-    @NonNull
-    private int version = 1;
+  // simple counter for updates
+  @NonNull private int version = 1;
 
-    // date this collection was created
-    @NonNull
-    @XmlJavaTypeAdapter(SQLDateAdapter.class)
-    private Date created;
+  // date this collection was created
+  @NonNull
+  @XmlJavaTypeAdapter(SQLDateAdapter.class)
+  private Date created;
 
-    // date this collection was last updated:
-    // - topics changed
-    // - image list changed
-    // - name changed
-    @NonNull
-    @XmlJavaTypeAdapter(SQLDateAdapter.class)
-    private Date updated;
+  // date this collection was last updated:
+  // - topics changed
+  // - image list changed
+  // - name changed
+  @NonNull
+  @XmlJavaTypeAdapter(SQLDateAdapter.class)
+  private Date updated;
 
-    // brief description of what this collection contains
-    @NonNull
-    private String description;
+  // brief description of what this collection contains
+  @NonNull private String description;
 
-    // this can be used to enable/disable it on the integrators end by the archive
-    @NonNull boolean enabled = true;
+  // this can be used to enable/disable it on the integrators end by the archive
+  @NonNull boolean enabled = true;
 
-    @ManyToOne
-    @NonNull
-    private Node archive;
+  @ManyToOne @NonNull private Node archive;
 
-    @ManyToMany
-    @JoinTable(
-            name = "hashcollection_topic",
-            joinColumns = @JoinColumn(name = "topic_id"),
-            inverseJoinColumns = @JoinColumn(name = "hashcollection_id"))
-    @XmlElementWrapper(name = "topicList")
-    @XmlElement(name = "topic")
-    @ToString.Exclude
-    @NonNull
-//    @XmlTransient
-    private List<Topic> topicList;
+  @ManyToMany
+  @JoinTable(
+      name = "hashcollection_topic",
+      joinColumns = @JoinColumn(name = "topic_id"),
+      inverseJoinColumns = @JoinColumn(name = "hashcollection_id"))
+  @XmlElementWrapper(name = "topicList")
+  @XmlElement(name = "topic")
+  @ToString.Exclude
+  @NonNull
+  //    @XmlTransient
+  private List<Topic> topicList;
 
-
-    // this will not be stored or transferred in XML
-    // loaded from H2 database instead
-    @OneToMany
-    @ToString.Exclude
-//    @XmlElementWrapper(name = "imageList")
-//    @XmlElement(name = "image")
-    @NonNull
-    @XmlTransient
-    private List<Image> imageList;
-
+  // this will not be stored or transferred in XML
+  // loaded from H2 database instead
+  @OneToMany
+  @ToString.Exclude
+  //    @XmlElementWrapper(name = "imageList")
+  //    @XmlElement(name = "image")
+  @NonNull
+  @XmlTransient
+  private List<Image> imageList;
 }

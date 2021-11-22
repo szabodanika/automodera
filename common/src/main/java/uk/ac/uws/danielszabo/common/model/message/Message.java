@@ -31,8 +31,7 @@ import java.sql.Date;
 @XmlRootElement
 public abstract class Message {
 
-    @NonNull private Date timeStamp;
+  @NonNull private Date timeStamp;
 
-    @NonNull private NodeCertificate certificate;
-
+  @NonNull private NodeCertificate certificate;
 }

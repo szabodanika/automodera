@@ -34,5 +34,4 @@ public interface NodeService {
   Node saveNode(Node node);
 
   boolean deleteNode(Node node);
-
 }

@@ -27,14 +27,13 @@ import java.util.List;
 
 public interface CertificationService {
 
-    List<NodeCertificate> retrieveAllCertificates();
+  List<NodeCertificate> retrieveAllCertificates();
 
-    NodeCertificate createCertificate(Node node);
+  NodeCertificate createCertificate(Node node);
 
-    boolean reissueCertificateForNode(Node node);
+  boolean reissueCertificateForNode(Node node);
 
-    boolean revokeCertificateForNode(Node node);
+  boolean revokeCertificateForNode(Node node);
 
-    boolean verifyCertificate(NodeCertificate certificate);
-
+  boolean verifyCertificate(NodeCertificate certificate);
 }

@@ -50,5 +50,4 @@ public class Topic {
   @XmlElement(name = "hashCollection")
   @ToString.Exclude
   private List<HashCollection> hashCollectionList;
-
 }

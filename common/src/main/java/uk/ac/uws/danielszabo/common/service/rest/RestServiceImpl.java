@@ -25,7 +25,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.uws.danielszabo.common.model.message.NodeStatus;
@@ -40,91 +39,89 @@ import java.net.URISyntaxException;
 @Service
 public class RestServiceImpl implements RestService {
 
-    // TODO this has to be configurable
-    // or at the very least changed to https
-    private static final String PROTOCOL = "http";
+  // TODO this has to be configurable
+  // or at the very least changed to https
+  private static final String PROTOCOL = "http";
 
-    private final RestTemplate restTemplate;
+  private final RestTemplate restTemplate;
 
-    public RestServiceImpl(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder.build();
+  public RestServiceImpl(RestTemplateBuilder restTemplateBuilder) {
+    this.restTemplate = restTemplateBuilder.build();
+  }
+
+  @Override
+  public NodeStatus requestStatus(String host) {
+
+    URI requestURI = null;
+    try {
+      requestURI = new URI(PROTOCOL, host, "/net/status", null);
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
     }
 
-    @Override
-    public NodeStatus requestStatus(String host) {
+    // use `exchange` method for HTTP call
+    NodeStatus status = this.restTemplate.getForObject(requestURI, NodeStatus.class);
 
-        URI requestURI = null;
-        try {
-            requestURI = new URI(PROTOCOL, host, "/net/status", null);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+    return status;
+  }
 
-        // use `exchange` method for HTTP call
-        NodeStatus status = this.restTemplate.getForObject(requestURI, NodeStatus.class);
+  @Override
+  public Node requestNodeInfo(String host) {
+    URI requestURI = null;
 
-        return status;
+    try {
+      requestURI = new URI(PROTOCOL, host, "/net/info", null);
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
     }
 
-    @Override
-    public Node requestNodeInfo(String host) {
-        URI requestURI = null;
+    // use `exchange` method for HTTP call
+    Node node = this.restTemplate.getForObject(requestURI, Node.class);
 
-        try {
-            requestURI = new URI(PROTOCOL, host, "/net/info", null);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+    return node;
+  }
 
-        // use `exchange` method for HTTP call
-        Node node = this.restTemplate.getForObject(requestURI, Node.class);
+  // void because certificate requests are not handled automatically
+  @Override
+  public void sendCertificateRequest(String host, CertificateRequest certificateRequest) {
+    URI requestURI = null;
 
-        return node;
+    try {
+      requestURI = new URI(PROTOCOL, host, "/cert/request", null);
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
     }
 
+    // create headers
+    HttpHeaders headers = new HttpHeaders();
+    // set `content-type` header
+    headers.setContentType(MediaType.APPLICATION_XML);
 
-    // void because certificate requests are not handled automatically
-    @Override
-    public void sendCertificateRequest(String host, CertificateRequest certificateRequest) {
-        URI requestURI = null;
+    // build the request
+    HttpEntity request = new HttpEntity<>(certificateRequest, headers);
 
-        try {
-            requestURI = new URI(PROTOCOL, host, "/cert/request", null);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+    this.restTemplate.postForEntity(requestURI, request, NodeCertificate.class);
+  }
 
-        // create headers
-        HttpHeaders headers = new HttpHeaders();
-        // set `content-type` header
-        headers.setContentType(MediaType.APPLICATION_XML);
+  @Override
+  public void sendProcessedCertificateRequest(String host, CertificateRequest certificateRequest) {
+    URI requestURI = null;
 
-        // build the request
-        HttpEntity request = new HttpEntity<>(certificateRequest, headers);
-
-        this.restTemplate.postForEntity(requestURI, request, NodeCertificate.class);
+    try {
+      requestURI = new URI(PROTOCOL, host, "/cert/processedrequest", null);
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
     }
 
-    @Override
-    public void sendProcessedCertificateRequest(String host, CertificateRequest certificateRequest) {
-        URI requestURI = null;
+    // create headers
+    HttpHeaders headers = new HttpHeaders();
+    // set `content-type` header
+    headers.setContentType(MediaType.APPLICATION_XML);
 
-        try {
-            requestURI = new URI(PROTOCOL, host, "/cert/processedrequest", null);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+    // build the request
+    HttpEntity request = new HttpEntity<>(certificateRequest, headers);
 
-        // create headers
-        HttpHeaders headers = new HttpHeaders();
-        // set `content-type` header
-        headers.setContentType(MediaType.APPLICATION_XML);
-
-        // build the request
-        HttpEntity request = new HttpEntity<>(certificateRequest, headers);
-
-        // use `exchange` method for HTTP call
-        this.restTemplate.postForEntity(requestURI, request, NodeCertificate.class);
-    }
-
+    // use `exchange` method for HTTP call
+    this.restTemplate.postForEntity(requestURI, request, NodeCertificate.class);
+  }
 }

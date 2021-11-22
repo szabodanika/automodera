@@ -24,10 +24,9 @@ import uk.ac.uws.danielszabo.common.model.network.node.Node;
 
 public interface LocalNodeService {
 
-    Node getLocalNode();
+  Node getLocalNode();
 
-    Node saveLocalNode(Node self);
+  Node saveLocalNode(Node self);
 
-    Node saveLocalNode();
-
+  Node saveLocalNode();
 }

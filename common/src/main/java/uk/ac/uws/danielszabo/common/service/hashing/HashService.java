@@ -30,5 +30,4 @@ public interface HashService {
   Hash pHash(File image) throws IOException;
 
   double simScore(Hash hash1, Hash hash2);
-
 }

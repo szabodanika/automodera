@@ -29,12 +29,11 @@ import java.util.Optional;
 
 public interface HashCollectionService {
 
-    List<HashCollection> retrieveAllHashCollections();
+  List<HashCollection> retrieveAllHashCollections();
 
-    Optional<HashCollection> retrieveHashCollectionById(String id);
+  Optional<HashCollection> retrieveHashCollectionById(String id);
 
-    List<HashCollection> retrieveHashCollectionByTopic(Topic topic);
+  List<HashCollection> retrieveHashCollectionByTopic(Topic topic);
 
-    List<HashCollection> retrieveHashCollectionByArchive(Node topic);
-
+  List<HashCollection> retrieveHashCollectionByArchive(Node topic);
 }

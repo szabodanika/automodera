@@ -29,11 +29,11 @@ import uk.ac.uws.danielszabo.common.model.network.node.Node;
 @Slf4j
 public class LocalNodeUpdatedEvent extends ApplicationEvent {
 
-    private final Node localNode;
+  private final Node localNode;
 
-    public LocalNodeUpdatedEvent(Object source,Node localNode) {
-        super(source);
-        this.localNode = localNode;
-        log.info("Local node updated.");
-    }
+  public LocalNodeUpdatedEvent(Object source, Node localNode) {
+    super(source);
+    this.localNode = localNode;
+    log.info("Local node updated.");
+  }
 }
