@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.hashnet.operator.service.OperatorService;
 
-
 @Slf4j
 @RestController
 @RequestMapping("/cert")
