@@ -9,7 +9,44 @@ A Publish-Subscribe Network for Distributing Perceptual Hashes of Images, writte
 
 
 ## Setup
-*TODO*
+
+### 1. Clone Project
+```
+git clone https://github.com/szabodanika/hashnet.git
+```
+### 2. Build executable JARs
+#### 1. Build project from the root directory
+```
+mvn clean install 
+```
+#### 2. Repackage executable modules (operator, archive, api) in their own directories
+```
+mvn package spring-boot:repackage
+```
+### 3. Run executables
+```
+java -jar operator-1.0-SNAPSHOT.jar
+java -jar archive-1.0-SNAPSHOT.jar
+java -jar api-1.0-SNAPSHOT.jar
+```
+### 4. Initialise Nodes
+#### 1. Initialise origin node
+```
+init --type ORIGIN --id origin --name 'HashNet Origin Node' --domain origin.hashnet.test --legal-name 'HashNet Test Organisation' --admin-email contact@origin.test --address-line1 '123 High Street' --address-line2 'Block B' --post-code AB12CD --country Scotland
+```
+#### 2. Initialise archive node
+```
+init --id testarchive1 --name 'HashNet Test Archive Node 1' --domain archive1.hashnet.test --legal-name 'HashNet Test Organisation' --admin-email contact@archive.test --address-line1 '123 High Street' --address-line2 'Block A' --post-code AB12CD --country Scotland
+```
+#### 3. Request certificate from origin node (archive)
+```
+localcert --request
+```
+#### 4. Sign certificate (origin)
+```
+certreq --accept --id testarchive1 --message OK
+```
+
 
 ## Modules
 *TODO*
