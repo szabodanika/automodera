@@ -23,7 +23,7 @@
 
     <modules>
         <module>common</module>
-        <module>api</module>
+        <module>integrator</module>
         <module>archive</module>
         <module>operator</module>
     </modules>
