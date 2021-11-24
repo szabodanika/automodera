@@ -25,12 +25,88 @@ mvn clean install
 mvn package spring-boot:repackage
 ```
 ### 3. Run executables
+By default the nodes will listen through port and refer to each other by their domains, so archive1 will send messages to origin.hashnet.test:80 and origin will send its messages to archive1.hashnet.test:80. You will need to set up virtual hosts so that both addresses are resolved to 127.0.0.1 or localhost and use a reverse proxy like NGINX to redirect the messages for different hosts to different ports, as you will not be able to launch two nodes listening to the same port.
+
+Here is an example NGINX configuration that I use for development:
+
+<details>
+  <summary>
+    NGINX Configuration
+  </summary>
+<pre>
+worker_processes 1;
+events {
+    worker_connections	512;
+}
+http {
+    server_names_hash_bucket_size 128;
+    include			mime.types;
+    default_type	application/octet-stream;
+    sendfile		on;
+    keepalive_timeout	65;
+    server_tokens	off;
+    ##
+    # Origin Node
+    ##
+    server {
+        listen		80;
+        server_name	origin.hashnet.test;
+        location / {
+            proxy_set_header	Host $host;
+            proxy_set_header	X-Forwarded-Proto $scheme;
+        }
+    }
+    ##
+    # Operator Nodes
+    ##
+    server {
+        listen		80;
+        server_name	operator1.hashnet.test operator2.hashnet.test;
+        location / {
+            proxy_pass		http://127.0.0.1:9001;
+            proxy_set_header	Host $host;
+            proxy_set_header	X-Forwarded-Proto $scheme;
+        }
+    }
+    ##
+    # Archive Nodes
+    ##
+    server {
+        listen		80;
+        server_name	archive1.hashnet.test archive2.hashnet.test;
+        location / {
+            proxy_pass		http://127.0.0.1:9002;
+            proxy_set_header	Host $host;
+            proxy_set_header	X-Forwarded-Proto $scheme;
+        }
+    }
+    ##
+    # Integrator Nodes
+    ##
+    server {
+        listen		80;
+        server_name	api1.hashnet.test api2.hashnet.test;
+        location / {
+            proxy_pass		http://127.0.0.1:9003;
+            proxy_set_header	Host $host;
+            proxy_set_header	X-Forwarded-Proto $scheme;
+        }
+    }
+}
+</pre>
+</details>
+
+Once the networking bit is all done, time to run the generated jar executables:
+
 ```
 java -jar operator-1.0-SNAPSHOT.jar
 java -jar archive-1.0-SNAPSHOT.jar
-java -jar api-1.0-SNAPSHOT.jar
+java -jar integrator-1.0-SNAPSHOT.jar
 ```
 ### 4. Initialise Nodes
+
+Note: there is no integrator exacutable yet.
+
 #### 1. Initialise origin node
 ```
 init --type ORIGIN --id origin --name 'HashNet Origin Node' --domain origin.hashnet.test --legal-name 'HashNet Test Organisation' --admin-email contact@origin.test --address-line1 '123 High Street' --address-line2 'Block B' --post-code AB12CD --country Scotland
@@ -48,6 +124,11 @@ localcert --request
 certreq --accept --id testarchive1 --message OK
 ```
 
+#### 5. Load configuration (optional, after restart)
+Currently the nodes do not load their configurations automatically after restarting them. The following command will tell them to read netconf.xml and configure themselves accordingly. The network data is stored separately in the application.properties file currently.
+```
+load
+```
 
 ## Modules
 *TODO*
