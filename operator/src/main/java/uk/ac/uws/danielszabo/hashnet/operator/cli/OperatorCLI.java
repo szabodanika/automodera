@@ -82,7 +82,7 @@ public class OperatorCLI extends BaseNodeCLI {
   }
 
   // example:
-  // netinit --name 'HashNet Prototype' --environment dev --version 0.1 --origin origin.hashnet.test
+  // netinit --name 'HashNetPrototype' --environment dev --version 0.1 --origin origin.hashnet.test
   @ShellMethod("Initialise network configuration.")
   public void netinit(String name, String environment, String version, String origin) {
 

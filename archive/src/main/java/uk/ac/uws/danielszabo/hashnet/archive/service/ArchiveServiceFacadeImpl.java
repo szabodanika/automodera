@@ -87,8 +87,8 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
   }
 
   @Override
-  public Optional<NodeCertificate> findCertificateRequestById(String id) {
-    return networkService.findCertificateById(id);
+  public Optional<CertificateRequest> findCertificateRequestById(String id) {
+    return networkService.findCertificateRequestById(id);
   }
 
   @Override
