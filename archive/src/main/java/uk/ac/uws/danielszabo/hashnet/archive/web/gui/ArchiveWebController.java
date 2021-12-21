@@ -43,5 +43,4 @@ public class ArchiveWebController {
     model.addAttribute("date", LocalDateTime.now());
     return "index";
   }
-
 }

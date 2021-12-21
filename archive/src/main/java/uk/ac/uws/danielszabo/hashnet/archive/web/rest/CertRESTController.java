@@ -30,15 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.message.Message;
-import uk.ac.uws.danielszabo.common.model.network.node.NodeStatus;
 import uk.ac.uws.danielszabo.hashnet.archive.service.ArchiveServiceFacade;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import java.io.StringReader;
-import java.io.StringWriter;
 
 @Slf4j
 @RestController
