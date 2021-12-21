@@ -18,25 +18,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.util;
+package uk.ac.uws.danielszabo.hashnet.operator.web.gui;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import uk.ac.uws.danielszabo.hashnet.operator.service.OperatorServiceFacade;
 
-public class SQLDateAdapter extends XmlAdapter<String, Date> {
+import java.time.LocalDateTime;
 
-  private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+@Controller
+@RequestMapping("operator")
+public class OperatorWebController {
 
-  @Override
-  public Date unmarshal(String xml) throws Exception {
-    Date date = new java.sql.Date(dateFormat.parse(xml).getTime());
-    return date;
+  private final OperatorServiceFacade operatorServiceFacade;
+
+  public OperatorWebController(OperatorServiceFacade operatorServiceFacade) {
+    this.operatorServiceFacade = operatorServiceFacade;
   }
 
-  @Override
-  public String marshal(Date object) {
-    return dateFormat.format(object);
+  @GetMapping("")
+  public String getIndex(Model model) {
+    model.addAttribute("date", LocalDateTime.now());
+    return "index";
   }
+
 }

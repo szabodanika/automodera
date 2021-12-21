@@ -26,32 +26,39 @@ import org.springframework.context.event.EventListener;
 import org.springframework.shell.jline.PromptProvider;
 import org.springframework.stereotype.Component;
 import uk.ac.uws.danielszabo.common.event.LocalNodeUpdatedEvent;
-import uk.ac.uws.danielszabo.common.model.network.NetworkConfig;
+import uk.ac.uws.danielszabo.common.event.NetworkConfigurationUpdatedEvent;
+import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
+import uk.ac.uws.danielszabo.common.service.network.LocalNodeService;
+import uk.ac.uws.danielszabo.common.service.network.NetworkService;
 
 @Component
 public class CustomPromptProvider implements PromptProvider {
 
+  private NetworkConfiguration networkConfiguration;
   private Node localNode;
 
-  private final NetworkConfig networkConfig;
-
-  public CustomPromptProvider(NetworkConfig networkConfig) {
-    this.networkConfig = networkConfig;
+  public CustomPromptProvider(NetworkService networkService, LocalNodeService localNodeService) {
+    networkConfiguration = networkService.getNetworkConfiguration();
+    localNode = localNodeService.get();
   }
 
   @Override
   public AttributedString getPrompt() {
-
     String nodeId = localNode == null ? "unknown" : localNode.getId();
-    String networkId = networkConfig == null ? "unknown" : networkConfig.getName();
+    String networkId = networkConfiguration == null ? "unknown" : networkConfiguration.getName();
     return new AttributedString(
         nodeId + "@" + networkId + " > ",
         AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN));
   }
 
   @EventListener
-  public void handle(LocalNodeUpdatedEvent event) {
+  public void handleLocalNodeUpdatedEvent(LocalNodeUpdatedEvent event) {
     this.localNode = event.getLocalNode();
+  }
+
+  @EventListener
+  public void handleNetworkConfigurationUpdatedEvent(NetworkConfigurationUpdatedEvent event) {
+    this.networkConfiguration = event.getNetworkConfiguration();
   }
 }

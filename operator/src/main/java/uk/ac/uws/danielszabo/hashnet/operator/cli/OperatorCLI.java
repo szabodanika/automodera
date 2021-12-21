@@ -24,79 +24,26 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-import uk.ac.uws.danielszabo.common.cli.BaseNodeCLIImpl;
+import uk.ac.uws.danielszabo.common.cli.BaseNodeCLI;
+import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
-import uk.ac.uws.danielszabo.common.model.network.node.Node;
-import uk.ac.uws.danielszabo.common.model.network.node.NodeType;
-import uk.ac.uws.danielszabo.common.service.hashing.HashService;
+import uk.ac.uws.danielszabo.common.service.image.TopicService;
 import uk.ac.uws.danielszabo.common.service.network.LocalNodeService;
 import uk.ac.uws.danielszabo.common.service.network.NetworkService;
-import uk.ac.uws.danielszabo.common.service.network.NodeFactory;
-import uk.ac.uws.danielszabo.common.service.network.NodeFactoryImpl;
-import uk.ac.uws.danielszabo.common.service.rest.RestService;
-import uk.ac.uws.danielszabo.hashnet.operator.service.OperatorService;
+import uk.ac.uws.danielszabo.hashnet.operator.service.OperatorServiceFacade;
 
 @Slf4j
 @ShellComponent
-public class OperatorCLI extends BaseNodeCLIImpl {
+public class OperatorCLI extends BaseNodeCLI {
 
-  private final OperatorService operatorService;
+  private final OperatorServiceFacade operatorServiceFacade;
 
   public OperatorCLI(
-      RestService restService,
-      HashService hashService,
-      LocalNodeService localNodeService,
-      NetworkService networkService,
-      OperatorService operatorService) {
-    super(restService, hashService, localNodeService, networkService);
-    this.operatorService = operatorService;
-  }
-
-  // for example:
-  // init --type ORIGIN --id origin --name 'HashNet Origin Node' --domain hashnet.danielszabo.me
-  // --legal-name 'Daniel Szabo' --admin-email daniel.szabo99@outlook.com --address-line1 '1/2 22
-  // Maxwellton Street' --post-code PA12UB --country Scotland
-  @ShellMethod("Initialise local node configuration.")
-  @Override
-  public void init(
-      String id,
-      NodeType type,
-      String name,
-      String domain,
-      String legalName,
-      String adminEmail,
-      String addressLine1,
-      @ShellOption(defaultValue = "N/A") String addressLine2,
-      String postCode,
-      String country) {
-    NodeFactory nodeFactory = new NodeFactoryImpl();
-    Node node = null;
-    switch (type) {
-      case OPERATOR -> node =
-          nodeFactory.getOperatorNode(
-              id,
-              name,
-              domain,
-              legalName,
-              adminEmail,
-              addressLine1,
-              addressLine2,
-              postCode,
-              country);
-      case ORIGIN -> node =
-          nodeFactory.getOriginNode(
-              id,
-              name,
-              domain,
-              legalName,
-              adminEmail,
-              addressLine1,
-              addressLine2,
-              postCode,
-              country);
-      default -> log.error("This software package can only be used in OPERATOR and ORIGIN mode.");
-    }
-    if (node != null) localNodeService.saveLocalNode(node);
+    LocalNodeService localNodeService,
+    NetworkService networkService,
+    OperatorServiceFacade operatorServiceFacade, TopicService topicService) {
+    super(localNodeService, networkService, topicService);
+    this.operatorServiceFacade = operatorServiceFacade;
   }
 
   @ShellMethod("Manage certificate requests.")
@@ -108,7 +55,7 @@ public class OperatorCLI extends BaseNodeCLIImpl {
       @ShellOption(defaultValue = "null") String message) {
     if (list) {
       StringBuilder printMessage = new StringBuilder();
-      for (CertificateRequest certReq : operatorService.retrieveAllCertificateRequests()) {
+      for (CertificateRequest certReq : operatorServiceFacade.findAllCertificateRequests()) {
         printMessage.append(certReq).append("\n");
       }
       log.info(printMessage.toString());
@@ -117,20 +64,33 @@ public class OperatorCLI extends BaseNodeCLIImpl {
         log.error("Please specify id and message: --id [id] --message [message]");
       }
       CertificateRequest certificateRequest =
-          operatorService.findCertificateRequestById(id).orElseThrow();
-      operatorService.handleCertificateRequest(
+          operatorServiceFacade.findCertificateRequestById(id).orElseThrow();
+      operatorServiceFacade.handleCertificateRequest(
           certificateRequest, CertificateRequest.Status.ISSUED, message);
     } else if (reject) {
       if (id == null || message == null) {
         log.error("Please specify id and message: --id [id] --message [message]");
       }
       CertificateRequest certificateRequest =
-          operatorService.findCertificateRequestById(id).orElseThrow();
-      operatorService.handleCertificateRequest(
+          operatorServiceFacade.findCertificateRequestById(id).orElseThrow();
+      operatorServiceFacade.handleCertificateRequest(
           certificateRequest, CertificateRequest.Status.REJECTED, message);
     } else {
-      log.error(
-          "Please specify action: 'certreq --list|accept|reject --id [id] --message [message]'");
+      log.error("Please specify one of the following: --list, --accept, --reject");
     }
   }
+
+    // example:
+    // netinit --name 'HashNet Prototype' --environment dev --version 0.1 --origin origin.hashnet.test
+    @ShellMethod("Initialise network configuration.")
+    public void netinit(
+            String name,
+            String environment,
+            String version,
+            String origin) {
+
+        NetworkConfiguration networkConfiguration = new NetworkConfiguration(name, environment, version, origin);
+
+        operatorServiceFacade.saveNetworkConfiguration(networkConfiguration);
+    }
 }

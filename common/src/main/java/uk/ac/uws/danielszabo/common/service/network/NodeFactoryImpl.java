@@ -20,6 +20,8 @@
 
 package uk.ac.uws.danielszabo.common.service.network;
 
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import uk.ac.uws.danielszabo.common.model.network.cert.NetworkRight;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
@@ -28,6 +30,7 @@ import uk.ac.uws.danielszabo.common.model.network.node.NodeType;
 import java.sql.Date;
 import java.util.ArrayList;
 
+@Component
 public class NodeFactoryImpl implements NodeFactory {
 
   @Override

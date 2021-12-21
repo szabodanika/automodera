@@ -18,26 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.service.rest;
+package uk.ac.uws.danielszabo.common.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
-import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
-import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
-import uk.ac.uws.danielszabo.common.model.network.node.Node;
-import uk.ac.uws.danielszabo.common.model.network.node.NodeStatus;
 
-public interface RestService {
+import java.util.Optional;
 
-  NodeStatus requestStatus(String host);
+@Repository
+public interface NetworkConfigurationRepository extends JpaRepository<NetworkConfiguration, Long> {
 
-  Node getNodeByHost(String host);
+  @Query("SELECT n FROM NetworkConfiguration n WHERE n.id = 0")
+  Optional<NetworkConfiguration> get();
 
-  // void because certificate requests are not handled automatically
-  void sendCertificateRequest(String operator, CertificateRequest certificateRequest);
-
-  void sendProcessedCertificateRequest(CertificateRequest certificateRequest);
-
-  NetworkConfiguration sendNetworkConfigurationRequest(String origin);
-
-  boolean requestCertificateVerification(NodeCertificate certificate);
 }

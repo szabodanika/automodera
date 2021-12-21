@@ -18,26 +18,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.service.rest;
+package uk.ac.uws.danielszabo.common.model.network.message;
 
+import org.springframework.stereotype.Component;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
-import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
-import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
-import uk.ac.uws.danielszabo.common.model.network.node.Node;
-import uk.ac.uws.danielszabo.common.model.network.node.NodeStatus;
+import uk.ac.uws.danielszabo.common.service.network.LocalNodeService;
 
-public interface RestService {
+import java.sql.Date;
 
-  NodeStatus requestStatus(String host);
+@Component
+public class MessageFactoryImpl implements MessageFactory {
 
-  Node getNodeByHost(String host);
+  private final LocalNodeService localNodeService;
 
-  // void because certificate requests are not handled automatically
-  void sendCertificateRequest(String operator, CertificateRequest certificateRequest);
+  private final NetworkConfiguration networkConfiguration;
 
-  void sendProcessedCertificateRequest(CertificateRequest certificateRequest);
+  public MessageFactoryImpl(
+      LocalNodeService localNodeService, NetworkConfiguration networkConfiguration) {
+    this.localNodeService = localNodeService;
+    this.networkConfiguration = networkConfiguration;
+  }
 
-  NetworkConfiguration sendNetworkConfigurationRequest(String origin);
-
-  boolean requestCertificateVerification(NodeCertificate certificate);
+  @Override
+  public Message getMessage(Object content) {
+    return new Message(
+        new Date(new java.util.Date().getTime()), localNodeService.get().getCertificate(), content);
+  }
 }

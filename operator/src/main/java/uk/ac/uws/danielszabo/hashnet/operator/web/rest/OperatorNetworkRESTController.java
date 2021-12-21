@@ -18,26 +18,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.service.rest;
+package uk.ac.uws.danielszabo.hashnet.operator.web.rest;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
-import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
-import uk.ac.uws.danielszabo.common.model.network.node.Node;
-import uk.ac.uws.danielszabo.common.model.network.node.NodeStatus;
+import uk.ac.uws.danielszabo.common.service.network.NetworkService;
 
-public interface RestService {
+@Slf4j
+@RestController
+@RequestMapping("net")
+public class OperatorNetworkRESTController {
 
-  NodeStatus requestStatus(String host);
 
-  Node getNodeByHost(String host);
+  private final NetworkService networkService;
 
-  // void because certificate requests are not handled automatically
-  void sendCertificateRequest(String operator, CertificateRequest certificateRequest);
+  public OperatorNetworkRESTController(NetworkService networkService) {
+    this.networkService = networkService;
+  }
 
-  void sendProcessedCertificateRequest(CertificateRequest certificateRequest);
+  @GetMapping(value = "conf", produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity<NetworkConfiguration> getConfig() {
+    return new ResponseEntity<>(networkService.getNetworkConfiguration(), HttpStatus.OK);
+  }
 
-  NetworkConfiguration sendNetworkConfigurationRequest(String origin);
-
-  boolean requestCertificateVerification(NodeCertificate certificate);
 }

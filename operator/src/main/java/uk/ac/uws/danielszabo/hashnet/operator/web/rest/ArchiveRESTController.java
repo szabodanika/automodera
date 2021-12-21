@@ -18,25 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.util;
+package uk.ac.uws.danielszabo.hashnet.operator.web.rest;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-public class SQLDateAdapter extends XmlAdapter<String, Date> {
+@Slf4j
+@RestController
+@RequestMapping("arch")
+public class ArchiveRESTController {
 
-  private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
-  @Override
-  public Date unmarshal(String xml) throws Exception {
-    Date date = new java.sql.Date(dateFormat.parse(xml).getTime());
-    return date;
-  }
-
-  @Override
-  public String marshal(Date object) {
-    return dateFormat.format(object);
-  }
+  // TODO mappings for sending out archive addresses for integrators
 }

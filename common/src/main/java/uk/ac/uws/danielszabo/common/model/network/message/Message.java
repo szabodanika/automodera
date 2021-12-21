@@ -18,26 +18,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.service.rest;
+package uk.ac.uws.danielszabo.common.model.network.message;
 
-import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
+import lombok.*;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
-import uk.ac.uws.danielszabo.common.model.network.node.Node;
-import uk.ac.uws.danielszabo.common.model.network.node.NodeStatus;
+import uk.ac.uws.danielszabo.common.util.SQLDateAdapter;
 
-public interface RestService {
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.sql.Date;
 
-  NodeStatus requestStatus(String host);
+@Getter
+@Setter
+@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+// must list all possible content types
+@XmlSeeAlso({
+  Date.class,
+  CertificateRequest.class
+})
+public class Message {
 
-  Node getNodeByHost(String host);
+  @NonNull
+//  @Setter(AccessLevel.NONE)
+  @XmlJavaTypeAdapter(SQLDateAdapter.class)
+  private Date timeStamp;
 
-  // void because certificate requests are not handled automatically
-  void sendCertificateRequest(String operator, CertificateRequest certificateRequest);
+  @NonNull private NodeCertificate certificate;
 
-  void sendProcessedCertificateRequest(CertificateRequest certificateRequest);
+//  @XmlAnyElement
+  // can be null for requests with no parameters, in that case we just sent certificate
+  private Object content;
 
-  NetworkConfiguration sendNetworkConfigurationRequest(String origin);
-
-  boolean requestCertificateVerification(NodeCertificate certificate);
 }

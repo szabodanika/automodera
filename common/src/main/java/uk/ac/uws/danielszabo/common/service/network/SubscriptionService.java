@@ -18,25 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.util;
+package uk.ac.uws.danielszabo.common.service.network;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import uk.ac.uws.danielszabo.common.model.network.node.Subscription;
 
-public class SQLDateAdapter extends XmlAdapter<String, Date> {
+import java.util.List;
 
-  private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+// on an archive node, this will handle the nodes that are subscribed to the local node
+// on an integrator node, this will handle the archive nodes that the local node is subscribed to
+public interface SubscriptionService {
 
-  @Override
-  public Date unmarshal(String xml) throws Exception {
-    Date date = new java.sql.Date(dateFormat.parse(xml).getTime());
-    return date;
-  }
+  List<Subscription> getSubscriptions();
 
-  @Override
-  public String marshal(Date object) {
-    return dateFormat.format(object);
-  }
+  Subscription save(Subscription subscription);
+
+  boolean remove(Subscription subscription);
 }
