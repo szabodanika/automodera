@@ -36,7 +36,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serial;
 import java.io.Serializable;
 import java.sql.Date;
-import java.util.Random;
 
 @Getter
 @Setter
@@ -80,5 +79,4 @@ public class CertificateRequest implements Serializable {
     this.id = id;
     this.node = localNode;
   }
-
 }

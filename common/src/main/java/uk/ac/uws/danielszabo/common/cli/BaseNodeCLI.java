@@ -181,7 +181,7 @@ public abstract class BaseNodeCLI {
 
       // TODO instead of always using the origin, we should find the closest operator from the list
       String operator = networkService.getNetworkConfiguration().getOrigin();
-      if(networkService.certificateRequest(operator, localNodeService.get()) != null) {
+      if (networkService.certificateRequest(operator, localNodeService.get()) != null) {
         log.info("Sent certificate request to " + operator);
       } else {
         log.error("Failed to send certificate request to " + operator);
@@ -253,7 +253,8 @@ public abstract class BaseNodeCLI {
   // Maxwellton Street' --post-code PA12UB --country Scotland
 
   // init --type ARCHIVE --id testarchive1 --name 'HashNet Test Archive Node 1' --domain
-  // archive1.hashnet.test --legal-name 'HashNet Test Organisation' --admin-email contact@archive.test --address-line1
+  // archive1.hashnet.test --legal-name 'HashNet Test Organisation' --admin-email
+  // contact@archive.test --address-line1
   // '123 High Street' --post-code AB12CD --country Scotland
   @ShellMethod("Initialise local node configuration.")
   public void init(

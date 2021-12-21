@@ -160,8 +160,9 @@ public class NetworkServiceImpl implements NetworkService {
 
   @Override
   public CertificateRequest certificateRequest(String origin, Node localNode) {
-    if(certificateRequestRepository.findAll().isEmpty()) {
-      CertificateRequest certReq = new CertificateRequest(localNode.getId() + "-" + new Random().nextInt(), localNode);
+    if (certificateRequestRepository.findAll().isEmpty()) {
+      CertificateRequest certReq =
+          new CertificateRequest(localNode.getId() + "-" + new Random().nextInt(), localNode);
       certificateRequestRepository.save(certReq);
       restService.sendCertificateRequest(origin, certReq);
       return certReq;
