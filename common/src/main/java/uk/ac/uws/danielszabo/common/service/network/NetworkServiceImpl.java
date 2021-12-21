@@ -37,6 +37,7 @@ import uk.ac.uws.danielszabo.common.service.rest.RestService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -96,29 +97,34 @@ public class NetworkServiceImpl implements NetworkService {
     // offline?
 
     // this certificate was issued by the local node
-    if (localNodeRepository
-        .get()
-        .get()
-        .getLocal()
-        .getId()
-        .equals(certificate.getIssuer().getId())) {
-      log.info("Verifying certificate " + certificate.getId() + " locally.");
-
-      return localNodeRepository
+    try {
+      if (localNodeRepository
           .get()
           .get()
           .getLocal()
-          .getIssuedCertificates()
-          .contains(certificate);
-    } else {
-      // this certificate was issued by someone else
-      // so we ask the issuer to check it
-      log.info(
-          "Verifying certificate "
-              + certificate.getId()
-              + " at "
-              + certificate.getIssuer().getHost());
-      return restService.requestCertificateVerification(certificate);
+          .getId()
+          .equals(certificate.getIssuer().getId())) {
+        log.info("Verifying certificate " + certificate.getId() + " locally.");
+
+        return localNodeRepository
+            .get()
+            .get()
+            .getLocal()
+            .getIssuedCertificates()
+            .contains(certificate);
+      } else {
+        // this certificate was issued by someone else
+        // so we ask the issuer to check it
+        log.info(
+            "Verifying certificate "
+                + certificate.getId()
+                + " at "
+                + certificate.getIssuer().getHost());
+        return restService.requestCertificateVerification(certificate);
+      }
+    } catch (Exception e) {
+      // TODO not sure if we should give any additional info if we fail to verify certificate
+      return false;
     }
   }
 
@@ -154,10 +160,15 @@ public class NetworkServiceImpl implements NetworkService {
 
   @Override
   public CertificateRequest certificateRequest(String origin, Node localNode) {
-    CertificateRequest certReq = new CertificateRequest(localNode);
-    certificateRequestRepository.save(certReq);
-    restService.sendCertificateRequest(origin, certReq);
-    return certReq;
+    if(certificateRequestRepository.findAll().isEmpty()) {
+      CertificateRequest certReq = new CertificateRequest(localNode.getId() + "-" + new Random().nextInt(), localNode);
+      certificateRequestRepository.save(certReq);
+      restService.sendCertificateRequest(origin, certReq);
+      return certReq;
+    } else {
+      log.error("Did not send certificate request because one is already in progress");
+      return null;
+    }
   }
 
   @Override

@@ -39,7 +39,7 @@ public interface ArchiveServiceFacade {
 
   List<CertificateRequest> retrieveAllCertificateRequests();
 
-  Optional<NodeCertificate> findCertificateRequestById(String id);
+  Optional<CertificateRequest> findCertificateRequestById(String id);
 
   List<HashCollection> retrieveAllHashCollections();
 
