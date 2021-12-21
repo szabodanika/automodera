@@ -32,7 +32,6 @@ import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.message.Message;
 import uk.ac.uws.danielszabo.hashnet.archive.service.ArchiveServiceFacade;
 
-
 @Slf4j
 @RestController
 @RequestMapping("cert")

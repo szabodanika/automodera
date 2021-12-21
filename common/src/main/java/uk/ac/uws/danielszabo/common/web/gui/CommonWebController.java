@@ -36,5 +36,4 @@ public class CommonWebController {
     model.addAttribute("date", LocalDateTime.now());
     return "index";
   }
-
 }
