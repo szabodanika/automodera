@@ -41,5 +41,4 @@ public class OperatorServer {
     SpringApplication application = new SpringApplication(OperatorServer.class);
     application.run(args);
   }
-
 }

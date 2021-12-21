@@ -39,9 +39,10 @@ public class OperatorCLI extends BaseNodeCLI {
   private final OperatorServiceFacade operatorServiceFacade;
 
   public OperatorCLI(
-    LocalNodeService localNodeService,
-    NetworkService networkService,
-    OperatorServiceFacade operatorServiceFacade, TopicService topicService) {
+      LocalNodeService localNodeService,
+      NetworkService networkService,
+      OperatorServiceFacade operatorServiceFacade,
+      TopicService topicService) {
     super(localNodeService, networkService, topicService);
     this.operatorServiceFacade = operatorServiceFacade;
   }
@@ -80,17 +81,14 @@ public class OperatorCLI extends BaseNodeCLI {
     }
   }
 
-    // example:
-    // netinit --name 'HashNet Prototype' --environment dev --version 0.1 --origin origin.hashnet.test
-    @ShellMethod("Initialise network configuration.")
-    public void netinit(
-            String name,
-            String environment,
-            String version,
-            String origin) {
+  // example:
+  // netinit --name 'HashNet Prototype' --environment dev --version 0.1 --origin origin.hashnet.test
+  @ShellMethod("Initialise network configuration.")
+  public void netinit(String name, String environment, String version, String origin) {
 
-        NetworkConfiguration networkConfiguration = new NetworkConfiguration(name, environment, version, origin);
+    NetworkConfiguration networkConfiguration =
+        new NetworkConfiguration(name, environment, version, origin);
 
-        operatorServiceFacade.saveNetworkConfiguration(networkConfiguration);
-    }
+    operatorServiceFacade.saveNetworkConfiguration(networkConfiguration);
+  }
 }

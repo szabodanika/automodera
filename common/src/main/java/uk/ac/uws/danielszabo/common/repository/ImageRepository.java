@@ -25,7 +25,4 @@ import org.springframework.stereotype.Repository;
 import uk.ac.uws.danielszabo.common.model.hash.Image;
 
 @Repository
-public interface ImageRepository extends JpaRepository<Image, String> {
-
-
-}
+public interface ImageRepository extends JpaRepository<Image, String> {}

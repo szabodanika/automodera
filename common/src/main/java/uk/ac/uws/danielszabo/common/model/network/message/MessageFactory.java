@@ -20,9 +20,7 @@
 
 package uk.ac.uws.danielszabo.common.model.network.message;
 
-
 public interface MessageFactory {
 
   Message getMessage(Object content);
-
 }

@@ -80,7 +80,7 @@ public class ArchiveCLI extends BaseNodeCLI {
 
     if (list) {
       for (HashCollection hc : archiveServiceFacade.findAllHashCollections()) {
-       log.info(hc.toString());
+        log.info(hc.toString());
       }
     } else if (show) {
       if (id.isBlank()) {

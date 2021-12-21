@@ -59,15 +59,14 @@ public abstract class BaseNodeCLI {
   private final TopicService topicService;
 
   protected BaseNodeCLI(
-    LocalNodeService localNodeService,
-    NetworkService networkService, TopicService topicService) {
+      LocalNodeService localNodeService, NetworkService networkService, TopicService topicService) {
     this.localNodeService = localNodeService;
     this.networkService = networkService;
     this.topicService = topicService;
   }
 
-    // example:
-    // connect --origin origin.hashnet.test
+  // example:
+  // connect --origin origin.hashnet.test
   @ShellMethod("Connect to network by addressing origin node.")
   public void connect(String origin) {
     networkService.getNetworkConfigurationFromOrigin(origin);
@@ -83,26 +82,26 @@ public abstract class BaseNodeCLI {
   }
 
   @ShellMethod("Manage known topics.")
-  public void topic(@ShellOption(defaultValue = "false") boolean list,
-                    @ShellOption(defaultValue = "false") boolean create,
-                    @ShellOption(defaultValue = "false") boolean show,
-                    @ShellOption(defaultValue = "") String id,
-                    @ShellOption(defaultValue = "") String name
-                    ) {
-    if(list) {
-      for (Topic t: topicService.findAll()){
-       log.info(t.toString());
+  public void topic(
+      @ShellOption(defaultValue = "false") boolean list,
+      @ShellOption(defaultValue = "false") boolean create,
+      @ShellOption(defaultValue = "false") boolean show,
+      @ShellOption(defaultValue = "") String id,
+      @ShellOption(defaultValue = "") String name) {
+    if (list) {
+      for (Topic t : topicService.findAll()) {
+        log.info(t.toString());
       }
-    } else if(create) {
-      if(id.isBlank() || name.isBlank()) {
+    } else if (create) {
+      if (id.isBlank() || name.isBlank()) {
         log.error("Please specify non-empty id and name");
         return;
       }
       Topic topic = new Topic(id, name, new ArrayList<>());
       topicService.save(topic);
       log.info("Saved topic " + topic.getId());
-    } else if(show) {
-      if(id.isBlank()) {
+    } else if (show) {
+      if (id.isBlank()) {
         log.error("Please specify non-empty id");
         return;
       }
@@ -162,11 +161,11 @@ public abstract class BaseNodeCLI {
 
                     """
               .formatted(
-                      networkService.getNetworkConfiguration().getName(),
-                      networkService.getNetworkConfiguration().getVersion(),
-                      networkService.getNetworkConfiguration().getEnvironment(),
-                      networkService.getNetworkConfiguration().getOperators(),
-                      networkService.getNetworkConfiguration().getOrigin()));
+                  networkService.getNetworkConfiguration().getName(),
+                  networkService.getNetworkConfiguration().getVersion(),
+                  networkService.getNetworkConfiguration().getEnvironment(),
+                  networkService.getNetworkConfiguration().getOperators(),
+                  networkService.getNetworkConfiguration().getOrigin()));
     }
   }
 
@@ -191,48 +190,48 @@ public abstract class BaseNodeCLI {
 
   // example: node --status --host origin.hashnet.test
   @ShellMethod("Request status and data of remote nodes.")
-  public void node(  @ShellOption(defaultValue = "false") boolean status,
-                     @ShellOption(defaultValue = "false") boolean info,
-                     @ShellOption(defaultValue = "") String id,
-                     @ShellOption(defaultValue = "") String host) {
-
+  public void node(
+      @ShellOption(defaultValue = "false") boolean status,
+      @ShellOption(defaultValue = "false") boolean info,
+      @ShellOption(defaultValue = "") String id,
+      @ShellOption(defaultValue = "") String host) {
 
     // user wants to request status
-    if(status) {
+    if (status) {
       // either id or host has to be specified
-      if(id.isBlank() && host.isBlank()) {
+      if (id.isBlank() && host.isBlank()) {
         log.error("Please specify non-empty id or host");
         return;
       }
       // host is specified, we can send the request right away
-      if(!host.isBlank()) {
+      if (!host.isBlank()) {
         log.info(networkService.getNodeStatus(host).toString());
-      } else if(!id.isBlank()) {
+      } else if (!id.isBlank()) {
         // id is specified, we need to check if we know the host of this node yet
         // before we send a request
         Node node = networkService.findKnownNodeById(id).orElse(null);
-        if(node != null) {
+        if (node != null) {
           log.info(networkService.getNodeStatus(node.getHost()).toString());
         } else {
           log.error("Specified node is unknown: " + id);
         }
       }
-    } else if(info){
+    } else if (info) {
       // user wants to request complete node info
       // either id or host has to be specified
-      if(id.isBlank() && host.isBlank()) {
+      if (id.isBlank() && host.isBlank()) {
         log.error("Please specify non-empty id or host");
         return;
       }
-      if(!host.isBlank()) {
+      if (!host.isBlank()) {
         log.info("Requesting node info from " + host);
         log.info(networkService.requestNodeInfo(host).toString());
         // host is specified, we can send the request right away
-      } else if(!id.isBlank()) {
+      } else if (!id.isBlank()) {
         // id is specified, we need to check if we know the host of this node yet
         // before we send a request
         Node node = networkService.findKnownNodeById(id).orElse(null);
-        if(node != null) {
+        if (node != null) {
           log.info("Requesting node info from " + node.getHost());
           log.info(networkService.requestNodeInfo(node.getHost()).toString());
         } else {
@@ -246,34 +245,37 @@ public abstract class BaseNodeCLI {
   }
 
   // for example:
-  // init --type ORIGIN --id origin --name 'HashNet Origin Node' --domain hashnet.danielszabo.me --legal-name 'Daniel Szabo' --admin-email daniel.szabo99@outlook.com --address-line1 '1/2 22 Maxwellton Street' --post-code PA12UB --country Scotland
+  // init --type ORIGIN --id origin --name 'HashNet Origin Node' --domain hashnet.danielszabo.me
+  // --legal-name 'Daniel Szabo' --admin-email daniel.szabo99@outlook.com --address-line1 '1/2 22
+  // Maxwellton Street' --post-code PA12UB --country Scotland
 
-  // init --type ARCHIVE --id testarchive1 --name 'HashNet Test Archive Node 1' --domain archive1.hashnet.test
-  // --legal-name 'HashNet Test Organisation' --admin-email contact@archive.test --address-line1 '123 High
+  // init --type ARCHIVE --id testarchive1 --name 'HashNet Test Archive Node 1' --domain
+  // archive1.hashnet.test
+  // --legal-name 'HashNet Test Organisation' --admin-email contact@archive.test --address-line1
+  // '123 High
   // Street' --post-code AB12CD --country Scotland
   @ShellMethod("Initialise local node configuration.")
   public void init(
-          String id,
-          NodeType type,
-          String name,
-          String domain,
-          String legalName,
-          String adminEmail,
-          String addressLine1,
-          @ShellOption(defaultValue = "N/A") String addressLine2,
-          String postCode,
-          String country) {
+      String id,
+      NodeType type,
+      String name,
+      String domain,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      @ShellOption(defaultValue = "N/A") String addressLine2,
+      String postCode,
+      String country) {
     localNodeService.init(
-            id,
-            type,
-            name,
-            domain,
-            legalName,
-            adminEmail,
-            addressLine1,
-            addressLine2,
-            postCode,
-            country);
+        id,
+        type,
+        name,
+        domain,
+        legalName,
+        adminEmail,
+        addressLine1,
+        addressLine2,
+        postCode,
+        country);
   }
-
 }

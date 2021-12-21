@@ -26,14 +26,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
-import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.service.network.NetworkService;
 
 @Slf4j
 @RestController
 @RequestMapping("net")
 public class OperatorNetworkRESTController {
-
 
   private final NetworkService networkService;
 
@@ -45,5 +43,4 @@ public class OperatorNetworkRESTController {
   public ResponseEntity<NetworkConfiguration> getConfig() {
     return new ResponseEntity<>(networkService.getNetworkConfiguration(), HttpStatus.OK);
   }
-
 }

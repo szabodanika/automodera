@@ -31,5 +31,4 @@ import java.util.List;
 public interface HashCollectionRepository extends JpaRepository<HashCollection, String> {
 
   List<HashCollection> findAllByTopicListContains(Topic topic);
-
 }

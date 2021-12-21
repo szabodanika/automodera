@@ -81,7 +81,8 @@ public class CertRESTController {
   public ResponseEntity getVerification(@RequestBody Message message) {
     if (operatorServiceFacade.verifyCertificate(message.getCertificate())) {
       NodeCertificate nodeCertificate = (NodeCertificate) message.getContent();
-      log.info("Received certificate verification request from " + nodeCertificate.getNode().getId());
+      log.info(
+          "Received certificate verification request from " + nodeCertificate.getNode().getId());
       return new ResponseEntity<>(
           operatorServiceFacade.verifyCertificate(nodeCertificate), HttpStatus.OK);
     } else {

@@ -33,10 +33,10 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-//@Configuration
-//@EnableConfigurationProperties
-//@ConfigurationProperties("network")
-//@ConditionalOnResource()
+// @Configuration
+// @EnableConfigurationProperties
+// @ConfigurationProperties("network")
+// @ConditionalOnResource()
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @RequiredArgsConstructor
@@ -55,6 +55,6 @@ public class NetworkConfiguration {
   @NonNull @NotNull private String origin;
 
   @ElementCollection(fetch = FetchType.EAGER)
-  @NonNull private List<String> operators = new ArrayList<>();
-
+  @NonNull
+  private List<String> operators = new ArrayList<>();
 }

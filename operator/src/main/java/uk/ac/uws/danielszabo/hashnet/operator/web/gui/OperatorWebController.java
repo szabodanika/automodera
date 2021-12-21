@@ -43,5 +43,4 @@ public class OperatorWebController {
     model.addAttribute("date", LocalDateTime.now());
     return "index";
   }
-
 }

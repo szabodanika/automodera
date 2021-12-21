@@ -32,5 +32,4 @@ public interface NetworkConfigurationRepository extends JpaRepository<NetworkCon
 
   @Query("SELECT n FROM NetworkConfiguration n WHERE n.id = 0")
   Optional<NetworkConfiguration> get();
-
 }

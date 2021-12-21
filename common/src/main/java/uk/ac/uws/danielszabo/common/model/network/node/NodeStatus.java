@@ -26,8 +26,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-
-
 // This class is used as a response message to tell if a node is available
 // later this might carry other information as well
 @Getter
@@ -39,5 +37,4 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class NodeStatus {
 
   @NonNull boolean active;
-
 }

@@ -25,5 +25,4 @@ import org.springframework.stereotype.Repository;
 import uk.ac.uws.danielszabo.common.model.network.node.Subscription;
 
 @Repository
-public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
-}
+public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {}

@@ -26,7 +26,6 @@ import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.model.network.node.NodeStatus;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 

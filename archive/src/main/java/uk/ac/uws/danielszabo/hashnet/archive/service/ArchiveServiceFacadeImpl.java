@@ -56,11 +56,12 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
   private final TopicService topicService;
 
   public ArchiveServiceFacadeImpl(
-    HashService hashService,
-    LocalNodeService localNodeService,
-    NetworkService networkService,
-    SubscriptionService subscriptionService,
-    HashCollectionService hashCollectionService, TopicService topicService) {
+      HashService hashService,
+      LocalNodeService localNodeService,
+      NetworkService networkService,
+      SubscriptionService subscriptionService,
+      HashCollectionService hashCollectionService,
+      TopicService topicService) {
     this.hashService = hashService;
     this.localNodeService = localNodeService;
     this.networkService = networkService;
@@ -144,15 +145,16 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
   }
 
   @Override
-  public HashCollection generateHashCollection(String path,
-                                               String id,
-                                               String name,
-                                               String description,
-                                               List<Topic> topics,
-                                               boolean forceRecalc)
-    throws IOException {
-    return hashCollectionService.generateHashCollection(path, id, name, description, localNodeService.get(), topics,
-      forceRecalc);
+  public HashCollection generateHashCollection(
+      String path,
+      String id,
+      String name,
+      String description,
+      List<Topic> topics,
+      boolean forceRecalc)
+      throws IOException {
+    return hashCollectionService.generateHashCollection(
+        path, id, name, description, localNodeService.get(), topics, forceRecalc);
   }
 
   @Override

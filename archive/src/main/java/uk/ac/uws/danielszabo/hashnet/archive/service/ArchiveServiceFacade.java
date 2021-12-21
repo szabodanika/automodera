@@ -61,14 +61,14 @@ public interface ArchiveServiceFacade {
 
   void saveCertificate(NodeCertificate certificate);
 
-
-  HashCollection generateHashCollection(String path,
-                                        String id,
-                                        String name,
-                                        String description,
-                                        List<Topic> topics,
-                                        boolean forceRecalc)
-    throws IOException;
+  HashCollection generateHashCollection(
+      String path,
+      String id,
+      String name,
+      String description,
+      List<Topic> topics,
+      boolean forceRecalc)
+      throws IOException;
 
   Topic findTopicById(String s);
 

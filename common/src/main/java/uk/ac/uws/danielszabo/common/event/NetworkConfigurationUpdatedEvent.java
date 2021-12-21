@@ -24,7 +24,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEvent;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
-import uk.ac.uws.danielszabo.common.model.network.node.Node;
 
 @Getter
 @Slf4j
@@ -32,7 +31,8 @@ public class NetworkConfigurationUpdatedEvent extends ApplicationEvent {
 
   private final NetworkConfiguration networkConfiguration;
 
-  public NetworkConfigurationUpdatedEvent(Object source, NetworkConfiguration networkConfiguration) {
+  public NetworkConfigurationUpdatedEvent(
+      Object source, NetworkConfiguration networkConfiguration) {
     super(source);
     this.networkConfiguration = networkConfiguration;
     log.info("Network configuration updated: " + networkConfiguration);

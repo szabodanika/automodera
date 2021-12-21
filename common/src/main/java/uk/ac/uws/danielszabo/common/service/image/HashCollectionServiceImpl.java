@@ -22,7 +22,6 @@ package uk.ac.uws.danielszabo.common.service.image;
 
 import dev.brachtendorf.jimagehash.hash.Hash;
 import jline.internal.Log;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
@@ -32,12 +31,8 @@ import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.repository.HashCollectionRepository;
 import uk.ac.uws.danielszabo.common.service.hashing.HashService;
 
-import java.io.Console;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.sql.Date;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -102,8 +97,11 @@ public class HashCollectionServiceImpl implements HashCollectionService {
     String imageFileNames[] = directoryPath.list();
 
     // check if we actually found files
-    if(imageFileNames.length == 0) {
-      Log.error("Specified folder " + path + " does not contain files or they cannot be accessed by this process.");
+    if (imageFileNames.length == 0) {
+      Log.error(
+          "Specified folder "
+              + path
+              + " does not contain files or they cannot be accessed by this process.");
       return null;
     }
 
@@ -113,7 +111,7 @@ public class HashCollectionServiceImpl implements HashCollectionService {
     for (int i = 0; i < imageFileNames.length; i++) {
 
       // log progress at 0%, 20%, 40%, 60%, 80%, 100%?
-      if (i / (float) imageFileNames.length-1 % 0.2f == 0) {
+      if (i / (float) imageFileNames.length - 1 % 0.2f == 0) {
         Log.info("Progress: " + i / (float) imageFileNames.length * 100 + "%");
       }
 

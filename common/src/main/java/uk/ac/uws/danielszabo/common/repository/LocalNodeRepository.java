@@ -32,5 +32,4 @@ public interface LocalNodeRepository extends JpaRepository<LocalNode, Long> {
 
   @Query("SELECT l FROM LocalNode l WHERE l.id = 0")
   Optional<LocalNode> get();
-
 }

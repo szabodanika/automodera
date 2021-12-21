@@ -21,7 +21,6 @@
 package uk.ac.uws.danielszabo.common.service.rest;
 
 import jline.internal.Log;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -64,16 +63,14 @@ public class RestServiceImpl implements RestService {
   // requests all the info about a certain node
   @Override
   public Node getNodeByHost(String host) {
-    ResponseEntity response =
-      postAsXML(host, "/net/info", Node.class);
+    ResponseEntity response = postAsXML(host, "/net/info", Node.class);
     return (Node) response.getBody();
   }
 
   // requests only availability from a node, it is a very basic ping
   @Override
   public NodeStatus requestStatus(String host) {
-    ResponseEntity response =
-      postAsXML(host, "/net/status", NodeStatus.class);
+    ResponseEntity response = postAsXML(host, "/net/status", NodeStatus.class);
     return (NodeStatus) response.getBody();
   }
 

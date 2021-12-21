@@ -31,5 +31,15 @@ public interface LocalNodeService {
 
   Node set();
 
-  Node init(String id, NodeType nodeType, String name, String domain, String legalName, String adminEmail, String addressLine1, String addressLine2, String postCode, String country);
+  Node init(
+      String id,
+      NodeType nodeType,
+      String name,
+      String domain,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      String addressLine2,
+      String postCode,
+      String country);
 }

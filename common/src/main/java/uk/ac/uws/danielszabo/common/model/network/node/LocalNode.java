@@ -42,6 +42,7 @@ public class LocalNode {
 
   @Id private Long id = 0L;
 
-  @OneToOne(cascade = CascadeType.ALL) @NonNull private Node local;
-
+  @OneToOne(cascade = CascadeType.ALL)
+  @NonNull
+  private Node local;
 }

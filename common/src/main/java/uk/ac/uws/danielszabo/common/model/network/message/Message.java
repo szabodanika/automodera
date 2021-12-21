@@ -37,21 +37,17 @@ import java.sql.Date;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 // must list all possible content types
-@XmlSeeAlso({
-  Date.class,
-  CertificateRequest.class
-})
+@XmlSeeAlso({Date.class, CertificateRequest.class})
 public class Message {
 
   @NonNull
-//  @Setter(AccessLevel.NONE)
+  //  @Setter(AccessLevel.NONE)
   @XmlJavaTypeAdapter(SQLDateAdapter.class)
   private Date timeStamp;
 
   @NonNull private NodeCertificate certificate;
 
-//  @XmlAnyElement
+  //  @XmlAnyElement
   // can be null for requests with no parameters, in that case we just sent certificate
   private Object content;
-
 }
