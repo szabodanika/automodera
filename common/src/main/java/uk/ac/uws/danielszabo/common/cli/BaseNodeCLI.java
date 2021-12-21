@@ -28,18 +28,16 @@ import org.springframework.shell.standard.ShellOption;
 import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.model.network.node.NodeType;
-import uk.ac.uws.danielszabo.common.service.hashing.HashServiceImpl;
 import uk.ac.uws.danielszabo.common.service.image.TopicService;
+import uk.ac.uws.danielszabo.common.service.image.TopicServiceImpl;
 import uk.ac.uws.danielszabo.common.service.network.*;
-import uk.ac.uws.danielszabo.common.service.rest.RestServiceImpl;
 
 import java.util.ArrayList;
 
 @Import({
-  RestServiceImpl.class,
-  HashServiceImpl.class,
   LocalNodeServiceImpl.class,
   NetworkServiceImpl.class,
+  TopicServiceImpl.class,
   CustomPromptProvider.class
 })
 @Slf4j
