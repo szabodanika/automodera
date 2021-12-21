@@ -24,80 +24,75 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import uk.ac.uws.danielszabo.common.event.LocalNodeUpdatedEvent;
+import uk.ac.uws.danielszabo.common.model.network.node.LocalNode;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
+import uk.ac.uws.danielszabo.common.model.network.node.NodeType;
+import uk.ac.uws.danielszabo.common.repository.LocalNodeRepository;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import java.io.File;
+import java.util.Optional;
 
 @Slf4j
 @Service
 public class LocalNodeServiceImpl implements LocalNodeService {
 
-  private static final String CONFIG_XML_PATH = "./data/netconf.xml";
-
   private final ApplicationEventPublisher applicationEventPublisher;
+
+  private final LocalNodeRepository localNodeRepository;
+
+  private final NodeFactory nodeFactory;
 
   private Node localNode;
 
-  public LocalNodeServiceImpl(ApplicationEventPublisher applicationEventPublisher) {
+  public LocalNodeServiceImpl(
+          ApplicationEventPublisher applicationEventPublisher,
+          LocalNodeRepository localNodeRepository, NodeFactory nodeFactory) {
     this.applicationEventPublisher = applicationEventPublisher;
+    this.localNodeRepository = localNodeRepository;
+    this.nodeFactory = nodeFactory;
   }
 
-  private void setLocalNode(Node localNode) {
+  private void save(Node localNode) {
     LocalNodeUpdatedEvent event = new LocalNodeUpdatedEvent(this, localNode);
     applicationEventPublisher.publishEvent(event);
     this.localNode = localNode;
   }
 
   @Override
-  public Node getLocalNode() {
+  public Node get() {
     if (this.localNode == null) {
-      try {
-        File file = new File(CONFIG_XML_PATH);
-        JAXBContext jaxbContext = JAXBContext.newInstance(Node.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        this.setLocalNode((Node) unmarshaller.unmarshal(file));
-        log.info("Successfully loaded " + CONFIG_XML_PATH);
-        return this.localNode;
-      } catch (Exception e) {
-        log.error("Failed to load " + CONFIG_XML_PATH + " " + e.getMessage());
-        return null;
-      }
-    } else return this.localNode;
+      Optional<LocalNode> optionalNode = localNodeRepository.get();
+      optionalNode.ifPresent(node -> this.localNode = node.getLocal());
+    }
+    return this.localNode;
   }
 
   @Override
-  public Node saveLocalNode(Node self) {
+  public Node set(Node self) {
     if (self == null) {
-      log.warn("Cannot overwrite local config with null.");
+      log.error("Cannot overwrite local config with null.");
       return null;
     } else {
-      try {
-        JAXBContext jaxbContext = null;
-        jaxbContext = JAXBContext.newInstance(Node.class);
-        Marshaller marshaller = jaxbContext.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(self, new File(CONFIG_XML_PATH));
-        this.setLocalNode(self);
-        log.info("Saved " + CONFIG_XML_PATH);
-        return self;
-      } catch (Exception e) {
-        log.error(
-            "Failed to save "
-                + CONFIG_XML_PATH
-                + ": Message: "
-                + e.getMessage()
-                + " Cause: "
-                + e.getCause());
-        return null;
-      }
+      save(self);
+      return localNodeRepository.save(new LocalNode(self)).getLocal();
     }
   }
 
   @Override
-  public Node saveLocalNode() {
-    return saveLocalNode(localNode);
+  public Node set() {
+    return set(localNode);
+  }
+
+  @Override
+  public Node init(String id, NodeType nodeType, String name, String domain, String legalName, String adminEmail, String addressLine1, String addressLine2, String postCode, String country) {
+    Node node;
+    switch (nodeType) {
+      case INTEGRATOR -> node = nodeFactory.getIntegratorNode(id, name, domain, legalName, adminEmail, addressLine1, addressLine2, postCode, country);
+      case ARCHIVE -> node = nodeFactory.getArchiveNode(id, name, domain, legalName, adminEmail, addressLine1, addressLine2, postCode, country);
+      case OPERATOR -> node = nodeFactory.getOperatorNode(id, name, domain, legalName, adminEmail, addressLine1, addressLine2, postCode, country);
+      case ORIGIN -> node = nodeFactory.getOriginNode(id, name, domain, legalName, adminEmail, addressLine1, addressLine2, postCode, country);
+      default -> throw new IllegalStateException("Unexpected value: " + nodeType);
+    }
+    set(node);
+    return node;
   }
 }

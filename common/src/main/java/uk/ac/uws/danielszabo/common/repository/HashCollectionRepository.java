@@ -18,25 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.util;
+package uk.ac.uws.danielszabo.common.repository;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
+import uk.ac.uws.danielszabo.common.model.hash.Topic;
 
-public class SQLDateAdapter extends XmlAdapter<String, Date> {
+import java.util.List;
 
-  private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+@Repository
+public interface HashCollectionRepository extends JpaRepository<HashCollection, String> {
 
-  @Override
-  public Date unmarshal(String xml) throws Exception {
-    Date date = new java.sql.Date(dateFormat.parse(xml).getTime());
-    return date;
-  }
+  List<HashCollection> findAllByTopicListContains(Topic topic);
 
-  @Override
-  public String marshal(Date object) {
-    return dateFormat.format(object);
-  }
 }

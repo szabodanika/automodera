@@ -21,12 +21,15 @@
 package uk.ac.uws.danielszabo.common.service.network;
 
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
+import uk.ac.uws.danielszabo.common.model.network.node.NodeType;
 
 public interface LocalNodeService {
 
-  Node getLocalNode();
+  Node get();
 
-  Node saveLocalNode(Node self);
+  Node set(Node self);
 
-  Node saveLocalNode();
+  Node set();
+
+  Node init(String id, NodeType nodeType, String name, String domain, String legalName, String adminEmail, String addressLine1, String addressLine2, String postCode, String country);
 }

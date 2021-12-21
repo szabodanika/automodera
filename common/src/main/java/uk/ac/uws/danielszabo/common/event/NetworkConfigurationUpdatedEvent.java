@@ -18,26 +18,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.service.rest;
+package uk.ac.uws.danielszabo.common.event;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEvent;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
-import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
-import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
-import uk.ac.uws.danielszabo.common.model.network.node.NodeStatus;
 
-public interface RestService {
+@Getter
+@Slf4j
+public class NetworkConfigurationUpdatedEvent extends ApplicationEvent {
 
-  NodeStatus requestStatus(String host);
+  private final NetworkConfiguration networkConfiguration;
 
-  Node getNodeByHost(String host);
-
-  // void because certificate requests are not handled automatically
-  void sendCertificateRequest(String operator, CertificateRequest certificateRequest);
-
-  void sendProcessedCertificateRequest(CertificateRequest certificateRequest);
-
-  NetworkConfiguration sendNetworkConfigurationRequest(String origin);
-
-  boolean requestCertificateVerification(NodeCertificate certificate);
+  public NetworkConfigurationUpdatedEvent(Object source, NetworkConfiguration networkConfiguration) {
+    super(source);
+    this.networkConfiguration = networkConfiguration;
+    log.info("Network configuration updated: " + networkConfiguration);
+  }
 }

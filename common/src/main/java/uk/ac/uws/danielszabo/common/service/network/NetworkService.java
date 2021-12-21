@@ -20,25 +20,65 @@
 
 package uk.ac.uws.danielszabo.common.service.network;
 
-import uk.ac.uws.danielszabo.common.model.message.NodeStatus;
+import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
+import uk.ac.uws.danielszabo.common.model.network.node.Node;
+import uk.ac.uws.danielszabo.common.model.network.node.NodeStatus;
 
+import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 public interface NetworkService {
 
-  String getNetworkName();
+  // Network Configuration
 
-  String getNetworkEnvironment();
+  NetworkConfiguration getNetworkConfiguration();
 
-  String getNetworkVersion();
+  NetworkConfiguration saveNetworkConfiguration(NetworkConfiguration networkConfiguration);
 
-  List<String> getOperatorAddresses();
+  Optional<CertificateRequest> findCertificateRequestById(String id);
 
-  boolean checkCertificate(NodeCertificate certificate);
+  void getNetworkConfigurationFromOrigin(String origin);
+
+  // Nodes
 
   NodeStatus getNodeStatus(String address);
 
-  CertificateRequest certificateRequest();
+  List<Node> findAllNodes();
+
+  Optional<Node> findKnownNodeById(String id);
+
+  Node saveNode(Node node);
+
+  void removeNode(Node node);
+
+  /**
+   * this should return all the nodes in the database: - local node - operator nodes - nodes
+   * subscribed to or publishing to
+   *
+   * @return list of all known nodes
+   */
+  List<Node> getAllKnownNodes();
+
+  // Certificate Requests
+
+  List<CertificateRequest> findAllCertificateRequests();
+
+  CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest);
+
+  void sendProcessedCertificateRequest(CertificateRequest certificateRequest);
+
+  // Certificates
+
+  void removeCertificate(NodeCertificate certificate);
+
+  boolean checkCertificate(NodeCertificate certificate);
+
+  Optional<NodeCertificate> findCertificateById(String id);
+
+  CertificateRequest certificateRequest(String origin, Node localNode);
+
+  Node requestNodeInfo(String host);
 }

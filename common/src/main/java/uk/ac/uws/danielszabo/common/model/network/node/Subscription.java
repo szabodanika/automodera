@@ -18,25 +18,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.util;
+package uk.ac.uws.danielszabo.common.model.network.node;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import lombok.*;
 
-public class SQLDateAdapter extends XmlAdapter<String, Date> {
+import javax.persistence.*;
+import javax.xml.bind.annotation.*;
 
-  private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@NoArgsConstructor
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@Entity
+public class Subscription {
 
-  @Override
-  public Date unmarshal(String xml) throws Exception {
-    Date date = new java.sql.Date(dateFormat.parse(xml).getTime());
-    return date;
-  }
+  // XML transient because it is just a local db id
+  // and it means nothing
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @XmlTransient
+  Long id;
 
-  @Override
-  public String marshal(Date object) {
-    return dateFormat.format(object);
-  }
+  @ManyToOne @XmlIDREF @NonNull private Node publisher;
+
+  @ManyToOne @XmlIDREF @NonNull private Node subscriber;
 }

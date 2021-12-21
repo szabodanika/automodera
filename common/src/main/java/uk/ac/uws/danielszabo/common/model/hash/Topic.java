@@ -18,25 +18,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.util;
+package uk.ac.uws.danielszabo.common.model.hash;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import lombok.*;
 
-public class SQLDateAdapter extends XmlAdapter<String, Date> {
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.xml.bind.annotation.*;
+import java.util.List;
 
-  private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@NoArgsConstructor
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@Entity
+public class Topic {
+  // unique identifier for this topic
+  @Id @XmlID @XmlAttribute @NonNull private String id;
 
-  @Override
-  public Date unmarshal(String xml) throws Exception {
-    Date date = new java.sql.Date(dateFormat.parse(xml).getTime());
-    return date;
-  }
+  // display name
+  @NonNull private String name;
 
-  @Override
-  public String marshal(Date object) {
-    return dateFormat.format(object);
-  }
+  @ManyToMany(mappedBy = "topicList")
+  @NonNull
+  @XmlIDREF
+  @XmlElementWrapper(name = "hashCollectionList")
+  @XmlElement(name = "hashCollection")
+  @ToString.Exclude
+  private List<HashCollection> hashCollectionList;
 }

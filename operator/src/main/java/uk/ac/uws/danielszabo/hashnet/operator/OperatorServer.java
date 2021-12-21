@@ -24,17 +24,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
-import uk.ac.uws.danielszabo.common.model.network.NetworkConfig;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 
 @Slf4j
-@Import({NetworkConfig.class})
+@Import({NetworkConfiguration.class})
 @SpringBootApplication
 @EntityScan(basePackages = {"uk.ac.uws.danielszabo.common", "uk.ac.uws.danielszabo.operator"})
+@ComponentScan(basePackages = {"uk.ac.uws.danielszabo"})
+@EnableJpaRepositories("uk.ac.uws.danielszabo.common.repository")
 public class OperatorServer {
 
   public static void main(String[] args) {
     SpringApplication application = new SpringApplication(OperatorServer.class);
     application.run(args);
   }
+
 }

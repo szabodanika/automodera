@@ -18,25 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.util;
+package uk.ac.uws.danielszabo.common.model.network.node;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import lombok.*;
 
-public class SQLDateAdapter extends XmlAdapter<String, Date> {
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
-  private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-  @Override
-  public Date unmarshal(String xml) throws Exception {
-    Date date = new java.sql.Date(dateFormat.parse(xml).getTime());
-    return date;
-  }
 
-  @Override
-  public String marshal(Date object) {
-    return dateFormat.format(object);
-  }
+// This class is used as a response message to tell if a node is available
+// later this might carry other information as well
+@Getter
+@ToString
+@RequiredArgsConstructor
+@XmlRootElement
+@NoArgsConstructor
+@XmlAccessorType(XmlAccessType.FIELD)
+public class NodeStatus {
+
+  @NonNull boolean active;
+
 }

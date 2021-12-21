@@ -18,65 +18,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.common.model.network.cert;
+package uk.ac.uws.danielszabo.common.model.hash;
 
 import lombok.*;
-import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.util.SQLDateAdapter;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serial;
-import java.io.Serializable;
+import java.io.File;
+import java.math.BigInteger;
 import java.sql.Date;
 
 @Getter
 @Setter
 @ToString
+@RequiredArgsConstructor
 @NoArgsConstructor
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@XmlSeeAlso({
-  Date.class,
-  Node.class,
-})
-public class CertificateRequest implements Serializable {
+public class Image {
+  // unique identifier of this image
+  // consists of archive id and local incremental count
+  // eg. 44-123
+  // where 44 is the archive id and 123 is the number of this image in this archive
+  @Id @XmlID @XmlAttribute @NonNull private String id;
 
-  @Serial private static final long serialVersionUID = 1L;
+  // file on the archive's local system
+  @NonNull private File file;
 
-  public enum Status {
-    WAITING,
-    ISSUED,
-    REJECTED
-  }
-
-  // should be same as the certificate id
-  @Id @NonNull String id;
-
-  // local node data and incomplete certificate request to sign
-  @OneToOne(cascade = CascadeType.ALL)
+  // date this image was added to collection
   @NonNull
-  private Node node;
-
-  // date the request was created
   @XmlJavaTypeAdapter(SQLDateAdapter.class)
-  @NonNull
   private Date date;
 
-  @NonNull private Status status = Status.WAITING;
+  // generated hash for this image
+  @NonNull private BigInteger hash;
 
-  private String message;
-
-  public CertificateRequest(Node localNode) {
-    this.id = localNode.getId();
-    this.node = localNode;
-  }
+  @ManyToOne @NonNull @XmlTransient private HashCollection hashCollection;
 }
