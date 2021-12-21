@@ -181,8 +181,11 @@ public abstract class BaseNodeCLI {
 
       // TODO instead of always using the origin, we should find the closest operator from the list
       String operator = networkService.getNetworkConfiguration().getOrigin();
-
-      networkService.certificateRequest(operator, localNodeService.get());
+      if(networkService.certificateRequest(operator, localNodeService.get()) != null) {
+        log.info("Sent certificate request to " + operator);
+      } else {
+        log.error("Failed to send certificate request to " + operator);
+      }
     } else {
       log.error("Please specify one of the following: --show, --request, --reissue");
     }
