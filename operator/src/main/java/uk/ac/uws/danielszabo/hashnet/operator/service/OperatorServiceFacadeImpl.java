@@ -156,8 +156,8 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
   }
 
   @Override
-  public List<HashCollection> retrieveHashCollectionByArchive(Node topic) {
-    throw new UnsupportedOperationException();
+  public List<HashCollection> retrieveHashCollectionByArchive(Node node) {
+    return  networkService.requestAllHashCollectionsByArchive(node);
   }
 
   @Override
@@ -166,7 +166,7 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
   }
 
   @Override
-  public Optional<Node> findNodeById(String id) {
+  public Optional<Node> findKnownNodeById(String id) {
     return networkService.findKnownNodeById(id);
   }
 
@@ -189,4 +189,5 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
   public NetworkConfiguration getNetworkConfiguration() {
     return networkService.getNetworkConfiguration();
   }
+
 }

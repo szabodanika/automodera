@@ -20,6 +20,7 @@
 
 package uk.ac.uws.danielszabo.common.service.network;
 
+import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
@@ -80,4 +81,6 @@ public interface NetworkService {
   CertificateRequest certificateRequest(String origin, Node localNode);
 
   Node requestNodeInfo(String host);
+
+  List<HashCollection> requestAllHashCollectionsByArchive(Node node);
 }

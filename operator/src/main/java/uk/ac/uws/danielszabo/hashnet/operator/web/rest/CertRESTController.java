@@ -86,7 +86,7 @@ public class CertRESTController {
       // retrieve certificate to be verified
       NodeCertificate nodeCertificate = (NodeCertificate) message.getContent();
       // find node the certificate belongs to
-      Node node = operatorServiceFacade.findNodeById(nodeCertificate.getId()).orElse(null);
+      Node node = operatorServiceFacade.findKnownNodeById(nodeCertificate.getId()).orElse(null);
       boolean result;
       // the node is not found, so we did not issue this certificate. cannot verify that it is valid
       if (node == null) result = false;

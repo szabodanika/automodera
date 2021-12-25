@@ -20,11 +20,14 @@
 
 package uk.ac.uws.danielszabo.common.service.rest;
 
+import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.model.network.node.NodeStatus;
+
+import java.util.List;
 
 public interface RestService {
 
@@ -40,4 +43,6 @@ public interface RestService {
   NetworkConfiguration sendNetworkConfigurationRequest(String origin);
 
   boolean requestCertificateVerification(NodeCertificate certificate);
+
+  List<HashCollection> requestAllHashCollections(String host);
 }

@@ -30,6 +30,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
+import uk.ac.uws.danielszabo.common.model.hash.HashCollectionsReport;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.message.Message;
 import uk.ac.uws.danielszabo.common.model.network.message.MessageFactory;
@@ -43,6 +45,7 @@ import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -104,6 +107,15 @@ public class RestServiceImpl implements RestService {
     if (response != null) {
       return (boolean) response.getBody();
     } else return false;
+  }
+
+  @Override
+  public List<HashCollection> requestAllHashCollections(String host) {
+    ResponseEntity response =
+      postAsXML(host, "/hash/collections", HashCollectionsReport.class);
+    if (response != null) {
+      return ((HashCollectionsReport) response.getBody()).getHashCollectionList();
+    } else return null;
   }
 
   private <T> ResponseEntity<T> postAsXML(String host, String path) {
