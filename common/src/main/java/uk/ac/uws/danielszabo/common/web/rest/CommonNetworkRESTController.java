@@ -50,7 +50,8 @@ public class CommonNetworkRESTController {
   @PostMapping(value = "status", produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity postStatus(@RequestBody Message message, HttpServletRequest request) {
     if (networkService.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
-      return new ResponseEntity<>(new NodeStatus(localNodeService.get().isActive(), true), HttpStatus.OK);
+      return new ResponseEntity<>(
+          new NodeStatus(localNodeService.get().isActive(), true), HttpStatus.OK);
     } else {
       return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }

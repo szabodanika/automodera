@@ -53,11 +53,11 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
   private final HashCollectionService hashCollectionService;
 
   public OperatorServiceFacadeImpl(
-    HashService hashService,
-    LocalNodeService localNodeService,
-    NetworkService networkService,
-    SubscriptionService subscriptionService,
-    HashCollectionService hashCollectionService) {
+      HashService hashService,
+      LocalNodeService localNodeService,
+      NetworkService networkService,
+      SubscriptionService subscriptionService,
+      HashCollectionService hashCollectionService) {
     this.hashService = hashService;
     this.localNodeService = localNodeService;
     this.networkService = networkService;
@@ -67,7 +67,7 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
 
   @Override
   public boolean handleCertificateRequest(
-    CertificateRequest certificateRequest, CertificateRequest.Status newStatus, String message) {
+      CertificateRequest certificateRequest, CertificateRequest.Status newStatus, String message) {
     certificateRequest.setStatus(newStatus);
     if (newStatus == CertificateRequest.Status.ISSUED) {
       NodeCertificate cert = certificateRequest.getNode().getCertificate();
@@ -78,9 +78,9 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
 
       // save cert in this operator/origin node's list
       localNodeService
-        .get()
-        .getIssuedCertificates()
-        .add(certificateRequest.getNode().getCertificate());
+          .get()
+          .getIssuedCertificates()
+          .add(certificateRequest.getNode().getCertificate());
       // persist local node
       localNodeService.set();
       // persist request
@@ -116,8 +116,9 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
     Optional<NodeCertificate> localCert = networkService.findCertificateById(certificate.getId());
     if (localCert.isPresent()) {
       // check validity dates
-      if (localCert.get().getExpiration().before(new Date(new java.util.Date().getTime())) ||
-        (new Date(new java.util.Date().getTime()).before(localCert.get().getIssued()))) return false;
+      if (localCert.get().getExpiration().before(new Date(new java.util.Date().getTime()))
+          || (new Date(new java.util.Date().getTime()).before(localCert.get().getIssued())))
+        return false;
 
       // date all good, check that the certificate we received matches our own version
       return localCert.map(nodeCertificate -> nodeCertificate.equals(certificate)).orElse(false);

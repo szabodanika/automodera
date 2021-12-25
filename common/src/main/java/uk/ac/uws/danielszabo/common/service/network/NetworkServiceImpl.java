@@ -57,12 +57,12 @@ public class NetworkServiceImpl implements NetworkService {
   protected final LocalNodeRepository localNodeRepository;
 
   public NetworkServiceImpl(
-    ApplicationEventPublisher applicationEventPublisher,
-    NetworkConfigurationRepository networkConfigurationRepository,
-    RestService restService,
-    CertificateRequestRepository certificateRequestRepository,
-    NodeRepository nodeRepository,
-    LocalNodeRepository localNodeRepository) {
+      ApplicationEventPublisher applicationEventPublisher,
+      NetworkConfigurationRepository networkConfigurationRepository,
+      RestService restService,
+      CertificateRequestRepository certificateRequestRepository,
+      NodeRepository nodeRepository,
+      LocalNodeRepository localNodeRepository) {
     this.applicationEventPublisher = applicationEventPublisher;
     this.networkConfigurationRepository = networkConfigurationRepository;
     this.restService = restService;
@@ -83,7 +83,7 @@ public class NetworkServiceImpl implements NetworkService {
       return null;
     } else {
       NetworkConfigurationUpdatedEvent event =
-        new NetworkConfigurationUpdatedEvent(this, networkConfiguration);
+          new NetworkConfigurationUpdatedEvent(this, networkConfiguration);
       applicationEventPublisher.publishEvent(event);
       return networkConfigurationRepository.save(networkConfiguration);
     }
@@ -94,7 +94,8 @@ public class NetworkServiceImpl implements NetworkService {
     // if this is certificate authority (operator or origin) node
     // then we check our local database, otherwise we request confirmation
     // from the issuer.
-    // TODO later on this should work with cryptography instead of web requests - what if CA node is offline?
+    // TODO later on this should work with cryptography instead of web requests - what if CA node is
+    // offline?
 
     try {
       // check that certificate was sent by the node it was issued to
@@ -104,33 +105,46 @@ public class NetworkServiceImpl implements NetworkService {
           // it will be OK as long as it comes from the correct address
           return true;
         } else if (localNodeRepository
-          // this certificate was issued by the local node
-          .get()
-          .get()
-          .getLocal()
-          .getId()
-          .equals(certificate.getIssuer().getId())
-        ) {
-          boolean result = localNodeRepository
+            // this certificate was issued by the local node
             .get()
             .get()
             .getLocal()
-            .getIssuedCertificates()
-            .contains(certificate);
+            .getId()
+            .equals(certificate.getIssuer().getId())) {
+          boolean result =
+              localNodeRepository
+                  .get()
+                  .get()
+                  .getLocal()
+                  .getIssuedCertificates()
+                  .contains(certificate);
 
-          log.info("Verifying certificate " + certificate.getId() + " locally: " + (result ? "VALID" : "INVALID"));
+          log.info(
+              "Verifying certificate "
+                  + certificate.getId()
+                  + " locally: "
+                  + (result ? "VALID" : "INVALID"));
           return result;
         } else {
           // this certificate was issued by someone else
           // so we ask the issuer to check it
           boolean result = restService.requestCertificateVerification(certificate);
-          log.info("Verifying certificate " + certificate.getId() + " at "
-            + certificate.getIssuer().getHost() + " " + (result ? "VALID" : "INVALID"));
+          log.info(
+              "Verifying certificate "
+                  + certificate.getId()
+                  + " at "
+                  + certificate.getIssuer().getHost()
+                  + " "
+                  + (result ? "VALID" : "INVALID"));
           return result;
         }
       } else {
-        log.info("Verifying certificate " + certificate.getId() + " at "
-          + certificate.getIssuer().getHost() + " INVALID (sent from incorrect address) ");
+        log.info(
+            "Verifying certificate "
+                + certificate.getId()
+                + " at "
+                + certificate.getIssuer().getHost()
+                + " INVALID (sent from incorrect address) ");
         return false;
       }
     } catch (Exception e) {
@@ -175,7 +189,7 @@ public class NetworkServiceImpl implements NetworkService {
   public CertificateRequest certificateRequest(String origin, Node localNode) {
     if (certificateRequestRepository.findAll().isEmpty()) {
       CertificateRequest certReq =
-        new CertificateRequest(localNode.getId() + "-" + new Random().nextInt(), localNode);
+          new CertificateRequest(localNode.getId() + "-" + new Random().nextInt(), localNode);
       certificateRequestRepository.save(certReq);
       restService.sendCertificateRequest(origin, certReq);
       return certReq;

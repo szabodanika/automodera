@@ -44,9 +44,9 @@ public class LocalNodeServiceImpl implements LocalNodeService {
   private Node localNode;
 
   public LocalNodeServiceImpl(
-    ApplicationEventPublisher applicationEventPublisher,
-    LocalNodeRepository localNodeRepository,
-    NodeFactory nodeFactory) {
+      ApplicationEventPublisher applicationEventPublisher,
+      LocalNodeRepository localNodeRepository,
+      NodeFactory nodeFactory) {
     this.applicationEventPublisher = applicationEventPublisher;
     this.localNodeRepository = localNodeRepository;
     this.nodeFactory = nodeFactory;
@@ -80,62 +80,62 @@ public class LocalNodeServiceImpl implements LocalNodeService {
 
   @Override
   public Node init(
-    String id,
-    NodeType nodeType,
-    String name,
-    String domain,
-    String legalName,
-    String adminEmail,
-    String addressLine1,
-    String addressLine2,
-    String postCode,
-    String country) {
+      String id,
+      NodeType nodeType,
+      String name,
+      String domain,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      String addressLine2,
+      String postCode,
+      String country) {
     Node node;
     switch (nodeType) {
       case INTEGRATOR -> node =
-        nodeFactory.getIntegratorNode(
-          id,
-          name,
-          domain,
-          legalName,
-          adminEmail,
-          addressLine1,
-          addressLine2,
-          postCode,
-          country);
+          nodeFactory.getIntegratorNode(
+              id,
+              name,
+              domain,
+              legalName,
+              adminEmail,
+              addressLine1,
+              addressLine2,
+              postCode,
+              country);
       case ARCHIVE -> node =
-        nodeFactory.getArchiveNode(
-          id,
-          name,
-          domain,
-          legalName,
-          adminEmail,
-          addressLine1,
-          addressLine2,
-          postCode,
-          country);
+          nodeFactory.getArchiveNode(
+              id,
+              name,
+              domain,
+              legalName,
+              adminEmail,
+              addressLine1,
+              addressLine2,
+              postCode,
+              country);
       case OPERATOR -> node =
-        nodeFactory.getOperatorNode(
-          id,
-          name,
-          domain,
-          legalName,
-          adminEmail,
-          addressLine1,
-          addressLine2,
-          postCode,
-          country);
+          nodeFactory.getOperatorNode(
+              id,
+              name,
+              domain,
+              legalName,
+              adminEmail,
+              addressLine1,
+              addressLine2,
+              postCode,
+              country);
       case ORIGIN -> node =
-        nodeFactory.getOriginNode(
-          id,
-          name,
-          domain,
-          legalName,
-          adminEmail,
-          addressLine1,
-          addressLine2,
-          postCode,
-          country);
+          nodeFactory.getOriginNode(
+              id,
+              name,
+              domain,
+              legalName,
+              adminEmail,
+              addressLine1,
+              addressLine2,
+              postCode,
+              country);
       default -> throw new IllegalStateException("Unexpected value: " + nodeType);
     }
     set(node);

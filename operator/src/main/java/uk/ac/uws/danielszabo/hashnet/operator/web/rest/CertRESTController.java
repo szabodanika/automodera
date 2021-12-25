@@ -45,9 +45,9 @@ public class CertRESTController {
 
   @PostMapping(value = "request", consumes = "application/XML")
   public void postRequest(
-    // used for debugging the request
-    // HttpServletRequest request,
-    @RequestBody Message message) {
+      // used for debugging the request
+      // HttpServletRequest request,
+      @RequestBody Message message) {
 
     CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
     log.info("Received certificate signing request from " + certificateRequest.getNode().getId());
@@ -95,8 +95,13 @@ public class CertRESTController {
         nodeCertificate.setNode(node);
         result = operatorServiceFacade.verifyCertificate(nodeCertificate);
       }
-      log.info("Received certificate verification request for certificate " + message.getCertificate().getId() +
-        " from " + request.getRemoteAddr() + ": " + (result ? "VALID" : "INVALID"));
+      log.info(
+          "Received certificate verification request for certificate "
+              + message.getCertificate().getId()
+              + " from "
+              + request.getRemoteAddr()
+              + ": "
+              + (result ? "VALID" : "INVALID"));
 
       return new ResponseEntity<>(result, HttpStatus.OK);
     } else {

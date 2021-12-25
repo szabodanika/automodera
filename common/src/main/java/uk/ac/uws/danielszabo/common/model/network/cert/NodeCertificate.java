@@ -32,7 +32,6 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -128,7 +127,6 @@ public class NodeCertificate implements Serializable {
     if (!addressLine2.equals(that.addressLine2)) return false;
     if (!postCode.equals(that.postCode)) return false;
     if (!country.equals(that.country)) return false;
-
 
     // without wrapping them in arraylists we would get lots of incorrect inequalities
     return new ArrayList<>(networkRights).equals(new ArrayList<>(that.networkRights));

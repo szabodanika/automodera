@@ -28,7 +28,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
@@ -94,14 +93,14 @@ public class RestServiceImpl implements RestService {
   @Override
   public NetworkConfiguration sendNetworkConfigurationRequest(String origin) {
     NetworkConfiguration networkConfiguration =
-      getObject(origin, "/net/conf", NetworkConfiguration.class);
+        getObject(origin, "/net/conf", NetworkConfiguration.class);
     return networkConfiguration;
   }
 
   @Override
   public boolean requestCertificateVerification(NodeCertificate certificate) {
     ResponseEntity response =
-      postAsXML(certificate.getIssuer().getHost(), "/cert/verify", certificate, Boolean.class);
+        postAsXML(certificate.getIssuer().getHost(), "/cert/verify", certificate, Boolean.class);
     if (response != null) {
       return (boolean) response.getBody();
     } else return false;

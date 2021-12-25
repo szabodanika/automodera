@@ -21,7 +21,6 @@
 package uk.ac.uws.danielszabo.common.model.network.message;
 
 import org.springframework.stereotype.Component;
-import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.service.network.LocalNodeService;
 
 import java.sql.Date;
@@ -31,8 +30,7 @@ public class MessageFactoryImpl implements MessageFactory {
 
   private final LocalNodeService localNodeService;
 
-  public MessageFactoryImpl(
-      LocalNodeService localNodeService) {
+  public MessageFactoryImpl(LocalNodeService localNodeService) {
     this.localNodeService = localNodeService;
   }
 

@@ -243,7 +243,7 @@ public abstract class BaseNodeCLI {
         }
       }
     } else if (all) {
-      for(Node n : networkService.getAllKnownNodes()){
+      for (Node n : networkService.getAllKnownNodes()) {
         log.info(networkService.getNodeStatus(n.getHost()).toString());
       }
     } else {

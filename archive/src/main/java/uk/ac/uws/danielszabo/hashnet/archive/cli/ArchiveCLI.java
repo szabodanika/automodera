@@ -79,7 +79,7 @@ public class ArchiveCLI extends BaseNodeCLI {
 
     if (list) {
       List<HashCollection> hashCollections;
-      if(!(hashCollections = archiveServiceFacade.findAllHashCollections()).isEmpty()){
+      if (!(hashCollections = archiveServiceFacade.findAllHashCollections()).isEmpty()) {
         for (HashCollection hc : hashCollections) {
           // TODO make this a little nicer
           log.info(hc.toString());
