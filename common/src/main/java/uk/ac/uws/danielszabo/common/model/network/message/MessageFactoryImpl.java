@@ -31,12 +31,9 @@ public class MessageFactoryImpl implements MessageFactory {
 
   private final LocalNodeService localNodeService;
 
-  private final NetworkConfiguration networkConfiguration;
-
   public MessageFactoryImpl(
-      LocalNodeService localNodeService, NetworkConfiguration networkConfiguration) {
+      LocalNodeService localNodeService) {
     this.localNodeService = localNodeService;
-    this.networkConfiguration = networkConfiguration;
   }
 
   @Override

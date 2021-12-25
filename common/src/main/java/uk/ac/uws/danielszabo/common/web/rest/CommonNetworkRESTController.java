@@ -30,6 +30,8 @@ import uk.ac.uws.danielszabo.common.model.network.node.NodeStatus;
 import uk.ac.uws.danielszabo.common.service.network.LocalNodeService;
 import uk.ac.uws.danielszabo.common.service.network.NetworkService;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Slf4j
 @RestController
 @RequestMapping("net")
@@ -46,17 +48,17 @@ public class CommonNetworkRESTController {
   }
 
   @PostMapping(value = "status", produces = MediaType.APPLICATION_XML_VALUE)
-  public ResponseEntity postStatus(@RequestBody Message message) {
-    if (networkService.checkCertificate(message.getCertificate())) {
-      return new ResponseEntity<>(new NodeStatus(localNodeService.get().isActive()), HttpStatus.OK);
+  public ResponseEntity postStatus(@RequestBody Message message, HttpServletRequest request) {
+    if (networkService.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
+      return new ResponseEntity<>(new NodeStatus(localNodeService.get().isActive(), true), HttpStatus.OK);
     } else {
       return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
   }
 
   @PostMapping(value = "info", produces = MediaType.APPLICATION_XML_VALUE)
-  public ResponseEntity postInfo(@RequestBody Message message) {
-    if (networkService.checkCertificate(message.getCertificate())) {
+  public ResponseEntity postInfo(@RequestBody Message message, HttpServletRequest request) {
+    if (networkService.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
       return new ResponseEntity<>(localNodeService.get(), HttpStatus.OK);
     } else {
       return new ResponseEntity<>(HttpStatus.FORBIDDEN);

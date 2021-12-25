@@ -35,6 +35,7 @@ import uk.ac.uws.danielszabo.common.service.network.LocalNodeService;
 import uk.ac.uws.danielszabo.common.service.network.NetworkService;
 import uk.ac.uws.danielszabo.common.service.network.SubscriptionService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -173,7 +174,7 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
   }
 
   @Override
-  public boolean checkCertificate(NodeCertificate certificate) {
-    return networkService.checkCertificate(certificate);
+  public boolean checkCertificate(NodeCertificate certificate, String remoteAddr) {
+    return networkService.checkCertificate(certificate, remoteAddr);
   }
 }

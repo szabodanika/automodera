@@ -30,7 +30,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serial;
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -86,7 +88,7 @@ public class NodeCertificate implements Serializable {
       String id,
       @NonNull Node node,
       @NonNull String host,
-      @NonNull List<NetworkRight> networkRights,
+      @NonNull ArrayList<NetworkRight> networkRights,
       @NonNull String legalName,
       @NonNull String adminEmail,
       @NonNull String addressLine1,
@@ -126,7 +128,10 @@ public class NodeCertificate implements Serializable {
     if (!addressLine2.equals(that.addressLine2)) return false;
     if (!postCode.equals(that.postCode)) return false;
     if (!country.equals(that.country)) return false;
-    return networkRights.equals(that.networkRights);
+
+
+    // without wrapping them in arraylists we would get lots of incorrect inequalities
+    return new ArrayList<>(networkRights).equals(new ArrayList<>(that.networkRights));
   }
 
   @Override

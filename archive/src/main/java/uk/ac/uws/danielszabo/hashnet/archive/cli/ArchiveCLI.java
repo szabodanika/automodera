@@ -64,8 +64,7 @@ public class ArchiveCLI extends BaseNodeCLI {
   }
 
   /* for example:
-  hashimages --path /images --id collection1 --name "First Hash Collection" --description "This is just a test"
-  --topics topic1,topic2,topic3 --forceRecalc
+  hash --path /images --id collection1 --name "First Hash Collection" --description "This is just a test" --topics topic1,topic2,topic3 --forceRecalc
     */
   @ShellMethod("Manage Hash Collections")
   public void hash(
@@ -79,9 +78,16 @@ public class ArchiveCLI extends BaseNodeCLI {
       @ShellOption(defaultValue = "false") boolean forceRecalc) {
 
     if (list) {
-      for (HashCollection hc : archiveServiceFacade.findAllHashCollections()) {
-        log.info(hc.toString());
+      List<HashCollection> hashCollections;
+      if(!(hashCollections = archiveServiceFacade.findAllHashCollections()).isEmpty()){
+        for (HashCollection hc : hashCollections) {
+          // TODO make this a little nicer
+          log.info(hc.toString());
+        }
+      } else {
+        log.info("No hash collections found");
       }
+
     } else if (show) {
       if (id.isBlank()) {
         log.error("Please specify non-empty id");
