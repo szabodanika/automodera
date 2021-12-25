@@ -54,28 +54,28 @@ public class ArchiveCLI extends BaseNodeCLI {
   private final ArchiveServiceFacade archiveServiceFacade;
 
   public ArchiveCLI(
-      LocalNodeService localNodeService,
-      NetworkService networkService,
-      ArchiveServiceFacade archiveServiceFacade,
-      SubscriptionService subscriptionService,
-      TopicService topicService) {
+    LocalNodeService localNodeService,
+    NetworkService networkService,
+    ArchiveServiceFacade archiveServiceFacade,
+    SubscriptionService subscriptionService,
+    TopicService topicService) {
     super(localNodeService, networkService, topicService);
     this.archiveServiceFacade = archiveServiceFacade;
   }
 
   /* for example:
-  hash --path /images --id collection1 --name "First Hash Collection" --description "This is just a test" --topics topic1,topic2,topic3 --forceRecalc
+    "hash --path /images --id collection1 --name "First Hash Collection" --description "This is just a test" --topics "topic1,topic2,topic3" --force-recalc"
     */
   @ShellMethod("Manage Hash Collections")
   public void hash(
-      @ShellOption(defaultValue = "false") boolean list,
-      @ShellOption(defaultValue = "false") boolean show,
-      @ShellOption(defaultValue = "") String path,
-      @ShellOption(defaultValue = "") String id,
-      @ShellOption(defaultValue = "") String name,
-      @ShellOption(defaultValue = "") String description,
-      @ShellOption(defaultValue = "") String topics,
-      @ShellOption(defaultValue = "false") boolean forceRecalc) {
+    @ShellOption(defaultValue = "false") boolean list,
+    @ShellOption(defaultValue = "false") boolean show,
+    @ShellOption(defaultValue = "") String path,
+    @ShellOption(defaultValue = "") String id,
+    @ShellOption(defaultValue = "") String name,
+    @ShellOption(defaultValue = "") String description,
+    @ShellOption(defaultValue = "") String topics,
+    @ShellOption(defaultValue = "false") boolean forceRecalc) {
 
     if (list) {
       List<HashCollection> hashCollections;
@@ -97,10 +97,10 @@ public class ArchiveCLI extends BaseNodeCLI {
     } else {
 
       if (path.isBlank()
-          || id.isBlank()
-          || name.isBlank()
-          || description.isBlank()
-          || topics.isBlank()) {
+        || id.isBlank()
+        || name.isBlank()
+        || description.isBlank()
+        || topics.isBlank()) {
         log.error("Please specify non-empty path, id, name, description and topic list");
         return;
       }
@@ -124,7 +124,7 @@ public class ArchiveCLI extends BaseNodeCLI {
       // no need to log anything here, the generateHashCollection method will do it
       try {
         archiveServiceFacade.generateHashCollection(
-            path, id, name, description, topicList, forceRecalc);
+          path, id, name, description, topicList, forceRecalc);
       } catch (IOException e) {
         e.printStackTrace();
       }

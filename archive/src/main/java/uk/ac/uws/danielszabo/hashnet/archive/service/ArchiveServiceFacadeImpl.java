@@ -23,6 +23,7 @@ package uk.ac.uws.danielszabo.hashnet.archive.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
+import uk.ac.uws.danielszabo.common.model.hash.HashCollectionsReport;
 import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
@@ -176,4 +177,10 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
   public boolean checkCertificate(NodeCertificate certificate, String remoteAddr) {
     return networkService.checkCertificate(certificate, remoteAddr);
   }
+
+  @Override
+  public HashCollectionsReport getHashCollectionReport() {
+    return new HashCollectionsReport(hashCollectionService.findAllEnabledNoImages());
+  }
+
 }

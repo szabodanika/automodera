@@ -45,4 +45,6 @@ public interface HashCollectionService {
       List<Topic> topics,
       boolean forceRecalc)
       throws IOException;
+
+  List<HashCollection> findAllEnabledNoImages();
 }

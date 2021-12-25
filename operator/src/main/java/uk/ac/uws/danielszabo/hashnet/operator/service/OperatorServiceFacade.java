@@ -57,7 +57,7 @@ public interface OperatorServiceFacade {
 
   List<Node> findAllNodes();
 
-  Optional<Node> findNodeById(String id);
+  Optional<Node> findKnownNodeById(String id);
 
   Node saveNode(Node node);
 
@@ -66,4 +66,5 @@ public interface OperatorServiceFacade {
   void saveNetworkConfiguration(NetworkConfiguration networkConfiguration);
 
   NetworkConfiguration getNetworkConfiguration();
+
 }

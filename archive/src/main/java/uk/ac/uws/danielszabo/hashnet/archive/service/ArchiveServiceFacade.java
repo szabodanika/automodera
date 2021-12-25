@@ -21,6 +21,7 @@
 package uk.ac.uws.danielszabo.hashnet.archive.service;
 
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
+import uk.ac.uws.danielszabo.common.model.hash.HashCollectionsReport;
 import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
@@ -77,4 +78,6 @@ public interface ArchiveServiceFacade {
   Optional<HashCollection> findAllHashCollectionById(String id);
 
   boolean checkCertificate(NodeCertificate certificate, String remoteAddr);
+
+  HashCollectionsReport getHashCollectionReport();
 }

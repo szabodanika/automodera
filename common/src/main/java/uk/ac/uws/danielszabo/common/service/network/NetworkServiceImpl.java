@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import uk.ac.uws.danielszabo.common.event.NetworkConfigurationUpdatedEvent;
+import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
@@ -203,6 +204,10 @@ public class NetworkServiceImpl implements NetworkService {
   public Node requestNodeInfo(String host) {
     return restService.getNodeByHost(host);
   }
+
+  @Override
+  public List<HashCollection> requestAllHashCollectionsByArchive(Node node) {
+    return restService.requestAllHashCollections(node.getHost());  }
 
   @Override
   public Optional<CertificateRequest> findCertificateRequestById(String id) {

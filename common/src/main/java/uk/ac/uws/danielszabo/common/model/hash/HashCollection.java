@@ -34,18 +34,24 @@ import java.util.List;
 @Setter
 @ToString
 @RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 public class HashCollection {
 
-  @Id @XmlID @NonNull private String id;
+  @Id
+  @XmlID
+  @NonNull
+  private String id;
 
-  @NonNull private String name;
+  @NonNull
+  private String name;
 
   // simple counter for updates
-  @NonNull private int version = 1;
+  @NonNull
+  private int version = 1;
 
   // date this collection was created
   @NonNull
@@ -61,18 +67,22 @@ public class HashCollection {
   private Date updated;
 
   // brief description of what this collection contains
-  @NonNull private String description;
+  @NonNull
+  private String description;
 
   // this can be used to enable/disable it on the integrators end by the archive
   @NonNull boolean enabled = true;
 
-  @ManyToOne @NonNull private Node archive;
+  @ManyToOne
+// Can be NonNull in hashcollection reports
+  @XmlIDREF
+  private Node archive;
 
   @ManyToMany
   @JoinTable(
-      name = "hashcollection_topic",
-      joinColumns = @JoinColumn(name = "topic_id"),
-      inverseJoinColumns = @JoinColumn(name = "hashcollection_id"))
+    name = "hashcollection_topic",
+    joinColumns = @JoinColumn(name = "topic_id"),
+    inverseJoinColumns = @JoinColumn(name = "hashcollection_id"))
   @XmlElementWrapper(name = "topicList")
   @XmlElement(name = "topic")
   @ToString.Exclude
@@ -81,10 +91,10 @@ public class HashCollection {
   private List<Topic> topicList;
 
   @OneToMany(cascade = CascadeType.ALL)
-  //    @XmlElementWrapper(name = "imageList")
-  //    @XmlElement(name = "image")
+  @XmlElementWrapper(name = "imageList")
+  @XmlElement(name = "image")
   @NonNull
   @ToString.Exclude
-  @XmlTransient
+//  @XmlTransient
   private List<Image> imageList;
 }
