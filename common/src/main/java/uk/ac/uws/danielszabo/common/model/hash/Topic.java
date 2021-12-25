@@ -45,9 +45,9 @@ public class Topic {
 
   @ManyToMany(mappedBy = "topicList")
   @NonNull
-//  @XmlIDREF
-//  @XmlElementWrapper(name = "hashCollectionList")
-//  @XmlElement(name = "hashCollection")
+  //  @XmlIDREF
+  //  @XmlElementWrapper(name = "hashCollectionList")
+  //  @XmlElement(name = "hashCollection")
   @ToString.Exclude
   @XmlTransient
   private List<HashCollection> hashCollectionList;

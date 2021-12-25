@@ -44,7 +44,7 @@ public class HashCollectionServiceImpl implements HashCollectionService {
   private final HashService hashService;
 
   public HashCollectionServiceImpl(
-    HashCollectionRepository hashCollectionRepository, HashService hashService) {
+      HashCollectionRepository hashCollectionRepository, HashService hashService) {
     this.hashCollectionRepository = hashCollectionRepository;
     this.hashService = hashService;
   }
@@ -66,45 +66,44 @@ public class HashCollectionServiceImpl implements HashCollectionService {
 
   @Override
   public HashCollection generateHashCollection(
-    String path,
-    String id,
-    String name,
-    String description,
-    Node archive,
-    List<Topic> topics,
-    boolean forceRecalc)
-    throws IOException {
+      String path,
+      String id,
+      String name,
+      String description,
+      Node archive,
+      List<Topic> topics,
+      boolean forceRecalc)
+      throws IOException {
 
     // prepare new hashcollection or load it from repository
     // if it already exists
     HashCollection hashCollection;
     hashCollection =
-      hashCollectionRepository
-        .findById(id)
-        .orElse(
-          new HashCollection(
-            id,
-            name,
-            1,
-            new java.sql.Date(new java.util.Date().getTime()),
-            new java.sql.Date(new java.util.Date().getTime()),
-            description,
-            false,
-            archive,
-            topics,
-            new ArrayList<>()));
+        hashCollectionRepository
+            .findById(id)
+            .orElse(
+                new HashCollection(
+                    id,
+                    name,
+                    1,
+                    new java.sql.Date(new java.util.Date().getTime()),
+                    new java.sql.Date(new java.util.Date().getTime()),
+                    description,
+                    false,
+                    archive,
+                    topics,
+                    new ArrayList<>()));
     // get all the files
     File directoryPath = new File(path);
-    if (!path.endsWith("/"))
-      path += "/";
+    if (!path.endsWith("/")) path += "/";
     String imageFileNames[] = directoryPath.list();
 
     // check if we actually found files
     if (imageFileNames == null || imageFileNames.length == 0) {
       log.error(
-        "Specified folder "
-          + path
-          + " does not contain files or they cannot be accessed by this process.");
+          "Specified folder "
+              + path
+              + " does not contain files or they cannot be accessed by this process.");
       return null;
     }
 
@@ -122,18 +121,18 @@ public class HashCollectionServiceImpl implements HashCollectionService {
       // only calculate hash if it is not present yet or user wants to recalculate hash for every
       // image
       if (forceRecalc
-        || !hashCollection.getImageList().stream()
-        .anyMatch(img -> img.getId().equals(imageFileNames[finalI]))) {
+          || !hashCollection.getImageList().stream()
+              .anyMatch(img -> img.getId().equals(imageFileNames[finalI]))) {
         Hash hash = hashService.pHash(new File(path + imageFileNames[i]));
         hashCollection
-          .getImageList()
-          .add(
-            new Image(
-              imageFileNames[i],
-              new File(directoryPath + imageFileNames[i]),
-              new java.sql.Date(new java.util.Date().getTime()),
-              hash.getHashValue(),
-              hashCollection));
+            .getImageList()
+            .add(
+                new Image(
+                    imageFileNames[i],
+                    new File(directoryPath + imageFileNames[i]),
+                    new java.sql.Date(new java.util.Date().getTime()),
+                    hash.getHashValue(),
+                    hashCollection));
       }
     }
     log.info("Hashed " + imageFileNames.length + " images for " + id);
@@ -143,9 +142,17 @@ public class HashCollectionServiceImpl implements HashCollectionService {
 
   @Override
   public List<HashCollection> findAllEnabledNoImages() {
-    return hashCollectionRepository.findAllProjectedByEnabled(true).stream().map(h ->
-      new HashCollection(h.getId(), h.getName(), h.getCreated(), h.getUpdated(), h.getDescription(), h.getTopicList(), new ArrayList<>())
-    ).collect(Collectors.toList());
+    return hashCollectionRepository.findAllProjectedByEnabled(true).stream()
+        .map(
+            h ->
+                new HashCollection(
+                    h.getId(),
+                    h.getName(),
+                    h.getCreated(),
+                    h.getUpdated(),
+                    h.getDescription(),
+                    h.getTopicList(),
+                    new ArrayList<>()))
+        .collect(Collectors.toList());
   }
-
 }

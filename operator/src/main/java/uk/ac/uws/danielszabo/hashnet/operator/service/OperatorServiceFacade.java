@@ -66,5 +66,4 @@ public interface OperatorServiceFacade {
   void saveNetworkConfiguration(NetworkConfiguration networkConfiguration);
 
   NetworkConfiguration getNetworkConfiguration();
-
 }

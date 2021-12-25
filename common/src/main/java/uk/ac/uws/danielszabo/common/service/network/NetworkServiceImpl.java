@@ -207,7 +207,8 @@ public class NetworkServiceImpl implements NetworkService {
 
   @Override
   public List<HashCollection> requestAllHashCollectionsByArchive(Node node) {
-    return restService.requestAllHashCollections(node.getHost());  }
+    return restService.requestAllHashCollections(node.getHost());
+  }
 
   @Override
   public Optional<CertificateRequest> findCertificateRequestById(String id) {

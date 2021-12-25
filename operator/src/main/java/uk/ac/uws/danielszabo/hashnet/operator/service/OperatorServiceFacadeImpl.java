@@ -157,7 +157,7 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
 
   @Override
   public List<HashCollection> retrieveHashCollectionByArchive(Node node) {
-    return  networkService.requestAllHashCollectionsByArchive(node);
+    return networkService.requestAllHashCollectionsByArchive(node);
   }
 
   @Override
@@ -189,5 +189,4 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
   public NetworkConfiguration getNetworkConfiguration() {
     return networkService.getNetworkConfiguration();
   }
-
 }

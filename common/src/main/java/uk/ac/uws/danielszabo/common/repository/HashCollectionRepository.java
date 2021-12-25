@@ -36,5 +36,4 @@ public interface HashCollectionRepository extends JpaRepository<HashCollection, 
   <T> List<T> findAllByTopicListContains(Topic topic);
 
   List<HashCollectionInfo> findAllProjectedByEnabled(boolean enabled);
-
 }

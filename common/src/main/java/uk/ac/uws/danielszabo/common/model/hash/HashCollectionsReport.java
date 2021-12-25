@@ -17,5 +17,4 @@ public class HashCollectionsReport {
   @XmlElement(name = "hashCollection")
   @NonNull
   private List<HashCollection> hashCollectionList;
-
 }

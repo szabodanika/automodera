@@ -111,8 +111,7 @@ public class RestServiceImpl implements RestService {
 
   @Override
   public List<HashCollection> requestAllHashCollections(String host) {
-    ResponseEntity response =
-      postAsXML(host, "/hash/collections", HashCollectionsReport.class);
+    ResponseEntity response = postAsXML(host, "/hash/collections", HashCollectionsReport.class);
     if (response != null) {
       return ((HashCollectionsReport) response.getBody()).getHashCollectionList();
     } else return null;

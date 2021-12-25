@@ -182,5 +182,4 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
   public HashCollectionsReport getHashCollectionReport() {
     return new HashCollectionsReport(hashCollectionService.findAllEnabledNoImages());
   }
-
 }
