@@ -1,8 +1,6 @@
 package uk.ac.uws.danielszabo.common.model.hash;
 
 import lombok.*;
-import uk.ac.uws.danielszabo.common.model.network.node.Node;
-
 import javax.xml.bind.annotation.*;
 import java.util.List;
 
