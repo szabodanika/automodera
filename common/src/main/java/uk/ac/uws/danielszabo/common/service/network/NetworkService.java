@@ -73,7 +73,7 @@ public interface NetworkService {
 
   void removeCertificate(NodeCertificate certificate);
 
-  boolean checkCertificate(NodeCertificate certificate);
+  boolean checkCertificate(NodeCertificate certificate, String remoteAddr);
 
   Optional<NodeCertificate> findCertificateById(String id);
 

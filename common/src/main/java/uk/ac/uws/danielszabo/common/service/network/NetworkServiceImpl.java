@@ -35,6 +35,7 @@ import uk.ac.uws.danielszabo.common.repository.NetworkConfigurationRepository;
 import uk.ac.uws.danielszabo.common.repository.NodeRepository;
 import uk.ac.uws.danielszabo.common.service.rest.RestService;
 
+import java.net.InetAddress;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -56,12 +57,12 @@ public class NetworkServiceImpl implements NetworkService {
   protected final LocalNodeRepository localNodeRepository;
 
   public NetworkServiceImpl(
-      ApplicationEventPublisher applicationEventPublisher,
-      NetworkConfigurationRepository networkConfigurationRepository,
-      RestService restService,
-      CertificateRequestRepository certificateRequestRepository,
-      NodeRepository nodeRepository,
-      LocalNodeRepository localNodeRepository) {
+    ApplicationEventPublisher applicationEventPublisher,
+    NetworkConfigurationRepository networkConfigurationRepository,
+    RestService restService,
+    CertificateRequestRepository certificateRequestRepository,
+    NodeRepository nodeRepository,
+    LocalNodeRepository localNodeRepository) {
     this.applicationEventPublisher = applicationEventPublisher;
     this.networkConfigurationRepository = networkConfigurationRepository;
     this.restService = restService;
@@ -82,55 +83,67 @@ public class NetworkServiceImpl implements NetworkService {
       return null;
     } else {
       NetworkConfigurationUpdatedEvent event =
-          new NetworkConfigurationUpdatedEvent(this, networkConfiguration);
+        new NetworkConfigurationUpdatedEvent(this, networkConfiguration);
       applicationEventPublisher.publishEvent(event);
       return networkConfigurationRepository.save(networkConfiguration);
     }
   }
 
   @Override
-  public boolean checkCertificate(NodeCertificate certificate) {
+  public boolean checkCertificate(NodeCertificate certificate, String remoteAddr) {
     // if this is certificate authority (operator or origin) node
     // then we check our local database, otherwise we request confirmation
     // from the issuer.
-    // TODO later on this should work with cryptography instead of web requests - what if CA node is
-    // offline?
+    // TODO later on this should work with cryptography instead of web requests - what if CA node is offline?
 
-    // this certificate was issued by the local node
     try {
-      if (localNodeRepository
+      // check that certificate was sent by the node it was issued to
+      if (InetAddress.getByName(certificate.getHost()).getHostAddress().equals(remoteAddr)) {
+        // check if we are verifying an origin node certificate (self certificate)
+        if (certificate.getHost().equals(networkConfigurationRepository.get().get().getOrigin())) {
+          // it will be OK as long as it comes from the correct address
+          return true;
+        } else if (localNodeRepository
+          // this certificate was issued by the local node
           .get()
           .get()
           .getLocal()
           .getId()
-          .equals(certificate.getIssuer().getId())) {
-        log.info("Verifying certificate " + certificate.getId() + " locally.");
-
-        return localNodeRepository
+          .equals(certificate.getIssuer().getId())
+        ) {
+          boolean result = localNodeRepository
             .get()
             .get()
             .getLocal()
             .getIssuedCertificates()
             .contains(certificate);
+
+          log.info("Verifying certificate " + certificate.getId() + " locally: " + (result ? "VALID" : "INVALID"));
+          return result;
+        } else {
+          // this certificate was issued by someone else
+          // so we ask the issuer to check it
+          boolean result = restService.requestCertificateVerification(certificate);
+          log.info("Verifying certificate " + certificate.getId() + " at "
+            + certificate.getIssuer().getHost() + " " + (result ? "VALID" : "INVALID"));
+          return result;
+        }
       } else {
-        // this certificate was issued by someone else
-        // so we ask the issuer to check it
-        log.info(
-            "Verifying certificate "
-                + certificate.getId()
-                + " at "
-                + certificate.getIssuer().getHost());
-        return restService.requestCertificateVerification(certificate);
+        log.info("Verifying certificate " + certificate.getId() + " at "
+          + certificate.getIssuer().getHost() + " INVALID (sent from incorrect address) ");
+        return false;
       }
     } catch (Exception e) {
-      // TODO not sure if we should give any additional info if we fail to verify certificate
+      log.error("Failed to verify certificate " + certificate.getId() + " " + e);
       return false;
     }
   }
 
   @Override
   public Optional<NodeCertificate> findCertificateById(String id) {
-    return Optional.empty();
+    Node node = nodeRepository.findById(id).orElse(null);
+    if (node == null) return Optional.empty();
+    return Optional.of(node.getCertificate());
   }
 
   @Override
@@ -162,7 +175,7 @@ public class NetworkServiceImpl implements NetworkService {
   public CertificateRequest certificateRequest(String origin, Node localNode) {
     if (certificateRequestRepository.findAll().isEmpty()) {
       CertificateRequest certReq =
-          new CertificateRequest(localNode.getId() + "-" + new Random().nextInt(), localNode);
+        new CertificateRequest(localNode.getId() + "-" + new Random().nextInt(), localNode);
       certificateRequestRepository.save(certReq);
       restService.sendCertificateRequest(origin, certReq);
       return certReq;

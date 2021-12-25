@@ -76,5 +76,6 @@ public interface ArchiveServiceFacade {
 
   Optional<HashCollection> findAllHashCollectionById(String id);
 
-  boolean checkCertificate(NodeCertificate certificate);
+
+  boolean checkCertificate(NodeCertificate certificate, String remoteAddr);
 }

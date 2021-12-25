@@ -196,6 +196,7 @@ public abstract class BaseNodeCLI {
   public void node(
       @ShellOption(defaultValue = "false") boolean status,
       @ShellOption(defaultValue = "false") boolean info,
+      @ShellOption(defaultValue = "false") boolean all,
       @ShellOption(defaultValue = "") String id,
       @ShellOption(defaultValue = "") String host) {
 
@@ -241,7 +242,10 @@ public abstract class BaseNodeCLI {
           log.error("Specified node is unknown: " + id);
         }
       }
-
+    } else if (all) {
+      for(Node n : networkService.getAllKnownNodes()){
+        log.info(networkService.getNodeStatus(n.getHost()).toString());
+      }
     } else {
       log.error("Please specify one of the following: --status, --info");
     }

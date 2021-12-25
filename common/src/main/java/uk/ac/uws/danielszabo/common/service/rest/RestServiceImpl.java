@@ -21,12 +21,14 @@
 package uk.ac.uws.danielszabo.common.service.rest;
 
 import jline.internal.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
@@ -38,12 +40,12 @@ import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+@Slf4j
 @Service
 public class RestServiceImpl implements RestService {
 
@@ -64,14 +66,18 @@ public class RestServiceImpl implements RestService {
   @Override
   public Node getNodeByHost(String host) {
     ResponseEntity response = postAsXML(host, "/net/info", Node.class);
-    return (Node) response.getBody();
+    if (response != null) {
+      return (Node) response.getBody();
+    } else return null;
   }
 
   // requests only availability from a node, it is a very basic ping
   @Override
   public NodeStatus requestStatus(String host) {
     ResponseEntity response = postAsXML(host, "/net/status", NodeStatus.class);
-    return (NodeStatus) response.getBody();
+    if (response != null) {
+      return (NodeStatus) response.getBody();
+    } else return new NodeStatus(false, false);
   }
 
   // void because certificate requests are not handled automatically
@@ -88,15 +94,17 @@ public class RestServiceImpl implements RestService {
   @Override
   public NetworkConfiguration sendNetworkConfigurationRequest(String origin) {
     NetworkConfiguration networkConfiguration =
-        getObject(origin, "/net/conf", NetworkConfiguration.class);
+      getObject(origin, "/net/conf", NetworkConfiguration.class);
     return networkConfiguration;
   }
 
   @Override
   public boolean requestCertificateVerification(NodeCertificate certificate) {
     ResponseEntity response =
-        postAsXML(certificate.getIssuer().getHost(), "/cert/verify", NodeStatus.class);
-    return (boolean) response.getBody();
+      postAsXML(certificate.getIssuer().getHost(), "/cert/verify", certificate, Boolean.class);
+    if (response != null) {
+      return (boolean) response.getBody();
+    } else return false;
   }
 
   private <T> ResponseEntity<T> postAsXML(String host, String path) {
@@ -137,8 +145,8 @@ public class RestServiceImpl implements RestService {
 
       return (ResponseEntity<T>) this.restTemplate.postForEntity(requestURI, request, responseType);
 
-    } catch (JAXBException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      log.error(String.join(" ", host, path, e.toString()));
       return null;
     }
   }

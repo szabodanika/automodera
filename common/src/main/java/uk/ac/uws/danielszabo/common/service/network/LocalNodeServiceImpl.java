@@ -44,18 +44,12 @@ public class LocalNodeServiceImpl implements LocalNodeService {
   private Node localNode;
 
   public LocalNodeServiceImpl(
-      ApplicationEventPublisher applicationEventPublisher,
-      LocalNodeRepository localNodeRepository,
-      NodeFactory nodeFactory) {
+    ApplicationEventPublisher applicationEventPublisher,
+    LocalNodeRepository localNodeRepository,
+    NodeFactory nodeFactory) {
     this.applicationEventPublisher = applicationEventPublisher;
     this.localNodeRepository = localNodeRepository;
     this.nodeFactory = nodeFactory;
-  }
-
-  private void save(Node localNode) {
-    LocalNodeUpdatedEvent event = new LocalNodeUpdatedEvent(this, localNode);
-    applicationEventPublisher.publishEvent(event);
-    this.localNode = localNode;
   }
 
   @Override
@@ -73,8 +67,9 @@ public class LocalNodeServiceImpl implements LocalNodeService {
       log.error("Cannot overwrite local config with null.");
       return null;
     } else {
-      save(self);
-      return localNodeRepository.save(new LocalNode(self)).getLocal();
+      LocalNodeUpdatedEvent event = new LocalNodeUpdatedEvent(this, self);
+      applicationEventPublisher.publishEvent(event);
+      return this.localNode = localNodeRepository.save(new LocalNode(self)).getLocal();
     }
   }
 
@@ -85,62 +80,62 @@ public class LocalNodeServiceImpl implements LocalNodeService {
 
   @Override
   public Node init(
-      String id,
-      NodeType nodeType,
-      String name,
-      String domain,
-      String legalName,
-      String adminEmail,
-      String addressLine1,
-      String addressLine2,
-      String postCode,
-      String country) {
+    String id,
+    NodeType nodeType,
+    String name,
+    String domain,
+    String legalName,
+    String adminEmail,
+    String addressLine1,
+    String addressLine2,
+    String postCode,
+    String country) {
     Node node;
     switch (nodeType) {
       case INTEGRATOR -> node =
-          nodeFactory.getIntegratorNode(
-              id,
-              name,
-              domain,
-              legalName,
-              adminEmail,
-              addressLine1,
-              addressLine2,
-              postCode,
-              country);
+        nodeFactory.getIntegratorNode(
+          id,
+          name,
+          domain,
+          legalName,
+          adminEmail,
+          addressLine1,
+          addressLine2,
+          postCode,
+          country);
       case ARCHIVE -> node =
-          nodeFactory.getArchiveNode(
-              id,
-              name,
-              domain,
-              legalName,
-              adminEmail,
-              addressLine1,
-              addressLine2,
-              postCode,
-              country);
+        nodeFactory.getArchiveNode(
+          id,
+          name,
+          domain,
+          legalName,
+          adminEmail,
+          addressLine1,
+          addressLine2,
+          postCode,
+          country);
       case OPERATOR -> node =
-          nodeFactory.getOperatorNode(
-              id,
-              name,
-              domain,
-              legalName,
-              adminEmail,
-              addressLine1,
-              addressLine2,
-              postCode,
-              country);
+        nodeFactory.getOperatorNode(
+          id,
+          name,
+          domain,
+          legalName,
+          adminEmail,
+          addressLine1,
+          addressLine2,
+          postCode,
+          country);
       case ORIGIN -> node =
-          nodeFactory.getOriginNode(
-              id,
-              name,
-              domain,
-              legalName,
-              adminEmail,
-              addressLine1,
-              addressLine2,
-              postCode,
-              country);
+        nodeFactory.getOriginNode(
+          id,
+          name,
+          domain,
+          legalName,
+          adminEmail,
+          addressLine1,
+          addressLine2,
+          postCode,
+          country);
       default -> throw new IllegalStateException("Unexpected value: " + nodeType);
     }
     set(node);
