@@ -26,21 +26,24 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
-import uk.ac.uws.danielszabo.common.service.network.NetworkService;
+import uk.ac.uws.danielszabo.hashnet.operator.service.OperatorServiceFacade;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @RestController
 @RequestMapping("net")
 public class OperatorNetworkRESTController {
 
-  private final NetworkService networkService;
+  private final OperatorServiceFacade operatorServiceFacade;
 
-  public OperatorNetworkRESTController(NetworkService networkService) {
-    this.networkService = networkService;
+  public OperatorNetworkRESTController(OperatorServiceFacade operatorServiceFacade) {
+    this.operatorServiceFacade = operatorServiceFacade;
   }
 
-  @GetMapping(value = "conf", produces = MediaType.APPLICATION_XML_VALUE)
-  public ResponseEntity<NetworkConfiguration> getConfig() {
-    return new ResponseEntity<>(networkService.getNetworkConfiguration(), HttpStatus.OK);
+  @GetMapping(value = "conf")
+  public ResponseEntity<NetworkConfiguration> getConfig(HttpServletRequest request) {
+    log.info("Network configuration requested by " + request.getRemoteAddr());
+    return new ResponseEntity<>(operatorServiceFacade.getNetworkConfiguration(), HttpStatus.OK);
   }
 }

@@ -21,9 +21,12 @@
 package uk.ac.uws.danielszabo.hashnet.operator.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.message.Message;
@@ -43,44 +46,17 @@ public class CertRESTController {
     this.operatorServiceFacade = operatorServiceFacade;
   }
 
-  @PostMapping(value = "request", consumes = "application/XML")
+
+  @PostMapping(value = "request")
   public void postRequest(
-      // used for debugging the request
-      // HttpServletRequest request,
-      @RequestBody Message message) {
+    @RequestBody Message message) {
 
     CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
     log.info("Received certificate signing request from " + certificateRequest.getNode().getId());
     operatorServiceFacade.saveCertificateRequest(certificateRequest);
-
-    //        this commented bit prints the entire request and the contents
-
-    //        System.out.println(request.getMethod());
-    //        request.
-    //        Enumeration<String> headerNames = request.getHeaderNames();
-    //        while(headerNames.hasMoreElements()) {
-    //            String headerName = headerNames.nextElement();
-    //            System.out.println("Header Name - " + headerName + ", Value - " +
-    // request.getHeader(headerName));
-    //        }
-    //        Enumeration<String> params = request.getParameterNames();
-    //        while(params.hasMoreElements()){
-    //            String paramName = params.nextElement();
-    //            System.out.println("Parameter Name - "+paramName+", Value -
-    // "+request.getParameter(paramName));
-    //        }
-    //        try {
-    //            Marshaller marshaller =
-    // JAXBContext.newInstance(CertificateRequest.class).createMarshaller();
-    //            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-    //            marshaller.marshal(certificateRequest, System.out);
-    //        } catch (JAXBException e) {
-    //            e.printStackTrace();
-    //        }
-
   }
 
-  @PostMapping(value = "verify", consumes = "application/XML")
+  @PostMapping(value = "verify")
   public ResponseEntity getVerification(@RequestBody Message message, HttpServletRequest request) {
     if (operatorServiceFacade.verifyCertificate(message.getCertificate())) {
       // retrieve certificate to be verified
@@ -89,19 +65,20 @@ public class CertRESTController {
       Node node = operatorServiceFacade.findKnownNodeById(nodeCertificate.getId()).orElse(null);
       boolean result;
       // the node is not found, so we did not issue this certificate. cannot verify that it is valid
-      if (node == null) result = false;
+      if (node == null)
+        result = false;
       else {
         // we found the node it was issued to, let's verify it
         nodeCertificate.setNode(node);
         result = operatorServiceFacade.verifyCertificate(nodeCertificate);
       }
       log.info(
-          "Received certificate verification request for certificate "
-              + message.getCertificate().getId()
-              + " from "
-              + request.getRemoteAddr()
-              + ": "
-              + (result ? "VALID" : "INVALID"));
+        "Received certificate verification request for certificate "
+          + message.getCertificate().getId()
+          + " from "
+          + request.getRemoteAddr()
+          + ": "
+          + (result ? "VALID" : "INVALID"));
 
       return new ResponseEntity<>(result, HttpStatus.OK);
     } else {

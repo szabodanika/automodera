@@ -33,4 +33,6 @@ public interface SubscriptionService {
   Subscription save(Subscription subscription);
 
   boolean remove(Subscription subscription);
+
+  boolean removeByArchiveId(String id);
 }

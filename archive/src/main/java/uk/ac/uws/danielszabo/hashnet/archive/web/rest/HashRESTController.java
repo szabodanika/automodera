@@ -22,12 +22,14 @@ package uk.ac.uws.danielszabo.hashnet.archive.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.uws.danielszabo.common.model.network.message.Message;
+import uk.ac.uws.danielszabo.common.model.network.node.Subscription;
 import uk.ac.uws.danielszabo.hashnet.archive.service.ArchiveServiceFacade;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,12 +45,26 @@ public class HashRESTController {
     this.archiveServiceFacade = archiveServiceFacade;
   }
 
-  @PostMapping(value = "collections", produces = "application/xml")
+  @PostMapping(value = "collections", produces = MediaType.APPLICATION_XML_VALUE, consumes = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity postCollections(@RequestBody Message message, HttpServletRequest request) {
     if (archiveServiceFacade.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
+      log.info("Received collection listing request from " + message.getCertificate().getId());
       return new ResponseEntity<>(archiveServiceFacade.getHashCollectionReport(), HttpStatus.OK);
     } else {
       return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
   }
+
+  @PostMapping(value = "subscribe", produces = MediaType.APPLICATION_XML_VALUE, consumes = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity postSubscribe(@RequestBody Message message, HttpServletRequest request) {
+    if (archiveServiceFacade.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
+      Subscription subscription = (Subscription) message.getContent();
+      archiveServiceFacade.saveSubscription(subscription);
+      log.info("Received subscription request from " + message.getCertificate().getId() + " for topic " + subscription.getTopic().getId());
+      return new ResponseEntity<>(HttpStatus.OK);
+    } else {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+  }
+
 }

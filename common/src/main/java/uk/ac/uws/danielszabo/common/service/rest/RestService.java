@@ -21,6 +21,7 @@
 package uk.ac.uws.danielszabo.common.service.rest;
 
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
+import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
@@ -28,21 +29,27 @@ import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.model.network.node.NodeStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RestService {
 
-  NodeStatus requestStatus(String host);
+  NodeStatus requestStatus(String host) throws Exception;
 
-  Node getNodeByHost(String host);
+  Node getNodeByHost(String host) throws Exception;
 
   // void because certificate requests are not handled automatically
-  void sendCertificateRequest(String operator, CertificateRequest certificateRequest);
+  void sendCertificateRequest(String operator, CertificateRequest certificateRequest) throws Exception;
 
-  void sendProcessedCertificateRequest(CertificateRequest certificateRequest);
+  void sendProcessedCertificateRequest(CertificateRequest certificateRequest) throws Exception;
 
-  NetworkConfiguration sendNetworkConfigurationRequest(String origin);
+  NetworkConfiguration sendNetworkConfigurationRequest(String origin) throws Exception;
 
-  boolean requestCertificateVerification(NodeCertificate certificate);
+  boolean requestCertificateVerification(NodeCertificate certificate) throws Exception;
 
-  List<HashCollection> requestAllHashCollections(String host);
+  List<HashCollection> requestAllHashCollections(String host) throws Exception;
+
+  void sendSubscription(Node node, Node localNode, Topic topic) throws Exception;
+
+  List<String> requestAllArchiveAddresses(String host);
+
 }

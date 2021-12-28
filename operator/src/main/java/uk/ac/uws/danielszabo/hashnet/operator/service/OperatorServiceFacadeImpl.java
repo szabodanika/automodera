@@ -27,6 +27,7 @@ import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
+import uk.ac.uws.danielszabo.common.model.network.messages.ArchiveAddressesMessage;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.service.hashing.HashService;
 import uk.ac.uws.danielszabo.common.service.image.HashCollectionService;
@@ -37,6 +38,7 @@ import uk.ac.uws.danielszabo.common.service.network.SubscriptionService;
 import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -67,7 +69,7 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
 
   @Override
   public boolean handleCertificateRequest(
-      CertificateRequest certificateRequest, CertificateRequest.Status newStatus, String message) {
+      CertificateRequest certificateRequest, CertificateRequest.Status newStatus, String message) throws Exception {
     certificateRequest.setStatus(newStatus);
     if (newStatus == CertificateRequest.Status.ISSUED) {
       NodeCertificate cert = certificateRequest.getNode().getCertificate();
@@ -156,7 +158,7 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
   }
 
   @Override
-  public List<HashCollection> retrieveHashCollectionByArchive(Node node) {
+  public List<HashCollection> retrieveHashCollectionByArchive(Node node) throws Exception {
     return networkService.requestAllHashCollectionsByArchive(node);
   }
 
@@ -188,5 +190,10 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
   @Override
   public NetworkConfiguration getNetworkConfiguration() {
     return networkService.getNetworkConfiguration();
+  }
+
+  @Override
+  public ArchiveAddressesMessage getArchiveAddressesMessage() {
+    return new ArchiveAddressesMessage(networkService.getAllKnownNodes().stream().map(Node::getHost).collect(Collectors.toList()));
   }
 }

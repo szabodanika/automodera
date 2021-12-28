@@ -30,6 +30,7 @@ import java.util.Optional;
 @Repository
 public interface NetworkConfigurationRepository extends JpaRepository<NetworkConfiguration, Long> {
 
+  // this is a singleton type, so we only work with id 0
   @Query("SELECT n FROM NetworkConfiguration n WHERE n.id = 0")
   Optional<NetworkConfiguration> get();
 }

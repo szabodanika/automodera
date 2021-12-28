@@ -47,7 +47,9 @@ public class CommonNetworkRESTController {
     this.localNodeService = localNodeService;
   }
 
-  @PostMapping(value = "status", produces = MediaType.APPLICATION_XML_VALUE)
+  @PostMapping(value = "status",
+    produces = MediaType.APPLICATION_XML_VALUE,
+    consumes = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity postStatus(@RequestBody Message message, HttpServletRequest request) {
     if (networkService.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
       return new ResponseEntity<>(
@@ -57,7 +59,9 @@ public class CommonNetworkRESTController {
     }
   }
 
-  @PostMapping(value = "info", produces = MediaType.APPLICATION_XML_VALUE)
+  @PostMapping(value = "info",
+    produces = MediaType.APPLICATION_XML_VALUE,
+    consumes = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity postInfo(@RequestBody Message message, HttpServletRequest request) {
     if (networkService.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
       return new ResponseEntity<>(localNodeService.get(), HttpStatus.OK);

@@ -69,7 +69,11 @@ public abstract class BaseNodeCLI {
   // connect --origin origin.hashnet.test
   @ShellMethod("Connect to network by addressing origin node.")
   public void connect(String origin) {
-    networkService.getNetworkConfigurationFromOrigin(origin);
+    try {
+      networkService.getNetworkConfigurationFromOrigin(origin);
+    } catch (Exception e) {
+      log.error("Failed to connect to network with origin node " + origin + ": " + e.getMessage());
+    }
   }
 
   @ShellMethod("Load node configuration.")
@@ -181,10 +185,14 @@ public abstract class BaseNodeCLI {
 
       // TODO instead of always using the origin, we should find the closest operator from the list
       String operator = networkService.getNetworkConfiguration().getOrigin();
-      if (networkService.certificateRequest(operator, localNodeService.get()) != null) {
-        log.info("Sent certificate request to " + operator);
-      } else {
-        log.error("Failed to send certificate request to " + operator);
+      try {
+        if (networkService.certificateRequest(operator, localNodeService.get()) != null) {
+          log.info("Sent certificate request to " + operator);
+        } else {
+          log.error("Failed to send certificate request to " + operator);
+        }
+      } catch (Exception e) {
+        log.error("Failed to send certificate request to " + operator + ": " + e.getMessage());
       }
     } else {
       log.error("Please specify one of the following: --show, --request, --reissue");
@@ -209,13 +217,21 @@ public abstract class BaseNodeCLI {
       }
       // host is specified, we can send the request right away
       if (!host.isBlank()) {
-        log.info(networkService.getNodeStatus(host).toString());
+        try {
+          log.info(networkService.getNodeStatus(host).toString());
+        } catch (Exception e) {
+          log.error("Failed to retrieve node status from " + host + ": " + e.getMessage());
+        }
       } else if (!id.isBlank()) {
         // id is specified, we need to check if we know the host of this node yet
         // before we send a request
         Node node = networkService.findKnownNodeById(id).orElse(null);
         if (node != null) {
-          log.info(networkService.getNodeStatus(node.getHost()).toString());
+          try {
+            log.info(networkService.getNodeStatus(node.getHost()).toString());
+          } catch (Exception e) {
+            log.error("Failed to retrieve node status from " + host + ": " + e.getMessage());
+          }
         } else {
           log.error("Specified node is unknown: " + id);
         }
@@ -229,7 +245,11 @@ public abstract class BaseNodeCLI {
       }
       if (!host.isBlank()) {
         log.info("Requesting node info from " + host);
-        log.info(networkService.requestNodeInfo(host).toString());
+        try {
+          log.info(networkService.requestNodeInfo(host).toString());
+        } catch (Exception e) {
+          log.error("Failed to retrieve node info from " + host + ": " + e.getMessage());
+        }
         // host is specified, we can send the request right away
       } else if (!id.isBlank()) {
         // id is specified, we need to check if we know the host of this node yet
@@ -237,14 +257,22 @@ public abstract class BaseNodeCLI {
         Node node = networkService.findKnownNodeById(id).orElse(null);
         if (node != null) {
           log.info("Requesting node info from " + node.getHost());
-          log.info(networkService.requestNodeInfo(node.getHost()).toString());
+          try {
+            log.info(networkService.requestNodeInfo(node.getHost()).toString());
+          } catch (Exception e) {
+            log.error("Failed to retrieve node info from " +  node.getHost() + ": " + e.getMessage());
+          }
         } else {
           log.error("Specified node is unknown: " + id);
         }
       }
     } else if (all) {
       for (Node n : networkService.getAllKnownNodes()) {
-        log.info(networkService.getNodeStatus(n.getHost()).toString());
+        try {
+          log.info(n.getId() + " - " + n.getHost() + " : " + networkService.getNodeStatus(n.getHost()).toString());
+        } catch (Exception e) {
+          log.error("Failed to retrieve node status from " + n.getHost() + ": " + e.getMessage());
+        }
       }
     } else {
       log.error("Please specify one of the following: --status, --info");

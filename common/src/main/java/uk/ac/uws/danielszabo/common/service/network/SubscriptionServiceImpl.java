@@ -37,16 +37,21 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
   @Override
   public List<Subscription> getSubscriptions() {
-    throw new UnsupportedOperationException();
+   return subscriptionRepository.findAll();
   }
 
   @Override
   public Subscription save(Subscription subscription) {
-    throw new UnsupportedOperationException();
+    return subscriptionRepository.save(subscription);
   }
 
   @Override
   public boolean remove(Subscription subscription) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean removeByArchiveId(String id) {
     throw new UnsupportedOperationException();
   }
 }
