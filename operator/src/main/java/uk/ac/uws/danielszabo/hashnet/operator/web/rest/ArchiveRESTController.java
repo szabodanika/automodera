@@ -22,18 +22,14 @@ package uk.ac.uws.danielszabo.hashnet.operator.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.message.Message;
-import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.hashnet.operator.service.OperatorServiceFacade;
 
-import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @RestController
@@ -49,7 +45,8 @@ public class ArchiveRESTController {
   @PostMapping(value = "list")
   public ResponseEntity getVerification(@RequestBody Message message) {
     if (operatorServiceFacade.verifyCertificate(message.getCertificate())) {
-      return new ResponseEntity<>(operatorServiceFacade.getArchiveAddressesMessage(), HttpStatus.OK);
+      return new ResponseEntity<>(
+          operatorServiceFacade.getArchiveAddressesMessage(), HttpStatus.OK);
     } else {
       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }

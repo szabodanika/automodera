@@ -22,7 +22,6 @@ package uk.ac.uws.danielszabo.hashnet.integrator.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,11 +43,12 @@ public class CertRESTController {
     this.integratorServiceFacade = integratorServiceFacade;
   }
 
-  @PostMapping(
-      value = "processedrequest")
+  @PostMapping(value = "processedrequest")
   public ResponseEntity postRequest(@RequestBody Message message) {
     CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
-    if (integratorServiceFacade.findCertificateRequestById(certificateRequest.getId()).isPresent()) {
+    if (integratorServiceFacade
+        .findCertificateRequestById(certificateRequest.getId())
+        .isPresent()) {
       NodeCertificate certificate = certificateRequest.getNode().getCertificate();
       log.info("Received processed certificate from " + message.getCertificate().getId());
       integratorServiceFacade.saveCertificate(certificate);

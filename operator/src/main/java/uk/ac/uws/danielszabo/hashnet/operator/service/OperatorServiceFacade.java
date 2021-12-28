@@ -34,7 +34,8 @@ import java.util.Optional;
 public interface OperatorServiceFacade {
 
   boolean handleCertificateRequest(
-      CertificateRequest certificateRequest, CertificateRequest.Status newStatus, String message) throws Exception;
+      CertificateRequest certificateRequest, CertificateRequest.Status newStatus, String message)
+      throws Exception;
 
   boolean reissueCertificateForNode(Node node);
 

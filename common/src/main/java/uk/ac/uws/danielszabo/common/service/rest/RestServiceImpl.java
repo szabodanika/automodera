@@ -20,7 +20,6 @@
 
 package uk.ac.uws.danielszabo.common.service.rest;
 
-import jline.internal.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -28,7 +27,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
 import uk.ac.uws.danielszabo.common.model.hash.Topic;
@@ -49,7 +47,6 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-
 
 @Slf4j
 @Service
@@ -89,30 +86,31 @@ public class RestServiceImpl implements RestService {
 
   // void because certificate requests are not handled automatically
   @Override
-  public void sendCertificateRequest(String operator, CertificateRequest certificateRequest) throws Exception {
+  public void sendCertificateRequest(String operator, CertificateRequest certificateRequest)
+      throws Exception {
     postAsXML(operator, "/cert/request", certificateRequest);
   }
 
   @Override
-  public void sendProcessedCertificateRequest(CertificateRequest certificateRequest) throws Exception {
+  public void sendProcessedCertificateRequest(CertificateRequest certificateRequest)
+      throws Exception {
     postAsXML(certificateRequest.getNode().getHost(), "/cert/processedrequest", certificateRequest);
   }
 
   @Override
   public NetworkConfiguration sendNetworkConfigurationRequest(String origin) throws Exception {
     NetworkConfiguration networkConfiguration =
-      getObject(origin, "/net/conf", NetworkConfiguration.class);
+        getObject(origin, "/net/conf", NetworkConfiguration.class);
     return networkConfiguration;
   }
 
   @Override
   public boolean requestCertificateVerification(NodeCertificate certificate) throws Exception {
     ResponseEntity response =
-      postAsXML(certificate.getIssuer().getHost(), "/cert/verify", certificate, Boolean.class);
+        postAsXML(certificate.getIssuer().getHost(), "/cert/verify", certificate, Boolean.class);
     if (response != null) {
       return (boolean) response.getBody();
-    } else
-      return false;
+    } else return false;
   }
 
   @Override
@@ -120,8 +118,7 @@ public class RestServiceImpl implements RestService {
     ResponseEntity response = postAsXML(host, "/hash/collections", HashCollectionsMessage.class);
     if (response != null) {
       return ((HashCollectionsMessage) response.getBody()).getHashCollectionList();
-    } else
-      return null;
+    } else return null;
   }
 
   @Override
@@ -139,15 +136,15 @@ public class RestServiceImpl implements RestService {
     }
     if (response != null) {
       return ((ArchiveAddressesMessage) response.getBody()).getArchiveAddresses();
-    } else
-      return null;
+    } else return null;
   }
 
   private <T> ResponseEntity<T> postAsXML(String host, String path) throws Exception {
     return postAsXML(host, path, null, Object.class);
   }
 
-  private <T> ResponseEntity<T> postAsXML(String host, String path, Class responseType) throws Exception {
+  private <T> ResponseEntity<T> postAsXML(String host, String path, Class responseType)
+      throws Exception {
     return postAsXML(host, path, null, responseType);
   }
 
@@ -155,7 +152,8 @@ public class RestServiceImpl implements RestService {
     return postAsXML(host, path, object, Object.class);
   }
 
-  private <T> ResponseEntity<T> postAsXML(String host, String path, T object, Class responseType) throws Exception {
+  private <T> ResponseEntity<T> postAsXML(String host, String path, T object, Class responseType)
+      throws Exception {
     URI requestURI = null;
 
     try {
@@ -180,7 +178,6 @@ public class RestServiceImpl implements RestService {
     HttpEntity<String> request = new HttpEntity<>(sw.toString(), headers);
 
     return (ResponseEntity<T>) this.restTemplate.postForEntity(requestURI, request, responseType);
-
   }
 
   private <T> T getObject(String host, String path, Class c) throws Exception {

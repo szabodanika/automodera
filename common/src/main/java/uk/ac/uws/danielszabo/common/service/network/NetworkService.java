@@ -65,11 +65,9 @@ public interface NetworkService {
 
   List<Node> getAllArchives();
 
-
   // HashCollections, Topics, Images
 
   Optional<Topic> getTopicById(String id) throws Exception;
-
 
   // Certificate Requests
 
@@ -94,5 +92,4 @@ public interface NetworkService {
   List<HashCollection> requestAllHashCollectionsByArchive(Node node) throws Exception;
 
   void sendSubscription(Node node, Topic topic);
-
 }

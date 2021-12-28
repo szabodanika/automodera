@@ -260,7 +260,8 @@ public abstract class BaseNodeCLI {
           try {
             log.info(networkService.requestNodeInfo(node.getHost()).toString());
           } catch (Exception e) {
-            log.error("Failed to retrieve node info from " +  node.getHost() + ": " + e.getMessage());
+            log.error(
+                "Failed to retrieve node info from " + node.getHost() + ": " + e.getMessage());
           }
         } else {
           log.error("Specified node is unknown: " + id);
@@ -269,7 +270,12 @@ public abstract class BaseNodeCLI {
     } else if (all) {
       for (Node n : networkService.getAllKnownNodes()) {
         try {
-          log.info(n.getId() + " - " + n.getHost() + " : " + networkService.getNodeStatus(n.getHost()).toString());
+          log.info(
+              n.getId()
+                  + " - "
+                  + n.getHost()
+                  + " : "
+                  + networkService.getNodeStatus(n.getHost()).toString());
         } catch (Exception e) {
           log.error("Failed to retrieve node status from " + n.getHost() + ": " + e.getMessage());
         }

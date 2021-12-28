@@ -52,11 +52,11 @@ public class IntegratorCLI extends BaseNodeCLI {
   private final IntegratorServiceFacade integratorServiceFacade;
 
   public IntegratorCLI(
-    LocalNodeService localNodeService,
-    NetworkService networkService,
-    IntegratorServiceFacade integratorServiceFacade,
-    SubscriptionService subscriptionService,
-    TopicService topicService) {
+      LocalNodeService localNodeService,
+      NetworkService networkService,
+      IntegratorServiceFacade integratorServiceFacade,
+      SubscriptionService subscriptionService,
+      TopicService topicService) {
     super(localNodeService, networkService, topicService);
     this.integratorServiceFacade = integratorServiceFacade;
   }
@@ -64,10 +64,10 @@ public class IntegratorCLI extends BaseNodeCLI {
   // for example:
   @ShellMethod("Manage Subscriptions")
   public void subs(
-    @ShellOption(defaultValue = "false") boolean list,
-    @ShellOption(defaultValue = "false") boolean add,
-    @ShellOption(defaultValue = "false") boolean remove,
-    @ShellOption(defaultValue = "") String topic) {
+      @ShellOption(defaultValue = "false") boolean list,
+      @ShellOption(defaultValue = "false") boolean add,
+      @ShellOption(defaultValue = "false") boolean remove,
+      @ShellOption(defaultValue = "") String topic) {
 
     if (list) {
       log.info("Subscriptions");
@@ -98,23 +98,23 @@ public class IntegratorCLI extends BaseNodeCLI {
         log.error("Please specify non-empty topic ID");
       }
     }
-//    else if (remove) {
-//      if (!id.isBlank()) {
-//        if (integratorServiceFacade.removeSubscriptionByArchiveId(id)) {
-//          log.info("Successfully unsubscribed from ");
-//        }
-//
-//      } else if (!host.isBlank()) {
-//        Optional<Node> optionalArchive = integratorServiceFacade.retrieveNodeByHost(host);
-//        if (optionalArchive.isPresent()) {
-//          integratorServiceFacade.addSubscription(optionalArchive.get());
-//        } else {
-//          log.error("Failed to reach node " + host);
-//        }
-//      } else {
-//        log.error("Please specify non-empty id or host");
-//      }
-//    }
+    //    else if (remove) {
+    //      if (!id.isBlank()) {
+    //        if (integratorServiceFacade.removeSubscriptionByArchiveId(id)) {
+    //          log.info("Successfully unsubscribed from ");
+    //        }
+    //
+    //      } else if (!host.isBlank()) {
+    //        Optional<Node> optionalArchive = integratorServiceFacade.retrieveNodeByHost(host);
+    //        if (optionalArchive.isPresent()) {
+    //          integratorServiceFacade.addSubscription(optionalArchive.get());
+    //        } else {
+    //          log.error("Failed to reach node " + host);
+    //        }
+    //      } else {
+    //        log.error("Please specify non-empty id or host");
+    //      }
+    //    }
   }
 
   @ShellMethod("Manage Hash Collections")

@@ -43,19 +43,13 @@ public class Subscription {
   @XmlTransient
   private Long id;
 
-
   // one subscription object for each topic even between the same publisher and subscriber nodes
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "topic_id")
-  @NonNull private Topic topic;
-
-  @ManyToOne
-  @XmlIDREF
   @NonNull
-  private Node publisher;
+  private Topic topic;
 
-  @ManyToOne
-  @XmlIDREF
-  @NonNull
-  private Node subscriber;
+  @ManyToOne @XmlIDREF @NonNull private Node publisher;
+
+  @ManyToOne @XmlIDREF @NonNull private Node subscriber;
 }

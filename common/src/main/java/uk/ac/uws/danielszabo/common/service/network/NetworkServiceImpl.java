@@ -61,12 +61,12 @@ public class NetworkServiceImpl implements NetworkService {
   protected final LocalNodeRepository localNodeRepository;
 
   public NetworkServiceImpl(
-    ApplicationEventPublisher applicationEventPublisher,
-    NetworkConfigurationRepository networkConfigurationRepository,
-    RestService restService,
-    CertificateRequestRepository certificateRequestRepository,
-    NodeRepository nodeRepository,
-    LocalNodeRepository localNodeRepository) {
+      ApplicationEventPublisher applicationEventPublisher,
+      NetworkConfigurationRepository networkConfigurationRepository,
+      RestService restService,
+      CertificateRequestRepository certificateRequestRepository,
+      NodeRepository nodeRepository,
+      LocalNodeRepository localNodeRepository) {
     this.applicationEventPublisher = applicationEventPublisher;
     this.networkConfigurationRepository = networkConfigurationRepository;
     this.restService = restService;
@@ -87,7 +87,7 @@ public class NetworkServiceImpl implements NetworkService {
       return null;
     } else {
       NetworkConfigurationUpdatedEvent event =
-        new NetworkConfigurationUpdatedEvent(this, networkConfiguration);
+          new NetworkConfigurationUpdatedEvent(this, networkConfiguration);
       applicationEventPublisher.publishEvent(event);
       return networkConfigurationRepository.save(networkConfiguration);
     }
@@ -109,46 +109,46 @@ public class NetworkServiceImpl implements NetworkService {
           // it will be OK as long as it comes from the correct address
           return true;
         } else if (localNodeRepository
-          // this certificate was issued by the local node
-          .get()
-          .get()
-          .getLocal()
-          .getId()
-          .equals(certificate.getIssuer().getId())) {
+            // this certificate was issued by the local node
+            .get()
+            .get()
+            .getLocal()
+            .getId()
+            .equals(certificate.getIssuer().getId())) {
           boolean result =
-            localNodeRepository
-              .get()
-              .get()
-              .getLocal()
-              .getIssuedCertificates()
-              .contains(certificate);
+              localNodeRepository
+                  .get()
+                  .get()
+                  .getLocal()
+                  .getIssuedCertificates()
+                  .contains(certificate);
 
           log.info(
-            "Verifying certificate "
-              + certificate.getId()
-              + " locally: "
-              + (result ? "VALID" : "INVALID"));
+              "Verifying certificate "
+                  + certificate.getId()
+                  + " locally: "
+                  + (result ? "VALID" : "INVALID"));
           return result;
         } else {
           // this certificate was issued by someone else
           // so we ask the issuer to check it
           boolean result = restService.requestCertificateVerification(certificate);
           log.info(
-            "Verifying certificate "
-              + certificate.getId()
-              + " at "
-              + certificate.getIssuer().getHost()
-              + " "
-              + (result ? "VALID" : "INVALID"));
+              "Verifying certificate "
+                  + certificate.getId()
+                  + " at "
+                  + certificate.getIssuer().getHost()
+                  + " "
+                  + (result ? "VALID" : "INVALID"));
           return result;
         }
       } else {
         log.info(
-          "Verifying certificate "
-            + certificate.getId()
-            + " at "
-            + certificate.getIssuer().getHost()
-            + " INVALID (sent from incorrect address) ");
+            "Verifying certificate "
+                + certificate.getId()
+                + " at "
+                + certificate.getIssuer().getHost()
+                + " INVALID (sent from incorrect address) ");
         return false;
       }
     } catch (Exception e) {
@@ -160,8 +160,7 @@ public class NetworkServiceImpl implements NetworkService {
   @Override
   public Optional<NodeCertificate> findCertificateById(String id) {
     Node node = nodeRepository.findById(id).orElse(null);
-    if (node == null)
-      return Optional.empty();
+    if (node == null) return Optional.empty();
     return Optional.ofNullable(node.getCertificate());
   }
 
@@ -193,7 +192,8 @@ public class NetworkServiceImpl implements NetworkService {
   @Override
   public CertificateRequest certificateRequest(String origin, Node localNode) throws Exception {
     if (certificateRequestRepository.findAll().isEmpty()) {
-      CertificateRequest certReq = new CertificateRequest(localNode.getId() + "-" + new Random().nextInt(), localNode);
+      CertificateRequest certReq =
+          new CertificateRequest(localNode.getId() + "-" + new Random().nextInt(), localNode);
       restService.sendCertificateRequest(origin, certReq);
       certificateRequestRepository.save(certReq);
       return certReq;
@@ -248,7 +248,7 @@ public class NetworkServiceImpl implements NetworkService {
       log.info("\t- " + n.getId());
       // for each hash collection
       for (HashCollection hashCollection : this.requestAllHashCollectionsByArchive(n)) {
-        //setting archive manually, but later this should be set by jpa automatically
+        // setting archive manually, but later this should be set by jpa automatically
         hashCollection.setArchive(n);
         // for each topic
         for (Topic t : hashCollection.getTopicList()) {
@@ -261,7 +261,8 @@ public class NetworkServiceImpl implements NetworkService {
             // otherwise just add this hash collection to that topic
             // we need ot initialise the hashcollection list but hopefully
             // this will be done automatically later by jpa
-            if(topic.getHashCollectionList() == null) topic.setHashCollectionList(new ArrayList<>());
+            if (topic.getHashCollectionList() == null)
+              topic.setHashCollectionList(new ArrayList<>());
             topic.getHashCollectionList().add(hashCollection);
           }
         }
@@ -314,7 +315,8 @@ public class NetworkServiceImpl implements NetworkService {
   }
 
   @Override
-  public void sendProcessedCertificateRequest(CertificateRequest certificateRequest) throws Exception {
+  public void sendProcessedCertificateRequest(CertificateRequest certificateRequest)
+      throws Exception {
     restService.sendProcessedCertificateRequest(certificateRequest);
   }
 
@@ -325,7 +327,8 @@ public class NetworkServiceImpl implements NetworkService {
 
   private List<String> getAllArchiveAddresses() {
     log.info("Requesting list of all archive addresses from origin");
-    return this.restService.requestAllArchiveAddresses(networkConfigurationRepository.get().get().getOrigin());
+    return this.restService.requestAllArchiveAddresses(
+        networkConfigurationRepository.get().get().getOrigin());
   }
 
   private void updateArchiveRepository() throws Exception {
@@ -333,5 +336,4 @@ public class NetworkServiceImpl implements NetworkService {
       nodeRepository.save(restService.getNodeByHost(host));
     }
   }
-
 }

@@ -29,7 +29,6 @@ import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.model.network.node.NodeStatus;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface RestService {
 
@@ -38,7 +37,8 @@ public interface RestService {
   Node getNodeByHost(String host) throws Exception;
 
   // void because certificate requests are not handled automatically
-  void sendCertificateRequest(String operator, CertificateRequest certificateRequest) throws Exception;
+  void sendCertificateRequest(String operator, CertificateRequest certificateRequest)
+      throws Exception;
 
   void sendProcessedCertificateRequest(CertificateRequest certificateRequest) throws Exception;
 
@@ -51,5 +51,4 @@ public interface RestService {
   void sendSubscription(Node node, Node localNode, Topic topic) throws Exception;
 
   List<String> requestAllArchiveAddresses(String host);
-
 }

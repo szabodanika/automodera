@@ -21,12 +21,9 @@
 package uk.ac.uws.danielszabo.hashnet.operator.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.message.Message;
@@ -46,10 +43,8 @@ public class CertRESTController {
     this.operatorServiceFacade = operatorServiceFacade;
   }
 
-
   @PostMapping(value = "request")
-  public void postRequest(
-    @RequestBody Message message) {
+  public void postRequest(@RequestBody Message message) {
 
     CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
     log.info("Received certificate signing request from " + certificateRequest.getNode().getId());
@@ -65,20 +60,19 @@ public class CertRESTController {
       Node node = operatorServiceFacade.findKnownNodeById(nodeCertificate.getId()).orElse(null);
       boolean result;
       // the node is not found, so we did not issue this certificate. cannot verify that it is valid
-      if (node == null)
-        result = false;
+      if (node == null) result = false;
       else {
         // we found the node it was issued to, let's verify it
         nodeCertificate.setNode(node);
         result = operatorServiceFacade.verifyCertificate(nodeCertificate);
       }
       log.info(
-        "Received certificate verification request for certificate "
-          + message.getCertificate().getId()
-          + " from "
-          + request.getRemoteAddr()
-          + ": "
-          + (result ? "VALID" : "INVALID"));
+          "Received certificate verification request for certificate "
+              + message.getCertificate().getId()
+              + " from "
+              + request.getRemoteAddr()
+              + ": "
+              + (result ? "VALID" : "INVALID"));
 
       return new ResponseEntity<>(result, HttpStatus.OK);
     } else {
