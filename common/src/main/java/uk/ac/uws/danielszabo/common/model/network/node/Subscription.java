@@ -21,6 +21,7 @@
 package uk.ac.uws.danielszabo.common.model.network.node;
 
 import lombok.*;
+import uk.ac.uws.danielszabo.common.model.hash.Topic;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -40,9 +41,21 @@ public class Subscription {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @XmlTransient
-  Long id;
+  private Long id;
 
-  @ManyToOne @XmlIDREF @NonNull private Node publisher;
 
-  @ManyToOne @XmlIDREF @NonNull private Node subscriber;
+  // one subscription object for each topic even between the same publisher and subscriber nodes
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "topic_id")
+  @NonNull private Topic topic;
+
+  @ManyToOne
+  @XmlIDREF
+  @NonNull
+  private Node publisher;
+
+  @ManyToOne
+  @XmlIDREF
+  @NonNull
+  private Node subscriber;
 }

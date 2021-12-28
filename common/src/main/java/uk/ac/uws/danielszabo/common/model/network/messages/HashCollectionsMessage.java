@@ -1,6 +1,8 @@
-package uk.ac.uws.danielszabo.common.model.hash;
+package uk.ac.uws.danielszabo.common.model.network.messages;
 
 import lombok.*;
+import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
+
 import javax.xml.bind.annotation.*;
 import java.util.List;
 
@@ -11,10 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HashCollectionsReport {
+public class HashCollectionsMessage {
 
   @XmlElementWrapper(name = "hashCollectionList")
   @XmlElement(name = "hashCollection")
   @NonNull
   private List<HashCollection> hashCollectionList;
+
 }

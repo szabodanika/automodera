@@ -18,33 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.hashnet.operator.service;
+package uk.ac.uws.danielszabo.hashnet.integrator.service;
 
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
+import uk.ac.uws.danielszabo.common.model.network.messages.HashCollectionsMessage;
 import uk.ac.uws.danielszabo.common.model.hash.Topic;
-import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
-import uk.ac.uws.danielszabo.common.model.network.messages.ArchiveAddressesMessage;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
+import uk.ac.uws.danielszabo.common.model.network.node.Subscription;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-public interface OperatorServiceFacade {
-
-  boolean handleCertificateRequest(
-      CertificateRequest certificateRequest, CertificateRequest.Status newStatus, String message) throws Exception;
-
-  boolean reissueCertificateForNode(Node node);
-
-  boolean revokeCertificateForNode(Node node);
+public interface IntegratorServiceFacade {
 
   boolean verifyCertificate(NodeCertificate certificate);
 
   CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest);
 
-  List<CertificateRequest> findAllCertificateRequests();
+  List<CertificateRequest> retrieveAllCertificateRequests();
 
   Optional<CertificateRequest> findCertificateRequestById(String id);
 
@@ -54,19 +48,44 @@ public interface OperatorServiceFacade {
 
   List<HashCollection> retrieveHashCollectionByTopic(Topic topic);
 
-  List<HashCollection> retrieveHashCollectionByArchive(Node topic) throws Exception;
+  List<HashCollection> retrieveHashCollectionByArchive(Node topic);
 
-  List<Node> findAllNodes();
+  List<Node> retrieveAllNodes();
 
-  Optional<Node> findKnownNodeById(String id);
+  Optional<Node> retrieveNodeById(String id);
 
   Node saveNode(Node node);
 
   void deleteNode(Node node);
 
-  void saveNetworkConfiguration(NetworkConfiguration networkConfiguration);
+  List<Subscription> getSubscriptions();
 
-  NetworkConfiguration getNetworkConfiguration();
+  void saveCertificate(NodeCertificate certificate);
 
-  ArchiveAddressesMessage getArchiveAddressesMessage();
+  HashCollection generateHashCollection(
+      String path,
+      String id,
+      String name,
+      String description,
+      List<Topic> topics,
+      boolean forceRecalc)
+      throws IOException;
+
+  Optional<Topic> findTopicById(String s) throws Exception;
+
+  List<HashCollection> findAllHashCollections();
+
+  Optional<HashCollection> findAllHashCollectionById(String id);
+
+  boolean checkCertificate(NodeCertificate certificate, String remoteAddr);
+
+  HashCollectionsMessage getHashCollectionReport();
+
+  Optional<Node> retrieveNodeByHost(String host) throws Exception;
+
+  boolean removeSubscriptionByArchiveId(String id);
+
+  void addSubscription(Topic topic);
+
+  List<Node> getAllArchives();
 }

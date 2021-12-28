@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package uk.ac.uws.danielszabo.hashnet.operator.web.rest;
+package uk.ac.uws.danielszabo.hashnet.integrator.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,30 +28,31 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.message.Message;
-import uk.ac.uws.danielszabo.common.model.network.node.Node;
-import uk.ac.uws.danielszabo.hashnet.operator.service.OperatorServiceFacade;
-
-import javax.servlet.http.HttpServletRequest;
+import uk.ac.uws.danielszabo.hashnet.integrator.service.IntegratorServiceFacade;
 
 @Slf4j
 @RestController
-@RequestMapping("arch")
-public class ArchiveRESTController {
+@RequestMapping("cert")
+public class CertRESTController {
 
-  private final OperatorServiceFacade operatorServiceFacade;
+  private final IntegratorServiceFacade integratorServiceFacade;
 
-  public ArchiveRESTController(OperatorServiceFacade operatorServiceFacade) {
-    this.operatorServiceFacade = operatorServiceFacade;
+  public CertRESTController(IntegratorServiceFacade integratorServiceFacade) {
+    this.integratorServiceFacade = integratorServiceFacade;
   }
 
-  @PostMapping(value = "list")
-  public ResponseEntity getVerification(@RequestBody Message message) {
-    if (operatorServiceFacade.verifyCertificate(message.getCertificate())) {
-      return new ResponseEntity<>(operatorServiceFacade.getArchiveAddressesMessage(), HttpStatus.OK);
-    } else {
-      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-    }
+  @PostMapping(
+      value = "processedrequest")
+  public ResponseEntity postRequest(@RequestBody Message message) {
+    CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
+    if (integratorServiceFacade.findCertificateRequestById(certificateRequest.getId()).isPresent()) {
+      NodeCertificate certificate = certificateRequest.getNode().getCertificate();
+      log.info("Received processed certificate from " + message.getCertificate().getId());
+      integratorServiceFacade.saveCertificate(certificate);
+      return new ResponseEntity(HttpStatus.OK);
+    } else return new ResponseEntity(HttpStatus.FORBIDDEN);
   }
 }

@@ -21,6 +21,7 @@
 package uk.ac.uws.danielszabo.common.service.network;
 
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
+import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
@@ -40,11 +41,11 @@ public interface NetworkService {
 
   Optional<CertificateRequest> findCertificateRequestById(String id);
 
-  void getNetworkConfigurationFromOrigin(String origin);
+  void getNetworkConfigurationFromOrigin(String origin) throws Exception;
 
   // Nodes
 
-  NodeStatus getNodeStatus(String address);
+  NodeStatus getNodeStatus(String address) throws Exception;
 
   List<Node> findAllNodes();
 
@@ -62,13 +63,21 @@ public interface NetworkService {
    */
   List<Node> getAllKnownNodes();
 
+  List<Node> getAllArchives();
+
+
+  // HashCollections, Topics, Images
+
+  Optional<Topic> getTopicById(String id) throws Exception;
+
+
   // Certificate Requests
 
   List<CertificateRequest> findAllCertificateRequests();
 
   CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest);
 
-  void sendProcessedCertificateRequest(CertificateRequest certificateRequest);
+  void sendProcessedCertificateRequest(CertificateRequest certificateRequest) throws Exception;
 
   // Certificates
 
@@ -78,9 +87,12 @@ public interface NetworkService {
 
   Optional<NodeCertificate> findCertificateById(String id);
 
-  CertificateRequest certificateRequest(String origin, Node localNode);
+  CertificateRequest certificateRequest(String origin, Node localNode) throws Exception;
 
-  Node requestNodeInfo(String host);
+  Node requestNodeInfo(String host) throws Exception;
 
-  List<HashCollection> requestAllHashCollectionsByArchive(Node node);
+  List<HashCollection> requestAllHashCollectionsByArchive(Node node) throws Exception;
+
+  void sendSubscription(Node node, Topic topic);
+
 }

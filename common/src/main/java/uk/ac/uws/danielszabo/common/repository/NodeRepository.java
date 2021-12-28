@@ -23,6 +23,12 @@ package uk.ac.uws.danielszabo.common.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
+import uk.ac.uws.danielszabo.common.model.network.node.NodeType;
+
+import java.util.List;
 
 @Repository
-public interface NodeRepository extends JpaRepository<Node, String> {}
+public interface NodeRepository extends JpaRepository<Node, String> {
+
+  List<Node> findAllByNodeType(NodeType nodeType);
+}

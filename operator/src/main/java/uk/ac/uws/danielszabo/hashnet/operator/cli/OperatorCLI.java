@@ -33,6 +33,8 @@ import uk.ac.uws.danielszabo.common.service.network.LocalNodeService;
 import uk.ac.uws.danielszabo.common.service.network.NetworkService;
 import uk.ac.uws.danielszabo.hashnet.operator.service.OperatorServiceFacade;
 
+import java.util.function.Supplier;
+
 @Slf4j
 @ShellComponent
 public class OperatorCLI extends BaseNodeCLI {
@@ -40,21 +42,21 @@ public class OperatorCLI extends BaseNodeCLI {
   private final OperatorServiceFacade operatorServiceFacade;
 
   public OperatorCLI(
-      LocalNodeService localNodeService,
-      NetworkService networkService,
-      OperatorServiceFacade operatorServiceFacade,
-      TopicService topicService) {
+    LocalNodeService localNodeService,
+    NetworkService networkService,
+    OperatorServiceFacade operatorServiceFacade,
+    TopicService topicService) {
     super(localNodeService, networkService, topicService);
     this.operatorServiceFacade = operatorServiceFacade;
   }
 
   @ShellMethod("Manage certificate requests.")
   public void certreq(
-      @ShellOption(defaultValue = "false") boolean list,
-      @ShellOption(defaultValue = "false") boolean accept,
-      @ShellOption(defaultValue = "false") boolean reject,
-      @ShellOption(defaultValue = "null") String id,
-      @ShellOption(defaultValue = "null") String message) {
+    @ShellOption(defaultValue = "false") boolean list,
+    @ShellOption(defaultValue = "false") boolean accept,
+    @ShellOption(defaultValue = "false") boolean reject,
+    @ShellOption(defaultValue = "null") String id,
+    @ShellOption(defaultValue = "null") String message) {
     if (list) {
       StringBuilder printMessage = new StringBuilder();
       for (CertificateRequest certReq : operatorServiceFacade.findAllCertificateRequests()) {
@@ -65,18 +67,26 @@ public class OperatorCLI extends BaseNodeCLI {
       if (id == null || message == null) {
         log.error("Please specify id and message: --id [id] --message [message]");
       }
-      CertificateRequest certificateRequest =
-          operatorServiceFacade.findCertificateRequestById(id).orElseThrow();
-      operatorServiceFacade.handleCertificateRequest(
+      try {
+        CertificateRequest certificateRequest =
+          operatorServiceFacade.findCertificateRequestById(id).orElseThrow((Supplier<Exception>) () -> new RuntimeException("Certificate Request " + id + " not found"));
+        operatorServiceFacade.handleCertificateRequest(
           certificateRequest, CertificateRequest.Status.ISSUED, message);
+      } catch (Exception e) {
+        log.error("Failed to handle certificate request: " + e.getMessage());
+      }
     } else if (reject) {
       if (id == null || message == null) {
         log.error("Please specify id and message: --id [id] --message [message]");
       }
       CertificateRequest certificateRequest =
-          operatorServiceFacade.findCertificateRequestById(id).orElseThrow();
-      operatorServiceFacade.handleCertificateRequest(
+        operatorServiceFacade.findCertificateRequestById(id).orElseThrow();
+      try {
+        operatorServiceFacade.handleCertificateRequest(
           certificateRequest, CertificateRequest.Status.REJECTED, message);
+      } catch (Exception e) {
+        log.error("Failed to handle certificate request: " + e.getMessage());
+      }
     } else {
       log.error("Please specify one of the following: --list, --accept, --reject");
     }
@@ -88,7 +98,7 @@ public class OperatorCLI extends BaseNodeCLI {
   public void netinit(String name, String environment, String version, String origin) {
 
     NetworkConfiguration networkConfiguration =
-        new NetworkConfiguration(name, environment, version, origin);
+      new NetworkConfiguration(name, environment, version, origin);
 
     operatorServiceFacade.saveNetworkConfiguration(networkConfiguration);
   }
@@ -97,7 +107,6 @@ public class OperatorCLI extends BaseNodeCLI {
   // hash --list --id testarchive1
   @ShellMethod("Initialise network configuration.")
   public void hash(@ShellOption(defaultValue = "false") boolean list, String id) {
-
     if (list) {
       if (id == null) {
         log.error("Please specify non-empty id");
@@ -106,7 +115,11 @@ public class OperatorCLI extends BaseNodeCLI {
 
       Node node = operatorServiceFacade.findKnownNodeById(id).orElse(null);
       if (node != null) {
-        log.info(operatorServiceFacade.retrieveHashCollectionByArchive(node).toString());
+        try {
+          log.info(operatorServiceFacade.retrieveHashCollectionByArchive(node).toString());
+        } catch (Exception e) {
+          log.error("Failed to retrieve hash collection from archive " + id + ": " + e.getMessage());
+        }
       } else {
         log.error("Specified node is unknown: " + id);
       }
