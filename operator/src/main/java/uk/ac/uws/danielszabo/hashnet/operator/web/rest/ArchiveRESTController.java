@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.ac.uws.danielszabo.common.model.network.message.Message;
 import uk.ac.uws.danielszabo.hashnet.operator.service.OperatorServiceFacade;
 
-
 @Slf4j
 @RestController
 @RequestMapping("arch")
