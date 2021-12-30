@@ -85,7 +85,7 @@ public interface IntegratorServiceFacade {
 
   boolean removeSubscriptionByArchiveId(String id);
 
-  void addSubscription(Topic topic);
+  void addSubscription(Topic topic) throws Exception;
 
   List<Node> getAllArchives();
 }

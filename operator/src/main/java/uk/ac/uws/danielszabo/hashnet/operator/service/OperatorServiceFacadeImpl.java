@@ -196,4 +196,9 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
   public ArchiveAddressesMessage getArchiveAddressesMessage() {
     return new ArchiveAddressesMessage(networkService.getAllKnownNodes().stream().map(Node::getHost).collect(Collectors.toList()));
   }
+
+  @Override
+  public Node getLocalNode() {
+    return localNodeService.get();
+  }
 }

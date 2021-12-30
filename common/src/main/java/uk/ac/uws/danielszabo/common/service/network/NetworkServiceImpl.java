@@ -153,6 +153,7 @@ public class NetworkServiceImpl implements NetworkService {
       }
     } catch (Exception e) {
       log.error("Failed to verify certificate " + certificate.getId() + " " + e);
+      e.printStackTrace();
       return false;
     }
   }
@@ -193,7 +194,7 @@ public class NetworkServiceImpl implements NetworkService {
   @Override
   public CertificateRequest certificateRequest(String origin, Node localNode) throws Exception {
     if (certificateRequestRepository.findAll().isEmpty()) {
-      CertificateRequest certReq = new CertificateRequest(localNode.getId() + "-" + new Random().nextInt(), localNode);
+      CertificateRequest certReq = new CertificateRequest(localNode.getId() + "-" + new Random().nextDouble()*Integer.MAX_VALUE, localNode);
       restService.sendCertificateRequest(origin, certReq);
       certificateRequestRepository.save(certReq);
       return certReq;
@@ -214,13 +215,8 @@ public class NetworkServiceImpl implements NetworkService {
   }
 
   @Override
-  public void sendSubscription(Node node, Topic topic) {
-    try {
+  public void sendSubscription(Node node, Topic topic) throws Exception{
       this.restService.sendSubscription(node, localNodeRepository.get().get().getLocal(), topic);
-    } catch (Exception e) {
-      log.error("Failed to send subscription to " + node.getId() + ": " + e.getMessage());
-      e.printStackTrace();
-    }
   }
 
   @Override

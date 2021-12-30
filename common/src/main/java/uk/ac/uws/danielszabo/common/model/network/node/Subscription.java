@@ -24,6 +24,7 @@ import lombok.*;
 import uk.ac.uws.danielszabo.common.model.hash.Topic;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import javax.xml.bind.annotation.*;
 
 @Getter
@@ -43,19 +44,28 @@ public class Subscription {
   @XmlTransient
   private Long id;
 
-
   // one subscription object for each topic even between the same publisher and subscriber nodes
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinColumn(name = "topic_id")
   @NonNull private Topic topic;
 
-  @ManyToOne
-  @XmlIDREF
-  @NonNull
+  @JoinColumn(name = "publisher_id", insertable = false, updatable = false)
+  @ManyToOne(targetEntity = Node.class, fetch = FetchType.EAGER)
+  @XmlTransient
+//  @Transient
   private Node publisher;
 
-  @ManyToOne
-  @XmlIDREF
+  @Column(name = "publisher_id")
   @NonNull
+  private String publisherId;
+
+  @JoinColumn(name = "subscriber_id", insertable = false, updatable = false)
+  @ManyToOne(targetEntity = Node.class, fetch = FetchType.EAGER)
+  @XmlTransient
+//  @Transient
   private Node subscriber;
+
+  @Column(name = "subscriber_id")
+  @NonNull
+  private String subscriberId;
 }

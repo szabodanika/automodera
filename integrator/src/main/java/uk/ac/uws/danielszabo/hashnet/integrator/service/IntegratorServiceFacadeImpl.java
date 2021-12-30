@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Transactional
 @Slf4j
 @Service
 public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
@@ -193,20 +192,28 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
   }
 
   @Override
-  public void addSubscription(Topic topic) {
-    topic = topicService.findById(topic.getId()).get();
+  public void addSubscription(Topic topic) throws Exception {
+    try {
+      topic = topicService.findById(topic.getId()).get();
+    } catch (Exception e) {
+    }
     // sending subscription to every archive that has hash collections in that topic
+
+    // LAST NOTE
+    // there are two identical hash collections here
+    // with two separate archive nodes... and one of them has no createdAt date, so this
+    // line gives nullpointer exception
     for (Node archive : topic.getHashCollectionList().stream().map(HashCollection::getArchive).distinct().collect(Collectors.toList())) {
-      Subscription subscription = new Subscription(topic, archive, localNodeService.get());
+      Subscription subscription = new Subscription(topic, archive.getId(), localNodeService.get().getId());
       // TODO later on wait for archive to accept subscription request maybe
-      this.subscriptionService.save(subscription);
       networkService.sendSubscription(archive, topic);
+      subscriptionService.save(subscription);
     }
   }
 
   @Override
   public List<Node> getAllArchives() {
-    return this.networkService.getAllArchives();
+    return networkService.getAllArchives();
   }
 
   @Override

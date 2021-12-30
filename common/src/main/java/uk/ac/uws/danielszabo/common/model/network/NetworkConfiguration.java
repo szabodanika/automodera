@@ -44,6 +44,8 @@ import java.util.List;
 @Entity
 public class NetworkConfiguration {
 
+  public static final String ENV_DEV = "dev", ENV_PROD = "prod";
+
   @Id private Long id = 0L;
 
   @NonNull @NotNull private String name;

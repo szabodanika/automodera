@@ -41,8 +41,10 @@ public class OperatorNetworkRESTController {
     this.operatorServiceFacade = operatorServiceFacade;
   }
 
-  @GetMapping(value = "conf")
-  public ResponseEntity<NetworkConfiguration> getConfig(HttpServletRequest request) {
+  @PostMapping(value = "conf",
+    consumes = MediaType.APPLICATION_XML_VALUE,
+    produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity<NetworkConfiguration> postConfigRequest(HttpServletRequest request) {
     log.info("Network configuration requested by " + request.getRemoteAddr());
     return new ResponseEntity<>(operatorServiceFacade.getNetworkConfiguration(), HttpStatus.OK);
   }

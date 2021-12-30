@@ -44,7 +44,9 @@ public class HashRESTController {
     this.integratorServiceFacade = integratorServiceFacade;
   }
 
-  @PostMapping(value = "collections")
+  @PostMapping(value = "collections",
+    consumes = MediaType.APPLICATION_XML_VALUE,
+    produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity postCollections(@RequestBody Message message, HttpServletRequest request) {
     if (integratorServiceFacade.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
       return new ResponseEntity<>(integratorServiceFacade.getHashCollectionReport(), HttpStatus.OK);

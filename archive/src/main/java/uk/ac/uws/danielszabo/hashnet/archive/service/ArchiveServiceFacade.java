@@ -52,7 +52,7 @@ public interface ArchiveServiceFacade {
 
   List<Node> retrieveAllNodes();
 
-  Optional<Node> retrieveNodeById(String id);
+  Optional<Node> findKnownNodeById(String id);
 
   Node saveNode(Node node);
 
@@ -82,4 +82,6 @@ public interface ArchiveServiceFacade {
   HashCollectionsMessage getHashCollectionReport();
 
   Subscription saveSubscription(Subscription subscription);
+
+  void storeNodeInfo(String subscriberId) throws Exception;
 }

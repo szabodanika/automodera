@@ -20,25 +20,25 @@
  *
  */
 
-package uk.ac.uws.danielszabo.common.model.hash;
+package uk.ac.uws.danielszabo.common.util;
 
-import java.sql.Date;
-import java.util.List;
+import org.springframework.context.annotation.Bean;
 
-public interface HashCollectionInfo {
-  String getId();
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
-  String getName();
+@Configuration
+public class HttpRequestLogger {
 
-  int getVersion();
+  @Bean
+  public CommonsRequestLoggingFilter logFilter() {
+    CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter();
+    filter.setIncludeQueryString(true);
+    filter.setIncludePayload(true);
+    filter.setMaxPayloadLength(10000);
+    filter.setIncludeHeaders(false);
+    filter.setAfterMessagePrefix("\nREQUEST DATA\n");
+    return filter;
+  }
 
-  Date getCreated();
-
-  Date getUpdated();
-
-  String getDescription();
-
-  boolean isEnabled();
-
-  List<Topic> getTopicList();
 }

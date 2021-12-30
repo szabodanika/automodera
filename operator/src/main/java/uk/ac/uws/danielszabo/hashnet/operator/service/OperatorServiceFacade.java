@@ -69,4 +69,6 @@ public interface OperatorServiceFacade {
   NetworkConfiguration getNetworkConfiguration();
 
   ArchiveAddressesMessage getArchiveAddressesMessage();
+
+  Node getLocalNode();
 }

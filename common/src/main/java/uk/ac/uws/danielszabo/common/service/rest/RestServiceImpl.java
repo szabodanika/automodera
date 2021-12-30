@@ -23,10 +23,7 @@ package uk.ac.uws.danielszabo.common.service.rest;
 import jline.internal.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -44,10 +41,12 @@ import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.model.network.node.Subscription;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -100,17 +99,20 @@ public class RestServiceImpl implements RestService {
 
   @Override
   public NetworkConfiguration sendNetworkConfigurationRequest(String origin) throws Exception {
-    NetworkConfiguration networkConfiguration =
-      getObject(origin, "/net/conf", NetworkConfiguration.class);
-    return networkConfiguration;
+    ResponseEntity response =
+      postAsXML(origin, "/net/conf", NetworkConfiguration.class);
+    if (response != null) {
+      return ((NetworkConfiguration) response.getBody());
+    } else
+      return null;
   }
 
   @Override
   public boolean requestCertificateVerification(NodeCertificate certificate) throws Exception {
     ResponseEntity response =
-      postAsXML(certificate.getIssuer().getHost(), "/cert/verify", certificate, Boolean.class);
+      postAsXML(certificate.getIssuer().getHost(), "/cert/verify", certificate, Message.class);
     if (response != null) {
-      return (boolean) response.getBody();
+      return ((Message) response.getBody()).getContent().equals("VALID");
     } else
       return false;
   }
@@ -126,7 +128,7 @@ public class RestServiceImpl implements RestService {
 
   @Override
   public void sendSubscription(Node node, Node localNode, Topic topic) throws Exception {
-    postAsXML(node.getHost(), "/hash/subscribe", new Subscription(topic, node, localNode));
+    postAsXML(node.getHost(), "/hash/subscribe", new Subscription(topic, node.getId(), localNode.getId()));
   }
 
   @Override
@@ -168,6 +170,7 @@ public class RestServiceImpl implements RestService {
     HttpHeaders headers = new HttpHeaders();
     // set `content-type` header
     headers.setContentType(MediaType.APPLICATION_XML);
+    headers.setAccept(List.of(new MediaType[]{MediaType.APPLICATION_XML}));
 
     // build the request
 
@@ -175,23 +178,21 @@ public class RestServiceImpl implements RestService {
     Marshaller marshallerObj = JAXBContext.newInstance(Message.class).createMarshaller();
     StringWriter sw = new StringWriter();
     marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-    marshallerObj.marshal(messageFactory.getMessage(object), sw);
+    try {
+      marshallerObj.marshal(messageFactory.getMessage(object), sw);
+    } catch (JAXBException jaxbException) {
+      if (jaxbException.toString().contains("known to this context")) {
+        log.error("Did you forget to add " + object.getClass().getName() + " to the @SeeAlso annotation on " + Message.class.getName() + "?");
+      }
+      jaxbException.printStackTrace();
+      return null;
+    }
 
     HttpEntity<String> request = new HttpEntity<>(sw.toString(), headers);
 
-    return (ResponseEntity<T>) this.restTemplate.postForEntity(requestURI, request, responseType);
+    return (ResponseEntity<T>) this.restTemplate.exchange(requestURI, HttpMethod.POST,  request, responseType);
 
   }
 
-  private <T> T getObject(String host, String path, Class c) throws Exception {
-
-    URI requestURI = null;
-    try {
-      requestURI = new URI(PROTOCOL, host, path, null);
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-      return null;
-    }
-    return (T) this.restTemplate.getForObject(requestURI, c);
-  }
 }
+
