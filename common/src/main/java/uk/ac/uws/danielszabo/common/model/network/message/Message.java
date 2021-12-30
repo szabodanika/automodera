@@ -52,7 +52,7 @@ public class Message {
   // can be null for requests with no parameters, in that case we just sent certificate
   private Object content;
 
-  public Message(Object content, NodeCertificate certificate){
+  public Message(Object content, NodeCertificate certificate) {
     this.timeStamp = new Date(new java.util.Date().getTime());
     this.certificate = certificate;
     this.content = content;

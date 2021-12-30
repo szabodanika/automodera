@@ -44,9 +44,10 @@ public class CertRESTController {
     this.archiveServiceFacade = archiveServiceFacade;
   }
 
-  @PostMapping(value = "processedrequest",
-    consumes = MediaType.APPLICATION_XML_VALUE,
-    produces = MediaType.APPLICATION_XML_VALUE)
+  @PostMapping(
+      value = "processedrequest",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity postRequest(@RequestBody Message message) {
     CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
     if (archiveServiceFacade.findCertificateRequestById(certificateRequest.getId()).isPresent()) {

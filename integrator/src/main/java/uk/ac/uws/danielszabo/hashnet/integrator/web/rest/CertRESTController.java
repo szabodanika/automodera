@@ -45,9 +45,9 @@ public class CertRESTController {
   }
 
   @PostMapping(
-    value = "processedrequest",
-    consumes = MediaType.APPLICATION_XML_VALUE,
-    produces = MediaType.APPLICATION_XML_VALUE)
+      value = "processedrequest",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity postRequest(@RequestBody Message message) {
     CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
     if (integratorServiceFacade
@@ -57,7 +57,6 @@ public class CertRESTController {
       log.info("Received processed certificate from " + message.getCertificate().getId());
       integratorServiceFacade.saveCertificate(certificate);
       return new ResponseEntity(HttpStatus.OK);
-    } else
-      return new ResponseEntity(HttpStatus.FORBIDDEN);
+    } else return new ResponseEntity(HttpStatus.FORBIDDEN);
   }
 }

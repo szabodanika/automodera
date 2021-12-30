@@ -40,5 +40,4 @@ public class HttpRequestLogger {
     filter.setAfterMessagePrefix("\nREQUEST DATA\n");
     return filter;
   }
-
 }

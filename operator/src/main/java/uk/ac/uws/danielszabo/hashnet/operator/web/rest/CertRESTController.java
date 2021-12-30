@@ -21,14 +21,10 @@
 package uk.ac.uws.danielszabo.hashnet.operator.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.filter.CommonsRequestLoggingFilter;
-import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.message.Message;
@@ -48,19 +44,20 @@ public class CertRESTController {
     this.operatorServiceFacade = operatorServiceFacade;
   }
 
-  @PostMapping(value = "request",
-    consumes = MediaType.APPLICATION_XML_VALUE,
-    produces = MediaType.APPLICATION_XML_VALUE)
-  public void postRequest(
-    @RequestBody Message message) {
+  @PostMapping(
+      value = "request",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
+  public void postRequest(@RequestBody Message message) {
     CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
     log.info("Received certificate signing request from " + certificateRequest.getNode().getId());
     operatorServiceFacade.saveCertificateRequest(certificateRequest);
   }
 
-  @PostMapping(value = "verify",
-    consumes = MediaType.APPLICATION_XML_VALUE,
-    produces = MediaType.APPLICATION_XML_VALUE)
+  @PostMapping(
+      value = "verify",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity getVerification(@RequestBody Message message, HttpServletRequest request) {
     if (operatorServiceFacade.verifyCertificate(message.getCertificate())) {
       // retrieve certificate to be verified
@@ -83,10 +80,12 @@ public class CertRESTController {
               + ": "
               + (result ? "VALID" : "INVALID"));
 
-      return new ResponseEntity<>(new Message(result ? "VALID" : "INVALID", operatorServiceFacade.getLocalNode().getCertificate()), HttpStatus.OK);
+      return new ResponseEntity<>(
+          new Message(
+              result ? "VALID" : "INVALID", operatorServiceFacade.getLocalNode().getCertificate()),
+          HttpStatus.OK);
     } else {
       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
   }
-
 }

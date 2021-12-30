@@ -35,7 +35,6 @@ import uk.ac.uws.danielszabo.common.service.network.*;
 import uk.ac.uws.danielszabo.common.service.rest.RestServiceImpl;
 import uk.ac.uws.danielszabo.hashnet.integrator.service.IntegratorServiceFacade;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 

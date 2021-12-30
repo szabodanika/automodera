@@ -44,7 +44,6 @@ import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -98,23 +97,19 @@ public class RestServiceImpl implements RestService {
 
   @Override
   public NetworkConfiguration sendNetworkConfigurationRequest(String origin) throws Exception {
-    ResponseEntity response =
-      postAsXML(origin, "/net/conf", NetworkConfiguration.class);
+    ResponseEntity response = postAsXML(origin, "/net/conf", NetworkConfiguration.class);
     if (response != null) {
       return ((NetworkConfiguration) response.getBody());
-    } else
-      return null;
+    } else return null;
   }
 
   @Override
   public boolean requestCertificateVerification(NodeCertificate certificate) throws Exception {
     ResponseEntity response =
-
-      postAsXML(certificate.getIssuer().getHost(), "/cert/verify", certificate, Message.class);
+        postAsXML(certificate.getIssuer().getHost(), "/cert/verify", certificate, Message.class);
     if (response != null) {
       return ((Message) response.getBody()).getContent().equals("VALID");
-    } else
-      return false;
+    } else return false;
   }
 
   @Override
@@ -127,7 +122,10 @@ public class RestServiceImpl implements RestService {
 
   @Override
   public void sendSubscription(Node node, Node localNode, Topic topic) throws Exception {
-    postAsXML(node.getHost(), "/hash/subscribe", new Subscription(topic, node.getId(), localNode.getId()));
+    postAsXML(
+        node.getHost(),
+        "/hash/subscribe",
+        new Subscription(topic, node.getId(), localNode.getId()));
   }
 
   @Override
@@ -170,7 +168,7 @@ public class RestServiceImpl implements RestService {
     HttpHeaders headers = new HttpHeaders();
     // set `content-type` header
     headers.setContentType(MediaType.APPLICATION_XML);
-    headers.setAccept(List.of(new MediaType[]{MediaType.APPLICATION_XML}));
+    headers.setAccept(List.of(new MediaType[] {MediaType.APPLICATION_XML}));
 
     // build the request
 
@@ -182,7 +180,12 @@ public class RestServiceImpl implements RestService {
       marshallerObj.marshal(messageFactory.getMessage(object), sw);
     } catch (JAXBException jaxbException) {
       if (jaxbException.toString().contains("known to this context")) {
-        log.error("Did you forget to add " + object.getClass().getName() + " to the @SeeAlso annotation on " + Message.class.getName() + "?");
+        log.error(
+            "Did you forget to add "
+                + object.getClass().getName()
+                + " to the @SeeAlso annotation on "
+                + Message.class.getName()
+                + "?");
       }
       jaxbException.printStackTrace();
       return null;
@@ -190,8 +193,7 @@ public class RestServiceImpl implements RestService {
 
     HttpEntity<String> request = new HttpEntity<>(sw.toString(), headers);
 
-    return (ResponseEntity<T>) this.restTemplate.exchange(requestURI, HttpMethod.POST,  request, responseType);
+    return (ResponseEntity<T>)
+        this.restTemplate.exchange(requestURI, HttpMethod.POST, request, responseType);
   }
-
 }
-

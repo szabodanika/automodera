@@ -36,7 +36,6 @@ import uk.ac.uws.danielszabo.common.service.network.LocalNodeService;
 import uk.ac.uws.danielszabo.common.service.network.NetworkService;
 import uk.ac.uws.danielszabo.common.service.network.SubscriptionService;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -196,8 +195,13 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
     } catch (Exception e) {
     }
     // sending subscription to every archive that has hash collections in that topic
-    for (Node archive : topic.getHashCollectionList().stream().map(HashCollection::getArchive).distinct().collect(Collectors.toList())) {
-      Subscription subscription = new Subscription(topic, archive.getId(), localNodeService.get().getId());
+    for (Node archive :
+        topic.getHashCollectionList().stream()
+            .map(HashCollection::getArchive)
+            .distinct()
+            .collect(Collectors.toList())) {
+      Subscription subscription =
+          new Subscription(topic, archive.getId(), localNodeService.get().getId());
       // TODO later on wait for archive to accept subscription request maybe
       networkService.sendSubscription(archive, topic);
       subscriptionService.save(subscription);

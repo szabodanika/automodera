@@ -42,9 +42,10 @@ public class ArchiveRESTController {
     this.operatorServiceFacade = operatorServiceFacade;
   }
 
-  @PostMapping(value = "list",
-    consumes = MediaType.APPLICATION_XML_VALUE,
-    produces = MediaType.APPLICATION_XML_VALUE)
+  @PostMapping(
+      value = "list",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity getVerification(@RequestBody Message message) {
     if (operatorServiceFacade.verifyCertificate(message.getCertificate())) {
       return new ResponseEntity<>(
