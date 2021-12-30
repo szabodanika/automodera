@@ -22,7 +22,6 @@ package uk.ac.uws.danielszabo.hashnet.archive.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,7 +53,6 @@ public class CertRESTController {
       log.info("Received processed certificate from " + message.getCertificate().getId());
       archiveServiceFacade.saveCertificate(certificate);
       return new ResponseEntity(HttpStatus.OK);
-    } else
-      return new ResponseEntity(HttpStatus.FORBIDDEN);
+    } else return new ResponseEntity(HttpStatus.FORBIDDEN);
   }
 }

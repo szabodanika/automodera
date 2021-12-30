@@ -36,7 +36,5 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ArchiveAddressesMessage {
 
-  @NonNull
-  private List<String> ArchiveAddresses;
-
+  @NonNull private List<String> ArchiveAddresses;
 }

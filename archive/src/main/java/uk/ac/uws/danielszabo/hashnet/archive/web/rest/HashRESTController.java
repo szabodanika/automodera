@@ -77,5 +77,4 @@ public class HashRESTController {
       return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
   }
-
 }

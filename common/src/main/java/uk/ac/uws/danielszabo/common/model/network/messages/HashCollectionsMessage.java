@@ -41,5 +41,4 @@ public class HashCollectionsMessage {
   @XmlElement(name = "hashCollection")
   @NonNull
   private List<HashCollection> hashCollectionList;
-
 }

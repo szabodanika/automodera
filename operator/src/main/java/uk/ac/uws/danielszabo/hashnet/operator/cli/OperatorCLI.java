@@ -42,21 +42,21 @@ public class OperatorCLI extends BaseNodeCLI {
   private final OperatorServiceFacade operatorServiceFacade;
 
   public OperatorCLI(
-    LocalNodeService localNodeService,
-    NetworkService networkService,
-    OperatorServiceFacade operatorServiceFacade,
-    TopicService topicService) {
+      LocalNodeService localNodeService,
+      NetworkService networkService,
+      OperatorServiceFacade operatorServiceFacade,
+      TopicService topicService) {
     super(localNodeService, networkService, topicService);
     this.operatorServiceFacade = operatorServiceFacade;
   }
 
   @ShellMethod("Manage certificate requests.")
   public void certreq(
-    @ShellOption(defaultValue = "false") boolean list,
-    @ShellOption(defaultValue = "false") boolean accept,
-    @ShellOption(defaultValue = "false") boolean reject,
-    @ShellOption(defaultValue = "null") String id,
-    @ShellOption(defaultValue = "null") String message) {
+      @ShellOption(defaultValue = "false") boolean list,
+      @ShellOption(defaultValue = "false") boolean accept,
+      @ShellOption(defaultValue = "false") boolean reject,
+      @ShellOption(defaultValue = "null") String id,
+      @ShellOption(defaultValue = "null") String message) {
     if (list) {
       StringBuilder printMessage = new StringBuilder();
       for (CertificateRequest certReq : operatorServiceFacade.findAllCertificateRequests()) {
@@ -69,9 +69,13 @@ public class OperatorCLI extends BaseNodeCLI {
       }
       try {
         CertificateRequest certificateRequest =
-          operatorServiceFacade.findCertificateRequestById(id).orElseThrow((Supplier<Exception>) () -> new RuntimeException("Certificate Request " + id + " not found"));
+            operatorServiceFacade
+                .findCertificateRequestById(id)
+                .orElseThrow(
+                    (Supplier<Exception>)
+                        () -> new RuntimeException("Certificate Request " + id + " not found"));
         operatorServiceFacade.handleCertificateRequest(
-          certificateRequest, CertificateRequest.Status.ISSUED, message);
+            certificateRequest, CertificateRequest.Status.ISSUED, message);
       } catch (Exception e) {
         log.error("Failed to handle certificate request: " + e.getMessage());
       }
@@ -80,10 +84,10 @@ public class OperatorCLI extends BaseNodeCLI {
         log.error("Please specify id and message: --id [id] --message [message]");
       }
       CertificateRequest certificateRequest =
-        operatorServiceFacade.findCertificateRequestById(id).orElseThrow();
+          operatorServiceFacade.findCertificateRequestById(id).orElseThrow();
       try {
         operatorServiceFacade.handleCertificateRequest(
-          certificateRequest, CertificateRequest.Status.REJECTED, message);
+            certificateRequest, CertificateRequest.Status.REJECTED, message);
       } catch (Exception e) {
         log.error("Failed to handle certificate request: " + e.getMessage());
       }
@@ -98,7 +102,7 @@ public class OperatorCLI extends BaseNodeCLI {
   public void netinit(String name, String environment, String version, String origin) {
 
     NetworkConfiguration networkConfiguration =
-      new NetworkConfiguration(name, environment, version, origin);
+        new NetworkConfiguration(name, environment, version, origin);
 
     operatorServiceFacade.saveNetworkConfiguration(networkConfiguration);
   }
@@ -118,7 +122,8 @@ public class OperatorCLI extends BaseNodeCLI {
         try {
           log.info(operatorServiceFacade.retrieveHashCollectionByArchive(node).toString());
         } catch (Exception e) {
-          log.error("Failed to retrieve hash collection from archive " + id + ": " + e.getMessage());
+          log.error(
+              "Failed to retrieve hash collection from archive " + id + ": " + e.getMessage());
         }
       } else {
         log.error("Specified node is unknown: " + id);

@@ -69,7 +69,8 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
 
   @Override
   public boolean handleCertificateRequest(
-      CertificateRequest certificateRequest, CertificateRequest.Status newStatus, String message) throws Exception {
+      CertificateRequest certificateRequest, CertificateRequest.Status newStatus, String message)
+      throws Exception {
     certificateRequest.setStatus(newStatus);
     if (newStatus == CertificateRequest.Status.ISSUED) {
       NodeCertificate cert = certificateRequest.getNode().getCertificate();
@@ -194,7 +195,8 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
 
   @Override
   public ArchiveAddressesMessage getArchiveAddressesMessage() {
-    return new ArchiveAddressesMessage(networkService.getAllKnownNodes().stream().map(Node::getHost).collect(Collectors.toList()));
+    return new ArchiveAddressesMessage(
+        networkService.getAllKnownNodes().stream().map(Node::getHost).collect(Collectors.toList()));
   }
 
   @Override

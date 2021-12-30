@@ -59,12 +59,12 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
   private final TopicService topicService;
 
   public IntegratorServiceFacadeImpl(
-    HashService hashService,
-    LocalNodeService localNodeService,
-    NetworkService networkService,
-    SubscriptionService subscriptionService,
-    HashCollectionService hashCollectionService,
-    TopicService topicService) {
+      HashService hashService,
+      LocalNodeService localNodeService,
+      NetworkService networkService,
+      SubscriptionService subscriptionService,
+      HashCollectionService hashCollectionService,
+      TopicService topicService) {
     this.hashService = hashService;
     this.localNodeService = localNodeService;
     this.networkService = networkService;
@@ -149,26 +149,24 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
 
   @Override
   public HashCollection generateHashCollection(
-    String path,
-    String id,
-    String name,
-    String description,
-    List<Topic> topics,
-    boolean forceRecalc)
-    throws IOException {
+      String path,
+      String id,
+      String name,
+      String description,
+      List<Topic> topics,
+      boolean forceRecalc)
+      throws IOException {
     return hashCollectionService.generateHashCollection(
-      path, id, name, description, localNodeService.get(), topics, forceRecalc);
+        path, id, name, description, localNodeService.get(), topics, forceRecalc);
   }
 
   @Override
   public Optional<Topic> findTopicById(String id) throws Exception {
     // check if we have this locally already
     Optional<Topic> localOptionalTopic = topicService.findById(id);
-    if (localOptionalTopic.isPresent())
-      return localOptionalTopic;
-      // we don't ask try to retrieve it form the network
-    else
-      return networkService.getTopicById(id);
+    if (localOptionalTopic.isPresent()) return localOptionalTopic;
+    // we don't ask try to retrieve it form the network
+    else return networkService.getTopicById(id);
   }
 
   @Override
@@ -198,11 +196,6 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
     } catch (Exception e) {
     }
     // sending subscription to every archive that has hash collections in that topic
-
-    // LAST NOTE
-    // there are two identical hash collections here
-    // with two separate archive nodes... and one of them has no createdAt date, so this
-    // line gives nullpointer exception
     for (Node archive : topic.getHashCollectionList().stream().map(HashCollection::getArchive).distinct().collect(Collectors.toList())) {
       Subscription subscription = new Subscription(topic, archive.getId(), localNodeService.get().getId());
       // TODO later on wait for archive to accept subscription request maybe
@@ -225,5 +218,4 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
   public boolean removeSubscriptionByArchiveId(String id) {
     return this.subscriptionService.removeByArchiveId(id);
   }
-
 }
