@@ -22,6 +22,7 @@ package uk.ac.uws.danielszabo.hashnet.operator.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
@@ -40,8 +41,10 @@ public class OperatorNetworkRESTController {
     this.operatorServiceFacade = operatorServiceFacade;
   }
 
-  @GetMapping(value = "conf")
-  public ResponseEntity<NetworkConfiguration> getConfig(HttpServletRequest request) {
+  @PostMapping(value = "conf",
+    consumes = MediaType.APPLICATION_XML_VALUE,
+    produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity<NetworkConfiguration> postConfigRequest(HttpServletRequest request) {
     log.info("Network configuration requested by " + request.getRemoteAddr());
     return new ResponseEntity<>(operatorServiceFacade.getNetworkConfiguration(), HttpStatus.OK);
   }

@@ -91,5 +91,6 @@ public interface NetworkService {
 
   List<HashCollection> requestAllHashCollectionsByArchive(Node node) throws Exception;
 
-  void sendSubscription(Node node, Topic topic);
+  void sendSubscription(Node node, Topic topic) throws Exception;
+
 }

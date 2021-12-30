@@ -27,16 +27,14 @@ import java.text.SimpleDateFormat;
 
 public class SQLDateAdapter extends XmlAdapter<String, Date> {
 
-  private final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
   @Override
   public Date unmarshal(String xml) throws Exception {
-    Date date = new java.sql.Date(dateFormat.parse(xml).getTime());
+    Date date = new java.sql.Date(Long.parseLong(xml));
     return date;
   }
 
   @Override
   public String marshal(Date object) {
-    return dateFormat.format(object);
+    return String.valueOf(object.getTime());
   }
 }

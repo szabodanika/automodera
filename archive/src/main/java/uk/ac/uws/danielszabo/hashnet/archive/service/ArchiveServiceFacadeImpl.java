@@ -118,7 +118,7 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
   }
 
   @Override
-  public Optional<Node> retrieveNodeById(String id) {
+  public Optional<Node> findKnownNodeById(String id) {
     return networkService.findKnownNodeById(id);
   }
 
@@ -186,5 +186,10 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
   @Override
   public Subscription saveSubscription(Subscription subscription) {
     return subscriptionService.save(subscription);
+  }
+
+  @Override
+  public void storeNodeInfo(String host) throws Exception {
+    this.saveNode(networkService.requestNodeInfo(host));
   }
 }

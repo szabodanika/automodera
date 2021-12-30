@@ -45,10 +45,9 @@ public class HashRESTController {
     this.archiveServiceFacade = archiveServiceFacade;
   }
 
-  @PostMapping(
-      value = "collections",
-      produces = MediaType.APPLICATION_XML_VALUE,
-      consumes = MediaType.APPLICATION_XML_VALUE)
+  @PostMapping(value = "collections",
+    produces = MediaType.APPLICATION_XML_VALUE,
+    consumes = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity postCollections(@RequestBody Message message, HttpServletRequest request) {
     if (archiveServiceFacade.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
       log.info("Received collection listing request from " + message.getCertificate().getId());
@@ -58,19 +57,21 @@ public class HashRESTController {
     }
   }
 
-  @PostMapping(
-      value = "subscribe",
-      produces = MediaType.APPLICATION_XML_VALUE,
-      consumes = MediaType.APPLICATION_XML_VALUE)
+  @PostMapping(value = "subscribe",
+    produces = MediaType.APPLICATION_XML_VALUE,
+    consumes = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity postSubscribe(@RequestBody Message message, HttpServletRequest request) {
     if (archiveServiceFacade.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
       Subscription subscription = (Subscription) message.getContent();
-      archiveServiceFacade.saveSubscription(subscription);
-      log.info(
-          "Received subscription request from "
-              + message.getCertificate().getId()
-              + " for topic "
-              + subscription.getTopic().getId());
+      try {
+        archiveServiceFacade.storeNodeInfo(request.getRemoteAddr());
+        archiveServiceFacade.saveSubscription(subscription);
+      } catch (Exception e) {
+        log.error("Failed to store subscription");
+        e.printStackTrace();
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+      log.info("Received subscription request from " + message.getCertificate().getId() + " for topic " + subscription.getTopic().getId());
       return new ResponseEntity<>(HttpStatus.OK);
     } else {
       return new ResponseEntity<>(HttpStatus.FORBIDDEN);

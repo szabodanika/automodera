@@ -23,6 +23,7 @@ package uk.ac.uws.danielszabo.common.model.network.message;
 import lombok.*;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
+import uk.ac.uws.danielszabo.common.model.network.node.Subscription;
 import uk.ac.uws.danielszabo.common.util.SQLDateAdapter;
 
 import javax.xml.bind.annotation.*;
@@ -36,8 +37,8 @@ import java.sql.Date;
 @AllArgsConstructor
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-// must list all possible content types
-@XmlSeeAlso({Date.class, CertificateRequest.class})
+// must list all possible content types unfortunately
+@XmlSeeAlso({Date.class, CertificateRequest.class, Subscription.class})
 public class Message {
 
   @NonNull
@@ -50,4 +51,10 @@ public class Message {
   //  @XmlAnyElement
   // can be null for requests with no parameters, in that case we just sent certificate
   private Object content;
+
+  public Message(Object content, NodeCertificate certificate){
+    this.timeStamp = new Date(new java.util.Date().getTime());
+    this.certificate = certificate;
+    this.content = content;
+  }
 }

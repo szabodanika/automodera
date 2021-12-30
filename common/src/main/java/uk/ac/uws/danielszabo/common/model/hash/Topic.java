@@ -23,6 +23,7 @@ package uk.ac.uws.danielszabo.common.model.hash;
 import lombok.*;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.xml.bind.annotation.*;

@@ -22,6 +22,7 @@ package uk.ac.uws.danielszabo.hashnet.integrator.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,7 +44,9 @@ public class HashRESTController {
     this.integratorServiceFacade = integratorServiceFacade;
   }
 
-  @PostMapping(value = "collections")
+  @PostMapping(value = "collections",
+    consumes = MediaType.APPLICATION_XML_VALUE,
+    produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity postCollections(@RequestBody Message message, HttpServletRequest request) {
     if (integratorServiceFacade.checkCertificate(
         message.getCertificate(), request.getRemoteAddr())) {

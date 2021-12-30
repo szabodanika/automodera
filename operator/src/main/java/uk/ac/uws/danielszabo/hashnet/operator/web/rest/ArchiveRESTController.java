@@ -22,6 +22,7 @@ package uk.ac.uws.danielszabo.hashnet.operator.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,7 +42,9 @@ public class ArchiveRESTController {
     this.operatorServiceFacade = operatorServiceFacade;
   }
 
-  @PostMapping(value = "list")
+  @PostMapping(value = "list",
+    consumes = MediaType.APPLICATION_XML_VALUE,
+    produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity getVerification(@RequestBody Message message) {
     if (operatorServiceFacade.verifyCertificate(message.getCertificate())) {
       return new ResponseEntity<>(

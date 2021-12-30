@@ -89,7 +89,7 @@ public class HashCollectionServiceImpl implements HashCollectionService {
                     new java.sql.Date(new java.util.Date().getTime()),
                     new java.sql.Date(new java.util.Date().getTime()),
                     description,
-                    false,
+                    true,
                     archive,
                     topics,
                     new ArrayList<>()));

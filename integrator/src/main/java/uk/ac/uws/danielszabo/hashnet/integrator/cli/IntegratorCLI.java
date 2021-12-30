@@ -35,6 +35,7 @@ import uk.ac.uws.danielszabo.common.service.network.*;
 import uk.ac.uws.danielszabo.common.service.rest.RestServiceImpl;
 import uk.ac.uws.danielszabo.hashnet.integrator.service.IntegratorServiceFacade;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,7 +91,12 @@ public class IntegratorCLI extends BaseNodeCLI {
           return;
         }
         if (optionalTopic.isPresent()) {
-          integratorServiceFacade.addSubscription(optionalTopic.get());
+          try {
+            integratorServiceFacade.addSubscription(optionalTopic.get());
+          } catch (Exception e) {
+            log.error("Failed to communicate subscription with archives");
+            e.printStackTrace();
+          }
         } else {
           log.error("Topic not found");
         }
