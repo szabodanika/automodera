@@ -23,11 +23,8 @@ package uk.ac.uws.danielszabo.common.model.hash;
 import lombok.*;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.xml.bind.annotation.*;
-import java.util.List;
 
 @Getter
 @Setter
@@ -44,12 +41,12 @@ public class Topic {
   // display name
   @NonNull private String name;
 
-//  @ManyToMany(mappedBy = "topicList")
-//  @NonNull
-//  //  @XmlIDREF
-//  //  @XmlElementWrapper(name = "hashCollectionList")
-//  //  @XmlElement(name = "hashCollection")
-//  @ToString.Exclude
-//  @XmlTransient
-//  private List<HashCollection> hashCollectionList;
+  //  @ManyToMany(mappedBy = "topicList")
+  //  @NonNull
+  //  //  @XmlIDREF
+  //  //  @XmlElementWrapper(name = "hashCollectionList")
+  //  //  @XmlElement(name = "hashCollection")
+  //  @ToString.Exclude
+  //  @XmlTransient
+  //  private List<HashCollection> hashCollectionList;
 }

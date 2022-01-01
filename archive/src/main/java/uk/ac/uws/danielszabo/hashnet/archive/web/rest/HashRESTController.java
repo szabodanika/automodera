@@ -48,9 +48,9 @@ public class HashRESTController {
   }
 
   @PostMapping(
-    value = "collections",
-    produces = MediaType.APPLICATION_XML_VALUE,
-    consumes = MediaType.APPLICATION_XML_VALUE)
+      value = "collections",
+      produces = MediaType.APPLICATION_XML_VALUE,
+      consumes = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity postCollections(@RequestBody Message message, HttpServletRequest request) {
     if (archiveServiceFacade.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
       log.info("Received collection listing request from " + message.getCertificate().getId());
@@ -61,16 +61,18 @@ public class HashRESTController {
   }
 
   @PostMapping(
-    value = "hcdownload",
-    produces = MediaType.APPLICATION_XML_VALUE,
-    consumes = MediaType.APPLICATION_XML_VALUE)
+      value = "hcdownload",
+      produces = MediaType.APPLICATION_XML_VALUE,
+      consumes = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity postHCDownload(@RequestBody Message message, HttpServletRequest request) {
     if (archiveServiceFacade.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
-      log.info("Received hash collection download request from " + message.getCertificate().getId());
+      log.info(
+          "Received hash collection download request from " + message.getCertificate().getId());
 
       String HCId = (String) message.getContent();
 
-      Optional<HashCollection> optionalHashCollection = archiveServiceFacade.retrieveHashCollectionById(HCId);
+      Optional<HashCollection> optionalHashCollection =
+          archiveServiceFacade.retrieveHashCollectionById(HCId);
       if (optionalHashCollection.isPresent()) {
 
         return new ResponseEntity<>(optionalHashCollection.get(), HttpStatus.OK);
@@ -83,9 +85,9 @@ public class HashRESTController {
   }
 
   @PostMapping(
-    value = "subscribe",
-    produces = MediaType.APPLICATION_XML_VALUE,
-    consumes = MediaType.APPLICATION_XML_VALUE)
+      value = "subscribe",
+      produces = MediaType.APPLICATION_XML_VALUE,
+      consumes = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity postSubscribe(@RequestBody Message message, HttpServletRequest request) {
     if (archiveServiceFacade.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
       Subscription subscription = (Subscription) message.getContent();
@@ -98,10 +100,10 @@ public class HashRESTController {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
       }
       log.info(
-        "Received subscription request from "
-          + message.getCertificate().getId()
-          + " for topic "
-          + subscription.getTopic().getId());
+          "Received subscription request from "
+              + message.getCertificate().getId()
+              + " for topic "
+              + subscription.getTopic().getId());
       return new ResponseEntity<>(HttpStatus.OK);
     } else {
       return new ResponseEntity<>(HttpStatus.FORBIDDEN);

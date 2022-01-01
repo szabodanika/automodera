@@ -85,13 +85,13 @@ public class RestServiceImpl implements RestService {
   // void because certificate requests are not handled automatically
   @Override
   public void sendCertificateRequest(String operator, CertificateRequest certificateRequest)
-    throws Exception {
+      throws Exception {
     postAsXML(operator, "/cert/request", certificateRequest);
   }
 
   @Override
   public void sendProcessedCertificateRequest(CertificateRequest certificateRequest)
-    throws Exception {
+      throws Exception {
     postAsXML(certificateRequest.getNode().getHost(), "/cert/processedrequest", certificateRequest);
   }
 
@@ -100,18 +100,16 @@ public class RestServiceImpl implements RestService {
     ResponseEntity response = postAsXML(origin, "/net/conf", NetworkConfiguration.class);
     if (response != null) {
       return ((NetworkConfiguration) response.getBody());
-    } else
-      return null;
+    } else return null;
   }
 
   @Override
   public boolean requestCertificateVerification(NodeCertificate certificate) throws Exception {
     ResponseEntity response =
-      postAsXML(certificate.getIssuer().getHost(), "/cert/verify", certificate, Message.class);
+        postAsXML(certificate.getIssuer().getHost(), "/cert/verify", certificate, Message.class);
     if (response != null) {
       return ((Message) response.getBody()).getContent().equals("VALID");
-    } else
-      return false;
+    } else return false;
   }
 
   @Override
@@ -119,21 +117,21 @@ public class RestServiceImpl implements RestService {
     ResponseEntity response = postAsXML(host, "/hash/collections", HashCollectionsMessage.class);
     if (response != null) {
       return ((HashCollectionsMessage) response.getBody()).getHashCollectionList();
-    } else
-      return null;
+    } else return null;
   }
 
   @Override
-  public void publishHashCollections(List<HashCollection> hashCollectionList, String host) throws Exception {
+  public void publishHashCollections(List<HashCollection> hashCollectionList, String host)
+      throws Exception {
     postAsXML(host, "/hash/publish", new HashCollectionsMessage(hashCollectionList));
   }
 
   @Override
   public void sendSubscription(Node node, Node localNode, Topic topic) throws Exception {
     postAsXML(
-      node.getHost(),
-      "/hash/subscribe",
-      new Subscription(topic, node.getId(), localNode.getId()));
+        node.getHost(),
+        "/hash/subscribe",
+        new Subscription(topic, node.getId(), localNode.getId()));
   }
 
   @Override
@@ -146,8 +144,7 @@ public class RestServiceImpl implements RestService {
     }
     if (response != null) {
       return ((ArchiveAddressesMessage) response.getBody()).getArchiveAddresses();
-    } else
-      return null;
+    } else return null;
   }
 
   @Override
@@ -155,8 +152,7 @@ public class RestServiceImpl implements RestService {
     ResponseEntity response = postAsXML(host, "/hash/hcdownload", id, HashCollection.class);
     if (response != null) {
       return ((HashCollection) response.getBody());
-    } else
-      return null;
+    } else return null;
   }
 
   @Override
@@ -164,8 +160,7 @@ public class RestServiceImpl implements RestService {
     ResponseEntity response = postAsXML(origin, "/net/resolveid", id, Message.class);
     if (response != null) {
       return (String) ((Message) response.getBody()).getContent();
-    } else
-      return null;
+    } else return null;
   }
 
   private <T> ResponseEntity<T> postAsXML(String host, String path) throws Exception {
@@ -173,7 +168,7 @@ public class RestServiceImpl implements RestService {
   }
 
   private <T> ResponseEntity<T> postAsXML(String host, String path, Class responseType)
-    throws Exception {
+      throws Exception {
     return postAsXML(host, path, null, responseType);
   }
 
@@ -182,7 +177,7 @@ public class RestServiceImpl implements RestService {
   }
 
   private <T> ResponseEntity<T> postAsXML(String host, String path, T object, Class responseType)
-    throws Exception {
+      throws Exception {
     URI requestURI = null;
 
     try {
@@ -195,7 +190,7 @@ public class RestServiceImpl implements RestService {
     HttpHeaders headers = new HttpHeaders();
     // set `content-type` header
     headers.setContentType(MediaType.APPLICATION_XML);
-    headers.setAccept(List.of(new MediaType[]{MediaType.APPLICATION_XML}));
+    headers.setAccept(List.of(new MediaType[] {MediaType.APPLICATION_XML}));
 
     // build the request
 
@@ -208,11 +203,11 @@ public class RestServiceImpl implements RestService {
     } catch (JAXBException jaxbException) {
       if (jaxbException.toString().contains("known to this context")) {
         log.error(
-          "Did you forget to add "
-            + object.getClass().getName()
-            + " to the @SeeAlso annotation on "
-            + Message.class.getName()
-            + "?");
+            "Did you forget to add "
+                + object.getClass().getName()
+                + " to the @SeeAlso annotation on "
+                + Message.class.getName()
+                + "?");
       }
       jaxbException.printStackTrace();
       return null;
@@ -221,6 +216,6 @@ public class RestServiceImpl implements RestService {
     HttpEntity<String> request = new HttpEntity<>(sw.toString(), headers);
 
     return (ResponseEntity<T>)
-      this.restTemplate.exchange(requestURI, HttpMethod.POST, request, responseType);
+        this.restTemplate.exchange(requestURI, HttpMethod.POST, request, responseType);
   }
 }

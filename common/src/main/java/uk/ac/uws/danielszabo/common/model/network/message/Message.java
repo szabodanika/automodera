@@ -38,7 +38,12 @@ import java.sql.Date;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 // must list all possible content types unfortunately
-@XmlSeeAlso({Date.class, CertificateRequest.class, Subscription.class, HashCollectionsMessage.class})
+@XmlSeeAlso({
+  Date.class,
+  CertificateRequest.class,
+  Subscription.class,
+  HashCollectionsMessage.class
+})
 public final class Message {
 
   @NonNull
@@ -52,6 +57,5 @@ public final class Message {
   // can be null for requests with no parameters, in that case we just sent certificate
   private Object content;
 
-  private Message(){}
-
+  private Message() {}
 }

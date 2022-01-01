@@ -43,5 +43,4 @@ public interface HashCollectionInfo {
   List<Topic> getTopicList();
 
   String getArchiveId();
-
 }

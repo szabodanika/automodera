@@ -48,7 +48,8 @@ public interface RestService {
 
   List<HashCollection> requestAllHashCollections(String host) throws Exception;
 
-  void publishHashCollections(List<HashCollection> hashCollectionList, String host) throws Exception;
+  void publishHashCollections(List<HashCollection> hashCollectionList, String host)
+      throws Exception;
 
   void sendSubscription(Node node, Node localNode, Topic topic) throws Exception;
 

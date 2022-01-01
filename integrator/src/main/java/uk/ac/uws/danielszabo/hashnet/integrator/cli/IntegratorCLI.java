@@ -28,7 +28,6 @@ import org.springframework.shell.standard.ShellOption;
 import uk.ac.uws.danielszabo.common.cli.BaseNodeCLI;
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
 import uk.ac.uws.danielszabo.common.model.hash.Topic;
-import uk.ac.uws.danielszabo.common.model.network.message.Message;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.model.network.node.Subscription;
 import uk.ac.uws.danielszabo.common.service.hashing.HashServiceImpl;
@@ -60,10 +59,10 @@ public class IntegratorCLI extends BaseNodeCLI {
   private final IntegratorServiceFacade integratorServiceFacade;
 
   public IntegratorCLI(
-    LocalNodeService localNodeService,
-    NetworkService networkService,
-    IntegratorServiceFacade integratorServiceFacade,
-    TopicService topicService) {
+      LocalNodeService localNodeService,
+      NetworkService networkService,
+      IntegratorServiceFacade integratorServiceFacade,
+      TopicService topicService) {
     super(localNodeService, networkService, topicService);
     this.integratorServiceFacade = integratorServiceFacade;
   }
@@ -71,10 +70,10 @@ public class IntegratorCLI extends BaseNodeCLI {
   // for example:
   @ShellMethod("Manage Subscriptions")
   public void subs(
-    @ShellOption(defaultValue = "false") boolean list,
-    @ShellOption(defaultValue = "false") boolean add,
-    @ShellOption(defaultValue = "false") boolean remove,
-    @ShellOption(defaultValue = "") String topic) {
+      @ShellOption(defaultValue = "false") boolean list,
+      @ShellOption(defaultValue = "false") boolean add,
+      @ShellOption(defaultValue = "false") boolean remove,
+      @ShellOption(defaultValue = "") String topic) {
 
     if (list) {
       log.info("Subscriptions");
@@ -124,10 +123,10 @@ public class IntegratorCLI extends BaseNodeCLI {
 
   @ShellMethod("Manage Hash Collections")
   public void hash(
-    @ShellOption(defaultValue = "false") boolean list,
-    @ShellOption(defaultValue = "false") boolean show,
-    @ShellOption(defaultValue = "sync") boolean sync,
-    @ShellOption(defaultValue = "") String id) {
+      @ShellOption(defaultValue = "false") boolean list,
+      @ShellOption(defaultValue = "false") boolean show,
+      @ShellOption(defaultValue = "sync") boolean sync,
+      @ShellOption(defaultValue = "") String id) {
 
     if (list) {
       List<HashCollection> hashCollections;
@@ -157,10 +156,7 @@ public class IntegratorCLI extends BaseNodeCLI {
   }
 
   @ShellMethod("Manage Hash Collections")
-  public void check(
-    String image,
-    @ShellOption(defaultValue = "false") boolean xml
-  ) {
+  public void check(String image, @ShellOption(defaultValue = "false") boolean xml) {
     try {
       if (xml) {
         Marshaller marshallerObj = JAXBContext.newInstance(HashReport.class).createMarshaller();

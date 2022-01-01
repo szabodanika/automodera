@@ -34,7 +34,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
   private final NetworkService networkService;
 
-  public SubscriptionServiceImpl(SubscriptionRepository subscriptionRepository, NetworkService networkService) {
+  public SubscriptionServiceImpl(
+      SubscriptionRepository subscriptionRepository, NetworkService networkService) {
     this.subscriptionRepository = subscriptionRepository;
     this.networkService = networkService;
   }
@@ -42,12 +43,16 @@ public class SubscriptionServiceImpl implements SubscriptionService {
   @Override
   public List<Subscription> getSubscriptions() throws Exception {
     List<Subscription> subscriptions = subscriptionRepository.findAll();
-    for(Subscription subscription : subscriptions){
+    for (Subscription subscription : subscriptions) {
       try {
-        if(subscription.getSubscriber() == null) {
-          subscription.setSubscriber(networkService.getNodeByHost(networkService.resolveNodeId(networkService.getNetworkConfiguration().getOrigin(), subscription.getSubscriberId())));
+        if (subscription.getSubscriber() == null) {
+          subscription.setSubscriber(
+              networkService.getNodeByHost(
+                  networkService.resolveNodeId(
+                      networkService.getNetworkConfiguration().getOrigin(),
+                      subscription.getSubscriberId())));
         }
-        if(subscription.getPublisher() == null) {
+        if (subscription.getPublisher() == null) {
           subscription.setPublisher(networkService.getLocalNode());
         }
       } catch (Exception e) {

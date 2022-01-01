@@ -62,14 +62,11 @@ public class HashReport {
       }
       throw new OutOfRangeException(highestMatchScore, 0d, 1d);
     }
-
   }
 
-  @NonNull
-  private Image highestMatch;
+  @NonNull private Image highestMatch;
 
-  @NonNull
-  private double highestMatchScore;
+  @NonNull private double highestMatchScore;
 
   @Enumerated(EnumType.STRING)
   private MatchProbability matchProbability;
@@ -86,5 +83,4 @@ public class HashReport {
     this.topicList = topicList;
     this.matchProbability = HashReport.MatchProbability.getMatchProbability(highestMatchScore);
   }
-
 }

@@ -134,8 +134,8 @@ public class ArchiveCLI extends BaseNodeCLI {
   // for example:
   @ShellMethod("Manage Subscriptions")
   public void subs(
-    @ShellOption(defaultValue = "false") boolean list,
-    @ShellOption(defaultValue = "false") boolean sync) {
+      @ShellOption(defaultValue = "false") boolean list,
+      @ShellOption(defaultValue = "false") boolean sync) {
 
     if (list) {
       log.info("Subscriptions");
@@ -153,7 +153,7 @@ public class ArchiveCLI extends BaseNodeCLI {
         log.error("Failed to retrieve subscriptions");
         e.printStackTrace();
       }
-    } else if(sync) {
+    } else if (sync) {
       try {
         archiveServiceFacade.syncAllHashCollections();
       } catch (Exception e) {

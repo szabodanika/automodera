@@ -25,8 +25,6 @@ package uk.ac.uws.danielszabo.common.model.network.messages;
 import lombok.*;
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
 
-import javax.persistence.CascadeType;
-import javax.persistence.OneToMany;
 import javax.xml.bind.annotation.*;
 import java.util.List;
 

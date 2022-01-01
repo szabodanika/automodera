@@ -48,29 +48,55 @@ public class HashRESTController {
   }
 
   @PostMapping(
-    value = "publish",
-    consumes = MediaType.APPLICATION_XML_VALUE,
-    produces = MediaType.APPLICATION_XML_VALUE)
+      value = "publish",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity postPublish(@RequestBody Message message, HttpServletRequest request) {
     if (integratorServiceFacade.checkCertificate(
-      message.getCertificate(), request.getRemoteAddr())) {
+        message.getCertificate(), request.getRemoteAddr())) {
 
       HashCollectionsMessage hashCollectionsMessage = (HashCollectionsMessage) message.getContent();
       // get hash collections from message
       for (HashCollection hashCollection : hashCollectionsMessage.getHashCollectionList()) {
-        Optional<HashCollection> localHashCollection = integratorServiceFacade.findHashCollectionById(hashCollection.getId());
+        Optional<HashCollection> localHashCollection =
+            integratorServiceFacade.findHashCollectionById(hashCollection.getId());
         // download if we don't have it yet or it has been updated
-        if (!localHashCollection.isPresent() || (localHashCollection.get().getVersion() < hashCollection.getVersion())) {
+        if (!localHashCollection.isPresent()
+            || (localHashCollection.get().getVersion() < hashCollection.getVersion())) {
           try {
-            hashCollection.setArchive(integratorServiceFacade.retrieveNodeById(hashCollection.getArchiveId()).get());
+            hashCollection.setArchive(
+                integratorServiceFacade.retrieveNodeById(hashCollection.getArchiveId()).get());
             if (localHashCollection.get().getVersion() < hashCollection.getVersion()) {
-              log.info("Downloading hash collection " + hashCollection.getId() + " version " + hashCollection.getVersion() + "  from " + hashCollection.getArchive() + "...");
+              log.info(
+                  "Downloading hash collection "
+                      + hashCollection.getId()
+                      + " version "
+                      + hashCollection.getVersion()
+                      + "  from "
+                      + hashCollection.getArchive()
+                      + "...");
             } else {
-              log.info("Upgrading hash collection " + hashCollection.getId() + " from version " + localHashCollection.get().getVersion() + " to version " + hashCollection.getVersion() + "  from " + hashCollection.getArchive() + "...");
+              log.info(
+                  "Upgrading hash collection "
+                      + hashCollection.getId()
+                      + " from version "
+                      + localHashCollection.get().getVersion()
+                      + " to version "
+                      + hashCollection.getVersion()
+                      + "  from "
+                      + hashCollection.getArchive()
+                      + "...");
             }
-            integratorServiceFacade.downloadHashCollection(hashCollection.getArchive().getHost(), hashCollection.getId());
+            integratorServiceFacade.downloadHashCollection(
+                hashCollection.getArchive().getHost(), hashCollection.getId());
           } catch (Exception e) {
-            log.error("Failed to retrieve hash collection " + hashCollection.getId() + " version " + hashCollection.getVersion() + " from " + message.getCertificate().getId());
+            log.error(
+                "Failed to retrieve hash collection "
+                    + hashCollection.getId()
+                    + " version "
+                    + hashCollection.getVersion()
+                    + " from "
+                    + message.getCertificate().getId());
             e.printStackTrace();
           }
         } else {

@@ -75,7 +75,8 @@ public interface NetworkService {
 
   HashCollection downloadHashCollection(String host, String id) throws Exception;
 
-  void publishHashCollections(List<HashCollection> hashCollectionList, Node subscriber) throws Exception;
+  void publishHashCollections(List<HashCollection> hashCollectionList, Node subscriber)
+      throws Exception;
 
   Optional<Topic> getTopicById(String id) throws Exception;
 
@@ -100,5 +101,4 @@ public interface NetworkService {
   CertificateRequest certificateRequest(String origin, Node localNode) throws Exception;
 
   void sendSubscription(Node node, Topic topic) throws Exception;
-
 }

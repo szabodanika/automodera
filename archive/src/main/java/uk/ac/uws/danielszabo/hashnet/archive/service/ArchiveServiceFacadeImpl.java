@@ -58,12 +58,12 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
   private final TopicService topicService;
 
   public ArchiveServiceFacadeImpl(
-    HashService hashService,
-    LocalNodeService localNodeService,
-    NetworkService networkService,
-    SubscriptionService subscriptionService,
-    HashCollectionService hashCollectionService,
-    TopicService topicService) {
+      HashService hashService,
+      LocalNodeService localNodeService,
+      NetworkService networkService,
+      SubscriptionService subscriptionService,
+      HashCollectionService hashCollectionService,
+      TopicService topicService) {
     this.hashService = hashService;
     this.localNodeService = localNodeService;
     this.networkService = networkService;
@@ -148,15 +148,15 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
 
   @Override
   public HashCollection generateHashCollection(
-    String path,
-    String id,
-    String name,
-    String description,
-    List<Topic> topics,
-    boolean forceRecalc)
-    throws IOException {
+      String path,
+      String id,
+      String name,
+      String description,
+      List<Topic> topics,
+      boolean forceRecalc)
+      throws IOException {
     return hashCollectionService.generateHashCollection(
-      path, id, name, description, localNodeService.get(), topics, forceRecalc);
+        path, id, name, description, localNodeService.get(), topics, forceRecalc);
   }
 
   @Override
@@ -198,7 +198,8 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
   @Override
   public void syncAllHashCollections() throws Exception {
     for (Subscription subscription : this.subscriptionService.getSubscriptions()) {
-      List<HashCollection> hashCollectionList = hashCollectionService.findAllEnabledNoImagesByTopic(subscription.getTopic());
+      List<HashCollection> hashCollectionList =
+          hashCollectionService.findAllEnabledNoImagesByTopic(subscription.getTopic());
       networkService.publishHashCollections(hashCollectionList, subscription.getSubscriber());
     }
   }

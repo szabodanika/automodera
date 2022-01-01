@@ -41,7 +41,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 public class Subscription {
 
-
   // XML transient because it is just a local db id
   // and it means nothing
   @Id
@@ -59,7 +58,7 @@ public class Subscription {
   @ManyToOne(targetEntity = Node.class, fetch = FetchType.EAGER)
   @XmlTransient
   @NotFound(action = NotFoundAction.IGNORE)
-//  @Transient
+  //  @Transient
   private Node publisher;
 
   @Column(name = "publisher_id")
@@ -70,12 +69,10 @@ public class Subscription {
   @ManyToOne(targetEntity = Node.class, fetch = FetchType.EAGER)
   @XmlTransient
   @NotFound(action = NotFoundAction.IGNORE)
-//  @Transient
+  //  @Transient
   private Node subscriber;
 
   @Column(name = "subscriber_id")
   @NonNull
   private String subscriberId;
-
-
 }

@@ -33,7 +33,6 @@ import uk.ac.uws.danielszabo.common.service.image.TopicService;
 import uk.ac.uws.danielszabo.common.service.network.*;
 import uk.ac.uws.danielszabo.common.service.rest.RestServiceImpl;
 
-import java.util.ArrayList;
 
 @Import({
   RestServiceImpl.class,

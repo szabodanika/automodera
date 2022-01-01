@@ -20,7 +20,6 @@
 
 package uk.ac.uws.danielszabo.common.repository;
 
-import org.springframework.beans.PropertyValues;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

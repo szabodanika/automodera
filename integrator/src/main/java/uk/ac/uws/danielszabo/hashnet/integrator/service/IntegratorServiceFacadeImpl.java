@@ -65,12 +65,12 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
   private final TopicService topicService;
 
   public IntegratorServiceFacadeImpl(
-    HashService hashService,
-    LocalNodeService localNodeService,
-    NetworkService networkService,
-    SubscriptionService subscriptionService,
-    HashCollectionService hashCollectionService,
-    TopicService topicService) {
+      HashService hashService,
+      LocalNodeService localNodeService,
+      NetworkService networkService,
+      SubscriptionService subscriptionService,
+      HashCollectionService hashCollectionService,
+      TopicService topicService) {
     this.hashService = hashService;
     this.localNodeService = localNodeService;
     this.networkService = networkService;
@@ -157,11 +157,9 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
   public Optional<Topic> findTopicById(String id) throws Exception {
     // check if we have this locally already
     Optional<Topic> localOptionalTopic = topicService.findById(id);
-    if (localOptionalTopic.isPresent())
-      return localOptionalTopic;
-      // we don't ask try to retrieve it form the network
-    else
-      return networkService.getTopicById(id);
+    if (localOptionalTopic.isPresent()) return localOptionalTopic;
+    // we don't ask try to retrieve it form the network
+    else return networkService.getTopicById(id);
   }
 
   @Override
@@ -179,7 +177,6 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
     return networkService.checkCertificate(certificate, remoteAddr);
   }
 
-
   @Transactional
   @Override
   public void addSubscription(Topic topic) throws Exception {
@@ -192,12 +189,12 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
     }
     // sending subscription to every archive that has hash collections in that topic
     for (Node archive :
-      hashCollectionService.findAllByTopic(topic).stream()
-        .map(HashCollection::getArchive)
-        .distinct()
-        .collect(Collectors.toList())) {
+        hashCollectionService.findAllByTopic(topic).stream()
+            .map(HashCollection::getArchive)
+            .distinct()
+            .collect(Collectors.toList())) {
       Subscription subscription =
-        new Subscription(topic, archive.getId(), localNodeService.get().getId());
+          new Subscription(topic, archive.getId(), localNodeService.get().getId());
       // TODO later on wait for archive to accept subscription request maybe
       networkService.sendSubscription(archive, topic);
       subscriptionService.save(subscription);
@@ -226,7 +223,6 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
     // calculate hash for the input image
     Hash hashInput = hashService.pHash(new File(image));
 
-
     Image highestMatch = null;
     double highestMatchScore = 0;
     List<Topic> topicList = new ArrayList<>();
@@ -236,10 +232,11 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
       // for each image in the collection
       for (Image i : hc.getImageList()) {
         // calculate a similarity score between the hashes
-        double score = hashService.simScore(hashInput, new Hash(i.getHash(), 32, new PerceptiveHash(32).algorithmId()));
+        double score =
+            hashService.simScore(
+                hashInput, new Hash(i.getHash(), 32, new PerceptiveHash(32).algorithmId()));
         // store the image, hash collection and similarity score
-        if (highestMatch == null)
-          highestMatch = i;
+        if (highestMatch == null) highestMatch = i;
         else if (score > highestMatchScore) {
           highestMatch = i;
           highestMatchScore = score;
@@ -251,15 +248,18 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
     Hibernate.initialize(highestMatch.getHashCollection());
     Hibernate.initialize(highestMatch.getHashCollection().getTopicList());
 
-    return new HashReport(highestMatch, highestMatchScore, highestMatch.getHashCollection().getTopicList());
+    return new HashReport(
+        highestMatch, highestMatchScore, highestMatch.getHashCollection().getTopicList());
   }
 
   @Override
   public void updateHashCollections() throws Exception {
     for (Subscription subscription : subscriptionService.getSubscriptions()) {
-      List<HashCollection> hashCollectionList = networkService.requestAllHashCollectionsByArchive(subscription.getPublisher());
+      List<HashCollection> hashCollectionList =
+          networkService.requestAllHashCollectionsByArchive(subscription.getPublisher());
       for (HashCollection hashCollection : hashCollectionList) {
-        networkService.downloadHashCollection(subscription.getPublisherId(), hashCollection.getId());
+        networkService.downloadHashCollection(
+            subscription.getPublisherId(), hashCollection.getId());
       }
     }
   }
@@ -268,5 +268,4 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
   public Optional<Node> retrieveNodeByHost(String host) throws Exception {
     return Optional.of(networkService.getNodeByHost(host));
   }
-
 }

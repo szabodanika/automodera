@@ -42,32 +42,34 @@ public class OperatorNetworkRESTController {
 
   private final MessageFactory messageFactory;
 
-  public OperatorNetworkRESTController(OperatorServiceFacade operatorServiceFacade, MessageFactory messageFactory) {
+  public OperatorNetworkRESTController(
+      OperatorServiceFacade operatorServiceFacade, MessageFactory messageFactory) {
     this.operatorServiceFacade = operatorServiceFacade;
     this.messageFactory = messageFactory;
   }
 
   @PostMapping(
-    value = "conf",
-    consumes = MediaType.APPLICATION_XML_VALUE,
-    produces = MediaType.APPLICATION_XML_VALUE)
+      value = "conf",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity postConfigRequest(HttpServletRequest request) {
     log.info("Network configuration requested by " + request.getRemoteAddr());
     return new ResponseEntity<>(operatorServiceFacade.getNetworkConfiguration(), HttpStatus.OK);
   }
 
   @PostMapping(
-    value = "resolveid",
-    consumes = MediaType.APPLICATION_XML_VALUE,
-    produces = MediaType.APPLICATION_XML_VALUE)
+      value = "resolveid",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity postResolveId(@RequestBody Message message, HttpServletRequest request) {
     log.info("Id resolution requested by " + request.getRemoteAddr());
-    Optional<Node> optionalNode = operatorServiceFacade.findKnownNodeById((String) message.getContent());
+    Optional<Node> optionalNode =
+        operatorServiceFacade.findKnownNodeById((String) message.getContent());
     if (optionalNode.isPresent()) {
-      return new ResponseEntity<>(messageFactory.getMessage(optionalNode.get().getHost()), HttpStatus.OK);
+      return new ResponseEntity<>(
+          messageFactory.getMessage(optionalNode.get().getHost()), HttpStatus.OK);
     } else {
       return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
   }
-
 }
