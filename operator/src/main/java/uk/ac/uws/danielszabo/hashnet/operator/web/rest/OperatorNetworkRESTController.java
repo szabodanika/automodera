@@ -25,10 +25,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
+import uk.ac.uws.danielszabo.common.model.network.message.Message;
+import uk.ac.uws.danielszabo.common.model.network.message.MessageFactory;
+import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.hashnet.operator.service.OperatorServiceFacade;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -37,16 +40,34 @@ public class OperatorNetworkRESTController {
 
   private final OperatorServiceFacade operatorServiceFacade;
 
-  public OperatorNetworkRESTController(OperatorServiceFacade operatorServiceFacade) {
+  private final MessageFactory messageFactory;
+
+  public OperatorNetworkRESTController(OperatorServiceFacade operatorServiceFacade, MessageFactory messageFactory) {
     this.operatorServiceFacade = operatorServiceFacade;
+    this.messageFactory = messageFactory;
   }
 
   @PostMapping(
-      value = "conf",
-      consumes = MediaType.APPLICATION_XML_VALUE,
-      produces = MediaType.APPLICATION_XML_VALUE)
-  public ResponseEntity<NetworkConfiguration> postConfigRequest(HttpServletRequest request) {
+    value = "conf",
+    consumes = MediaType.APPLICATION_XML_VALUE,
+    produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity postConfigRequest(HttpServletRequest request) {
     log.info("Network configuration requested by " + request.getRemoteAddr());
     return new ResponseEntity<>(operatorServiceFacade.getNetworkConfiguration(), HttpStatus.OK);
   }
+
+  @PostMapping(
+    value = "resolveid",
+    consumes = MediaType.APPLICATION_XML_VALUE,
+    produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity postResolveId(@RequestBody Message message, HttpServletRequest request) {
+    log.info("Id resolution requested by " + request.getRemoteAddr());
+    Optional<Node> optionalNode = operatorServiceFacade.findKnownNodeById((String) message.getContent());
+    if (optionalNode.isPresent()) {
+      return new ResponseEntity<>(messageFactory.getMessage(optionalNode.get().getHost()), HttpStatus.OK);
+    } else {
+      return new ResponseEntity(HttpStatus.NOT_FOUND);
+    }
+  }
+
 }

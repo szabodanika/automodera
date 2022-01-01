@@ -36,6 +36,7 @@ import uk.ac.uws.danielszabo.common.service.network.LocalNodeService;
 import uk.ac.uws.danielszabo.common.service.network.NetworkService;
 import uk.ac.uws.danielszabo.common.service.network.SubscriptionService;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -57,12 +58,12 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
   private final TopicService topicService;
 
   public ArchiveServiceFacadeImpl(
-      HashService hashService,
-      LocalNodeService localNodeService,
-      NetworkService networkService,
-      SubscriptionService subscriptionService,
-      HashCollectionService hashCollectionService,
-      TopicService topicService) {
+    HashService hashService,
+    LocalNodeService localNodeService,
+    NetworkService networkService,
+    SubscriptionService subscriptionService,
+    HashCollectionService hashCollectionService,
+    TopicService topicService) {
     this.hashService = hashService;
     this.localNodeService = localNodeService;
     this.networkService = networkService;
@@ -104,7 +105,7 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
 
   @Override
   public List<HashCollection> retrieveHashCollectionByTopic(Topic topic) {
-    return hashCollectionService.findByTopic(topic);
+    return hashCollectionService.findAllByTopic(topic);
   }
 
   @Override
@@ -133,7 +134,7 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
   }
 
   @Override
-  public List<Subscription> getSubscriptions() {
+  public List<Subscription> getSubscriptions() throws Exception {
     return subscriptionService.getSubscriptions();
   }
 
@@ -147,15 +148,15 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
 
   @Override
   public HashCollection generateHashCollection(
-      String path,
-      String id,
-      String name,
-      String description,
-      List<Topic> topics,
-      boolean forceRecalc)
-      throws IOException {
+    String path,
+    String id,
+    String name,
+    String description,
+    List<Topic> topics,
+    boolean forceRecalc)
+    throws IOException {
     return hashCollectionService.generateHashCollection(
-        path, id, name, description, localNodeService.get(), topics, forceRecalc);
+      path, id, name, description, localNodeService.get(), topics, forceRecalc);
   }
 
   @Override
@@ -169,7 +170,7 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
   }
 
   @Override
-  public Optional<HashCollection> findAllHashCollectionById(String id) {
+  public Optional<HashCollection> findHashCollectionById(String id) {
     return hashCollectionService.findById(id);
   }
 
@@ -190,6 +191,15 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
 
   @Override
   public void storeNodeInfo(String host) throws Exception {
-    this.saveNode(networkService.requestNodeInfo(host));
+    this.saveNode(networkService.getNodeByHost(host));
+  }
+
+  @Transactional
+  @Override
+  public void syncAllHashCollections() throws Exception {
+    for (Subscription subscription : this.subscriptionService.getSubscriptions()) {
+      List<HashCollection> hashCollectionList = hashCollectionService.findAllEnabledNoImagesByTopic(subscription.getTopic());
+      networkService.publishHashCollections(hashCollectionList, subscription.getSubscriber());
+    }
   }
 }

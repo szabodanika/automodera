@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.message.Message;
+import uk.ac.uws.danielszabo.common.model.network.message.MessageFactory;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.hashnet.operator.service.OperatorServiceFacade;
 
@@ -40,14 +41,17 @@ public class CertRESTController {
 
   private final OperatorServiceFacade operatorServiceFacade;
 
-  public CertRESTController(OperatorServiceFacade operatorServiceFacade) {
+  private final MessageFactory messageFactory;
+
+  public CertRESTController(OperatorServiceFacade operatorServiceFacade, MessageFactory messageFactory) {
     this.operatorServiceFacade = operatorServiceFacade;
+    this.messageFactory = messageFactory;
   }
 
   @PostMapping(
-      value = "request",
-      consumes = MediaType.APPLICATION_XML_VALUE,
-      produces = MediaType.APPLICATION_XML_VALUE)
+    value = "request",
+    consumes = MediaType.APPLICATION_XML_VALUE,
+    produces = MediaType.APPLICATION_XML_VALUE)
   public void postRequest(@RequestBody Message message) {
     CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
     log.info("Received certificate signing request from " + certificateRequest.getNode().getId());
@@ -55,9 +59,9 @@ public class CertRESTController {
   }
 
   @PostMapping(
-      value = "verify",
-      consumes = MediaType.APPLICATION_XML_VALUE,
-      produces = MediaType.APPLICATION_XML_VALUE)
+    value = "verify",
+    consumes = MediaType.APPLICATION_XML_VALUE,
+    produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity getVerification(@RequestBody Message message, HttpServletRequest request) {
     if (operatorServiceFacade.verifyCertificate(message.getCertificate())) {
       // retrieve certificate to be verified
@@ -66,24 +70,25 @@ public class CertRESTController {
       Node node = operatorServiceFacade.findKnownNodeById(nodeCertificate.getId()).orElse(null);
       Boolean result;
       // the node is not found, so we did not issue this certificate. cannot verify that it is valid
-      if (node == null) result = false;
+      if (node == null)
+        result = false;
       else {
         // we found the node it was issued to, let's verify it
         nodeCertificate.setNode(node);
         result = operatorServiceFacade.verifyCertificate(nodeCertificate);
       }
       log.info(
-          "Received certificate verification request for certificate "
-              + message.getCertificate().getId()
-              + " from "
-              + request.getRemoteAddr()
-              + ": "
-              + (result ? "VALID" : "INVALID"));
+        "Received certificate verification request for certificate "
+          + message.getCertificate().getId()
+          + " from "
+          + request.getRemoteAddr()
+          + ": "
+          + (result ? "VALID" : "INVALID"));
 
       return new ResponseEntity<>(
-          new Message(
-              result ? "VALID" : "INVALID", operatorServiceFacade.getLocalNode().getCertificate()),
-          HttpStatus.OK);
+        messageFactory.getMessage(
+          result ? "VALID" : "INVALID"),
+        HttpStatus.OK);
     } else {
       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }

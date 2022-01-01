@@ -21,10 +21,15 @@
 package uk.ac.uws.danielszabo.common.model.network.node;
 
 import lombok.*;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import uk.ac.uws.danielszabo.common.model.hash.Topic;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Getter
 @Setter
@@ -35,6 +40,7 @@ import javax.xml.bind.annotation.*;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 public class Subscription {
+
 
   // XML transient because it is just a local db id
   // and it means nothing
@@ -52,7 +58,8 @@ public class Subscription {
   @JoinColumn(name = "publisher_id", insertable = false, updatable = false)
   @ManyToOne(targetEntity = Node.class, fetch = FetchType.EAGER)
   @XmlTransient
-  //  @Transient
+  @NotFound(action = NotFoundAction.IGNORE)
+//  @Transient
   private Node publisher;
 
   @Column(name = "publisher_id")
@@ -62,10 +69,13 @@ public class Subscription {
   @JoinColumn(name = "subscriber_id", insertable = false, updatable = false)
   @ManyToOne(targetEntity = Node.class, fetch = FetchType.EAGER)
   @XmlTransient
-  //  @Transient
+  @NotFound(action = NotFoundAction.IGNORE)
+//  @Transient
   private Node subscriber;
 
   @Column(name = "subscriber_id")
   @NonNull
   private String subscriberId;
+
+
 }

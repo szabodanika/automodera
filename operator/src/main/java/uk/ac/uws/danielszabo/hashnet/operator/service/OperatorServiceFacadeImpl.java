@@ -155,7 +155,7 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
 
   @Override
   public List<HashCollection> retrieveHashCollectionByTopic(Topic topic) {
-    return hashCollectionService.findByTopic(topic);
+    return hashCollectionService.findAllByTopic(topic);
   }
 
   @Override

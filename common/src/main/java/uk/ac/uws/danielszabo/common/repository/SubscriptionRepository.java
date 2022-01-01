@@ -22,7 +22,12 @@ package uk.ac.uws.danielszabo.common.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.node.Subscription;
 
+import java.util.Optional;
+
 @Repository
-public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {}
+public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
+  Optional<Subscription> findByTopic(Topic topic);
+}

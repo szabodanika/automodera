@@ -93,7 +93,7 @@ public class ArchiveCLI extends BaseNodeCLI {
         log.error("Please specify non-empty id");
         return;
       }
-      archiveServiceFacade.findAllHashCollectionById(id).ifPresent(h -> log.info(h.toString()));
+      archiveServiceFacade.findHashCollectionById(id).ifPresent(h -> log.info(h.toString()));
     } else {
 
       if (path.isBlank()
@@ -132,12 +132,34 @@ public class ArchiveCLI extends BaseNodeCLI {
   }
 
   // for example:
-  // hashimages --path /images
-  @ShellMethod("Manage Integrator Subscriptions")
-  public void subs() {
-    // TODO make this a little bit nicer
-    for (Subscription s : archiveServiceFacade.getSubscriptions()) {
-      log.info(s.toString());
+  @ShellMethod("Manage Subscriptions")
+  public void subs(
+    @ShellOption(defaultValue = "false") boolean list,
+    @ShellOption(defaultValue = "false") boolean sync) {
+
+    if (list) {
+      log.info("Subscriptions");
+      List<Subscription> hashCollections;
+      try {
+        if (!(hashCollections = archiveServiceFacade.getSubscriptions()).isEmpty()) {
+          for (Subscription s : hashCollections) {
+            // TODO make this a little nicer
+            log.info(s.toString());
+          }
+        } else {
+          log.info("No subscription found");
+        }
+      } catch (Exception e) {
+        log.error("Failed to retrieve subscriptions");
+        e.printStackTrace();
+      }
+    } else if(sync) {
+      try {
+        archiveServiceFacade.syncAllHashCollections();
+      } catch (Exception e) {
+        log.error("Failed to sync hash collections");
+        e.printStackTrace();
+      }
     }
   }
 }

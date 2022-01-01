@@ -58,7 +58,7 @@ public interface ArchiveServiceFacade {
 
   void deleteNode(Node node);
 
-  List<Subscription> getSubscriptions();
+  List<Subscription> getSubscriptions() throws Exception;
 
   void saveCertificate(NodeCertificate certificate);
 
@@ -75,7 +75,7 @@ public interface ArchiveServiceFacade {
 
   List<HashCollection> findAllHashCollections();
 
-  Optional<HashCollection> findAllHashCollectionById(String id);
+  Optional<HashCollection> findHashCollectionById(String id);
 
   boolean checkCertificate(NodeCertificate certificate, String remoteAddr);
 
@@ -84,4 +84,6 @@ public interface ArchiveServiceFacade {
   Subscription saveSubscription(Subscription subscription);
 
   void storeNodeInfo(String subscriberId) throws Exception;
+
+  void syncAllHashCollections() throws Exception;
 }

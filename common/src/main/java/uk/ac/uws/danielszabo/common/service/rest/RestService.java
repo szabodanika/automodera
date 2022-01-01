@@ -32,7 +32,7 @@ import java.util.List;
 
 public interface RestService {
 
-  NodeStatus requestStatus(String host) throws Exception;
+  NodeStatus requestStatus(String host);
 
   Node getNodeByHost(String host) throws Exception;
 
@@ -48,7 +48,13 @@ public interface RestService {
 
   List<HashCollection> requestAllHashCollections(String host) throws Exception;
 
+  void publishHashCollections(List<HashCollection> hashCollectionList, String host) throws Exception;
+
   void sendSubscription(Node node, Node localNode, Topic topic) throws Exception;
 
-  List<String> requestAllArchiveAddresses(String host);
+  List<String> requestAllArchiveAddresses(String host) throws Exception;
+
+  HashCollection downloadHashCollection(String host, String id) throws Exception;
+
+  String getHostById(String origin, String id) throws Exception;
 }

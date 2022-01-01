@@ -55,7 +55,7 @@ public class HashCollectionServiceImpl implements HashCollectionService {
   }
 
   @Override
-  public List<HashCollection> findByTopic(Topic topic) {
+  public List<HashCollection> findAllByTopic(Topic topic) {
     return hashCollectionRepository.findAllByTopicListContains(topic);
   }
 
@@ -91,6 +91,7 @@ public class HashCollectionServiceImpl implements HashCollectionService {
                     description,
                     true,
                     archive,
+                    archive.getId(),
                     topics,
                     new ArrayList<>()));
     // get all the files
@@ -113,9 +114,9 @@ public class HashCollectionServiceImpl implements HashCollectionService {
     for (int i = 0; i < imageFileNames.length; i++) {
 
       // log progress at 0%, 20%, 40%, 60%, 80%, 100%?
-      if (i / (float) imageFileNames.length - 1 % 0.2f == 0) {
-        log.info("Progress: " + i / (float) imageFileNames.length * 100 + "%");
-      }
+//      if (i / (float) imageFileNames.length - 1 % 0.2f == 0) {
+//        log.info("Progress: " + i / (float) imageFileNames.length * 100 + "%");
+//      }
 
       int finalI = i;
       // only calculate hash if it is not present yet or user wants to recalculate hash for every
@@ -151,8 +152,26 @@ public class HashCollectionServiceImpl implements HashCollectionService {
                     h.getCreated(),
                     h.getUpdated(),
                     h.getDescription(),
+                    h.getArchiveId(),
                     h.getTopicList(),
                     new ArrayList<>()))
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<HashCollection> findAllEnabledNoImagesByTopic(Topic topic) {
+    return hashCollectionRepository.findAllProjectedByEnabledAndTopicListContains(true, topic).stream()
+      .map(
+        h ->
+          new HashCollection(
+            h.getId(),
+            h.getName(),
+            h.getCreated(),
+            h.getUpdated(),
+            h.getDescription(),
+            h.getArchiveId(),
+            h.getTopicList(),
+            new ArrayList<>()))
+      .collect(Collectors.toList());
   }
 }

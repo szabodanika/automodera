@@ -101,7 +101,7 @@ public abstract class BaseNodeCLI {
         log.error("Please specify non-empty id and name");
         return;
       }
-      Topic topic = new Topic(id, name, new ArrayList<>());
+      Topic topic = new Topic(id, name);
       topicService.save(topic);
       log.info("Saved topic " + topic.getId());
     } else if (show) {
@@ -246,7 +246,7 @@ public abstract class BaseNodeCLI {
       if (!host.isBlank()) {
         log.info("Requesting node info from " + host);
         try {
-          log.info(networkService.requestNodeInfo(host).toString());
+          log.info(networkService.getNodeByHost(host).toString());
         } catch (Exception e) {
           log.error("Failed to retrieve node info from " + host + ": " + e.getMessage());
         }
@@ -258,7 +258,7 @@ public abstract class BaseNodeCLI {
         if (node != null) {
           log.info("Requesting node info from " + node.getHost());
           try {
-            log.info(networkService.requestNodeInfo(node.getHost()).toString());
+            log.info(networkService.getNodeByHost(node.getHost()).toString());
           } catch (Exception e) {
             log.error(
                 "Failed to retrieve node info from " + node.getHost() + ": " + e.getMessage());

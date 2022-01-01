@@ -43,13 +43,13 @@ public class HashServiceImpl implements HashService {
 
   @Override
   public Hash pHash(File image) throws IOException {
-    log.info("Hashing " + image.getName());
+    log.debug("Hashing " + image.getName());
     return hasher.hash(image);
   }
 
   @Override
   public double simScore(Hash hash1, Hash hash2) {
-    log.info("Calculating similarity score for  " + hash1 + " and " + hash2);
+    log.debug("Calculating similarity score for  " + hash1 + " and " + hash2);
     // turning hamming distance, where 0 is identical and 1 is completely different into
     // similarity score where 1 is identical and 0 is completely differnt
     return 1 - hash1.normalizedHammingDistance(hash2);

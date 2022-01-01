@@ -21,6 +21,10 @@
 package uk.ac.uws.danielszabo.common.model.hash;
 
 import lombok.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.util.SQLDateAdapter;
 
@@ -41,12 +45,17 @@ import java.util.List;
 @Entity
 public class HashCollection {
 
-  @Id @XmlID @NonNull private String id;
+  @Id
+  @XmlID
+  @NonNull
+  private String id;
 
-  @NonNull private String name;
+  @NonNull
+  private String name;
 
   // simple counter for updates
-  @NonNull private int version = 1;
+  @NonNull
+  private int version = 1;
 
   // date this collection was created
   @NonNull
@@ -62,21 +71,29 @@ public class HashCollection {
   private Date updated;
 
   // brief description of what this collection contains
-  @NonNull private String description;
+  @NonNull
+  private String description;
 
   // this can be used to enable/disable it on the integrators end by the archive
   @NonNull boolean enabled = true;
 
-  @ManyToOne
-  // Can be NonNull in hashcollection reports
-  @XmlIDREF
+
+  @JoinColumn(name = "archive_id", insertable = false, updatable = false)
+  @ManyToOne(targetEntity = Node.class, fetch = FetchType.EAGER)
+  @XmlTransient
+  @NotFound(action = NotFoundAction.IGNORE)
+//  @Transient
   private Node archive;
 
-  @ManyToMany
+  @Column(name = "archive_id")
+  @NonNull
+  private String archiveId;
+
+  @ManyToMany(cascade = CascadeType.ALL)
   @JoinTable(
-      name = "hashcollection_topic",
-      joinColumns = @JoinColumn(name = "topic_id"),
-      inverseJoinColumns = @JoinColumn(name = "hashcollection_id"))
+    name = "hashcollection_topic",
+    joinColumns = @JoinColumn(name = "topic_id"),
+    inverseJoinColumns = @JoinColumn(name = "hashcollection_id"))
   @XmlElementWrapper(name = "topicList")
   @XmlElement(name = "topic")
   @ToString.Exclude

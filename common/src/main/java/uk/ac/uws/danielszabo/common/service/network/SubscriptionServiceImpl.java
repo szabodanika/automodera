@@ -21,6 +21,7 @@
 package uk.ac.uws.danielszabo.common.service.network;
 
 import org.springframework.stereotype.Service;
+import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.node.Subscription;
 import uk.ac.uws.danielszabo.common.repository.SubscriptionRepository;
 
@@ -31,13 +32,29 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
   private final SubscriptionRepository subscriptionRepository;
 
-  public SubscriptionServiceImpl(SubscriptionRepository subscriptionRepository) {
+  private final NetworkService networkService;
+
+  public SubscriptionServiceImpl(SubscriptionRepository subscriptionRepository, NetworkService networkService) {
     this.subscriptionRepository = subscriptionRepository;
+    this.networkService = networkService;
   }
 
   @Override
-  public List<Subscription> getSubscriptions() {
-    return subscriptionRepository.findAll();
+  public List<Subscription> getSubscriptions() throws Exception {
+    List<Subscription> subscriptions = subscriptionRepository.findAll();
+    for(Subscription subscription : subscriptions){
+      try {
+        if(subscription.getSubscriber() == null) {
+          subscription.setSubscriber(networkService.getNodeByHost(networkService.resolveNodeId(networkService.getNetworkConfiguration().getOrigin(), subscription.getSubscriberId())));
+        }
+        if(subscription.getPublisher() == null) {
+          subscription.setPublisher(networkService.getLocalNode());
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    return subscriptions;
   }
 
   @Override
@@ -51,7 +68,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
   }
 
   @Override
-  public boolean removeByArchiveId(String id) {
-    throw new UnsupportedOperationException();
+  public boolean isSubscribedTo(Topic topic) {
+    return subscriptionRepository.findByTopic(topic).isPresent();
+  }
+
+  @Override
+  public void removeByTopic(Topic topic) {
+    subscriptionRepository.delete(subscriptionRepository.findByTopic(topic).get());
   }
 }

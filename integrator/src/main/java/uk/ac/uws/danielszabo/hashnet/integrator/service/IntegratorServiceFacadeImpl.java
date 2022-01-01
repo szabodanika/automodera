@@ -20,10 +20,13 @@
 
 package uk.ac.uws.danielszabo.hashnet.integrator.service;
 
+import dev.brachtendorf.jimagehash.hash.Hash;
+import dev.brachtendorf.jimagehash.hashAlgorithms.PerceptiveHash;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
-import uk.ac.uws.danielszabo.common.model.network.messages.HashCollectionsMessage;
+import uk.ac.uws.danielszabo.common.model.hash.Image;
 import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
@@ -35,8 +38,12 @@ import uk.ac.uws.danielszabo.common.service.image.TopicService;
 import uk.ac.uws.danielszabo.common.service.network.LocalNodeService;
 import uk.ac.uws.danielszabo.common.service.network.NetworkService;
 import uk.ac.uws.danielszabo.common.service.network.SubscriptionService;
+import uk.ac.uws.danielszabo.hashnet.integrator.model.HashReport;
 
+import javax.transaction.Transactional;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,12 +65,12 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
   private final TopicService topicService;
 
   public IntegratorServiceFacadeImpl(
-      HashService hashService,
-      LocalNodeService localNodeService,
-      NetworkService networkService,
-      SubscriptionService subscriptionService,
-      HashCollectionService hashCollectionService,
-      TopicService topicService) {
+    HashService hashService,
+    LocalNodeService localNodeService,
+    NetworkService networkService,
+    SubscriptionService subscriptionService,
+    HashCollectionService hashCollectionService,
+    TopicService topicService) {
     this.hashService = hashService;
     this.localNodeService = localNodeService;
     this.networkService = networkService;
@@ -105,7 +112,7 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
 
   @Override
   public List<HashCollection> retrieveHashCollectionByTopic(Topic topic) {
-    return hashCollectionService.findByTopic(topic);
+    return hashCollectionService.findAllByTopic(topic);
   }
 
   @Override
@@ -134,7 +141,7 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
   }
 
   @Override
-  public List<Subscription> getSubscriptions() {
+  public List<Subscription> getSubscriptions() throws Exception {
     return subscriptionService.getSubscriptions();
   }
 
@@ -147,25 +154,14 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
   }
 
   @Override
-  public HashCollection generateHashCollection(
-      String path,
-      String id,
-      String name,
-      String description,
-      List<Topic> topics,
-      boolean forceRecalc)
-      throws IOException {
-    return hashCollectionService.generateHashCollection(
-        path, id, name, description, localNodeService.get(), topics, forceRecalc);
-  }
-
-  @Override
   public Optional<Topic> findTopicById(String id) throws Exception {
     // check if we have this locally already
     Optional<Topic> localOptionalTopic = topicService.findById(id);
-    if (localOptionalTopic.isPresent()) return localOptionalTopic;
-    // we don't ask try to retrieve it form the network
-    else return networkService.getTopicById(id);
+    if (localOptionalTopic.isPresent())
+      return localOptionalTopic;
+      // we don't ask try to retrieve it form the network
+    else
+      return networkService.getTopicById(id);
   }
 
   @Override
@@ -174,7 +170,7 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
   }
 
   @Override
-  public Optional<HashCollection> findAllHashCollectionById(String id) {
+  public Optional<HashCollection> findHashCollectionById(String id) {
     return hashCollectionService.findById(id);
   }
 
@@ -183,25 +179,25 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
     return networkService.checkCertificate(certificate, remoteAddr);
   }
 
-  @Override
-  public HashCollectionsMessage getHashCollectionReport() {
-    return new HashCollectionsMessage(hashCollectionService.findAllEnabledNoImages());
-  }
 
+  @Transactional
   @Override
   public void addSubscription(Topic topic) throws Exception {
     try {
       topic = topicService.findById(topic.getId()).get();
+      if (subscriptionService.isSubscribedTo(topic)) {
+        return;
+      }
     } catch (Exception e) {
     }
     // sending subscription to every archive that has hash collections in that topic
     for (Node archive :
-        topic.getHashCollectionList().stream()
-            .map(HashCollection::getArchive)
-            .distinct()
-            .collect(Collectors.toList())) {
+      hashCollectionService.findAllByTopic(topic).stream()
+        .map(HashCollection::getArchive)
+        .distinct()
+        .collect(Collectors.toList())) {
       Subscription subscription =
-          new Subscription(topic, archive.getId(), localNodeService.get().getId());
+        new Subscription(topic, archive.getId(), localNodeService.get().getId());
       // TODO later on wait for archive to accept subscription request maybe
       networkService.sendSubscription(archive, topic);
       subscriptionService.save(subscription);
@@ -214,12 +210,63 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
   }
 
   @Override
-  public Optional<Node> retrieveNodeByHost(String host) throws Exception {
-    return Optional.of(networkService.requestNodeInfo(host));
+  public HashCollection downloadHashCollection(String host, String id) throws Exception {
+    return networkService.downloadHashCollection(host, id);
   }
 
   @Override
-  public boolean removeSubscriptionByArchiveId(String id) {
-    return this.subscriptionService.removeByArchiveId(id);
+  public void removeSubscriptionByTopic(String topic) {
+    subscriptionService.removeByTopic(topicService.findById(topic).get());
   }
+
+  @Transactional
+  @Override
+  public HashReport checkImage(String image) throws IOException {
+
+    // calculate hash for the input image
+    Hash hashInput = hashService.pHash(new File(image));
+
+
+    Image highestMatch = null;
+    double highestMatchScore = 0;
+    List<Topic> topicList = new ArrayList<>();
+
+    // for each registered hash collection (i.e. ones we are subscribed to)
+    for (HashCollection hc : hashCollectionService.findAll()) {
+      // for each image in the collection
+      for (Image i : hc.getImageList()) {
+        // calculate a similarity score between the hashes
+        double score = hashService.simScore(hashInput, new Hash(i.getHash(), 32, new PerceptiveHash(32).algorithmId()));
+        // store the image, hash collection and similarity score
+        if (highestMatch == null)
+          highestMatch = i;
+        else if (score > highestMatchScore) {
+          highestMatch = i;
+          highestMatchScore = score;
+        }
+      }
+    }
+
+    // load hashcollection
+    Hibernate.initialize(highestMatch.getHashCollection());
+    Hibernate.initialize(highestMatch.getHashCollection().getTopicList());
+
+    return new HashReport(highestMatch, highestMatchScore, highestMatch.getHashCollection().getTopicList());
+  }
+
+  @Override
+  public void updateHashCollections() throws Exception {
+    for (Subscription subscription : subscriptionService.getSubscriptions()) {
+      List<HashCollection> hashCollectionList = networkService.requestAllHashCollectionsByArchive(subscription.getPublisher());
+      for (HashCollection hashCollection : hashCollectionList) {
+        networkService.downloadHashCollection(subscription.getPublisherId(), hashCollection.getId());
+      }
+    }
+  }
+
+  @Override
+  public Optional<Node> retrieveNodeByHost(String host) throws Exception {
+    return Optional.of(networkService.getNodeByHost(host));
+  }
+
 }

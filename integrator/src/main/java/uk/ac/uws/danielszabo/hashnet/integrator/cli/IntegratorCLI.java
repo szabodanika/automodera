@@ -26,15 +26,23 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import uk.ac.uws.danielszabo.common.cli.BaseNodeCLI;
+import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
 import uk.ac.uws.danielszabo.common.model.hash.Topic;
+import uk.ac.uws.danielszabo.common.model.network.message.Message;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.model.network.node.Subscription;
 import uk.ac.uws.danielszabo.common.service.hashing.HashServiceImpl;
 import uk.ac.uws.danielszabo.common.service.image.TopicService;
 import uk.ac.uws.danielszabo.common.service.network.*;
 import uk.ac.uws.danielszabo.common.service.rest.RestServiceImpl;
+import uk.ac.uws.danielszabo.hashnet.integrator.model.HashReport;
 import uk.ac.uws.danielszabo.hashnet.integrator.service.IntegratorServiceFacade;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,11 +60,10 @@ public class IntegratorCLI extends BaseNodeCLI {
   private final IntegratorServiceFacade integratorServiceFacade;
 
   public IntegratorCLI(
-      LocalNodeService localNodeService,
-      NetworkService networkService,
-      IntegratorServiceFacade integratorServiceFacade,
-      SubscriptionService subscriptionService,
-      TopicService topicService) {
+    LocalNodeService localNodeService,
+    NetworkService networkService,
+    IntegratorServiceFacade integratorServiceFacade,
+    TopicService topicService) {
     super(localNodeService, networkService, topicService);
     this.integratorServiceFacade = integratorServiceFacade;
   }
@@ -64,21 +71,26 @@ public class IntegratorCLI extends BaseNodeCLI {
   // for example:
   @ShellMethod("Manage Subscriptions")
   public void subs(
-      @ShellOption(defaultValue = "false") boolean list,
-      @ShellOption(defaultValue = "false") boolean add,
-      @ShellOption(defaultValue = "false") boolean remove,
-      @ShellOption(defaultValue = "") String topic) {
+    @ShellOption(defaultValue = "false") boolean list,
+    @ShellOption(defaultValue = "false") boolean add,
+    @ShellOption(defaultValue = "false") boolean remove,
+    @ShellOption(defaultValue = "") String topic) {
 
     if (list) {
       log.info("Subscriptions");
       List<Subscription> hashCollections;
-      if (!(hashCollections = integratorServiceFacade.getSubscriptions()).isEmpty()) {
-        for (Subscription s : hashCollections) {
-          // TODO make this a little nicer
-          log.info(s.toString());
+      try {
+        if (!(hashCollections = integratorServiceFacade.getSubscriptions()).isEmpty()) {
+          for (Subscription s : hashCollections) {
+            // TODO make this a little nicer
+            log.info(s.toString());
+          }
+        } else {
+          log.info("No subscription found");
         }
-      } else {
-        log.info("No subscription found");
+      } catch (Exception e) {
+        log.error("Failed to retrieve subscriptions");
+        e.printStackTrace();
       }
     } else if (add) {
       if (!topic.isBlank()) {
@@ -102,24 +114,69 @@ public class IntegratorCLI extends BaseNodeCLI {
       } else {
         log.error("Please specify non-empty topic ID");
       }
+    } else if (remove) {
+      if (!topic.isBlank()) {
+        integratorServiceFacade.removeSubscriptionByTopic(topic);
+        log.info("Successfully unsubscribed from ");
+      }
     }
-    //    else if (remove) {
-    //      if (!id.isBlank()) {
-    //        if (integratorServiceFacade.removeSubscriptionByArchiveId(id)) {
-    //          log.info("Successfully unsubscribed from ");
-    //        }
-    //
-    //      } else if (!host.isBlank()) {
-    //        Optional<Node> optionalArchive = integratorServiceFacade.retrieveNodeByHost(host);
-    //        if (optionalArchive.isPresent()) {
-    //          integratorServiceFacade.addSubscription(optionalArchive.get());
-    //        } else {
-    //          log.error("Failed to reach node " + host);
-    //        }
-    //      } else {
-    //        log.error("Please specify non-empty id or host");
-    //      }
-    //    }
+  }
+
+  @ShellMethod("Manage Hash Collections")
+  public void hash(
+    @ShellOption(defaultValue = "false") boolean list,
+    @ShellOption(defaultValue = "false") boolean show,
+    @ShellOption(defaultValue = "sync") boolean sync,
+    @ShellOption(defaultValue = "") String id) {
+
+    if (list) {
+      List<HashCollection> hashCollections;
+      if (!(hashCollections = integratorServiceFacade.findAllHashCollections()).isEmpty()) {
+        for (HashCollection hc : hashCollections) {
+          // TODO make this a little nicer
+          log.info(hc.toString());
+        }
+      } else {
+        log.info("No hash collections found");
+      }
+
+    } else if (show) {
+      if (id.isBlank()) {
+        log.error("Please specify non-empty id");
+        return;
+      }
+      integratorServiceFacade.findHashCollectionById(id).ifPresent(h -> log.info(h.toString()));
+    } else if (sync) {
+      try {
+        integratorServiceFacade.updateHashCollections();
+      } catch (Exception e) {
+        log.error("Failed to update hash collections");
+        e.printStackTrace();
+      }
+    }
+  }
+
+  @ShellMethod("Manage Hash Collections")
+  public void check(
+    String image,
+    @ShellOption(defaultValue = "false") boolean xml
+  ) {
+    try {
+      if (xml) {
+        Marshaller marshallerObj = JAXBContext.newInstance(HashReport.class).createMarshaller();
+        StringWriter sw = new StringWriter();
+        marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+        marshallerObj.marshal(integratorServiceFacade.checkImage(image), sw);
+
+        System.out.println(sw);
+
+      } else {
+        log.info(integratorServiceFacade.checkImage(image).toString());
+      }
+    } catch (IOException | JAXBException e) {
+      e.printStackTrace();
+    }
   }
 
   @ShellMethod("Manage Hash Collections")

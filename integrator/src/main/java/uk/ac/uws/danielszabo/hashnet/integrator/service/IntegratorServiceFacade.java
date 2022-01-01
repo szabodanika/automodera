@@ -27,6 +27,7 @@ import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.model.network.node.Subscription;
+import uk.ac.uws.danielszabo.hashnet.integrator.model.HashReport;
 
 import java.io.IOException;
 import java.util.List;
@@ -58,34 +59,29 @@ public interface IntegratorServiceFacade {
 
   void deleteNode(Node node);
 
-  List<Subscription> getSubscriptions();
+  List<Subscription> getSubscriptions() throws Exception;
 
   void saveCertificate(NodeCertificate certificate);
-
-  HashCollection generateHashCollection(
-      String path,
-      String id,
-      String name,
-      String description,
-      List<Topic> topics,
-      boolean forceRecalc)
-      throws IOException;
 
   Optional<Topic> findTopicById(String s) throws Exception;
 
   List<HashCollection> findAllHashCollections();
 
-  Optional<HashCollection> findAllHashCollectionById(String id);
+  Optional<HashCollection> findHashCollectionById(String id);
 
   boolean checkCertificate(NodeCertificate certificate, String remoteAddr);
 
-  HashCollectionsMessage getHashCollectionReport();
+  void updateHashCollections() throws Exception;
 
   Optional<Node> retrieveNodeByHost(String host) throws Exception;
-
-  boolean removeSubscriptionByArchiveId(String id);
 
   void addSubscription(Topic topic) throws Exception;
 
   List<Node> getAllArchives();
+
+  HashCollection downloadHashCollection(String host, String id) throws Exception;
+
+  void removeSubscriptionByTopic(String topic);
+
+  HashReport checkImage(String image) throws IOException;
 }

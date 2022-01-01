@@ -20,6 +20,7 @@
 
 package uk.ac.uws.danielszabo.common.repository;
 
+import org.springframework.beans.PropertyValues;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -36,4 +37,6 @@ public interface HashCollectionRepository extends JpaRepository<HashCollection, 
   <T> List<T> findAllByTopicListContains(Topic topic);
 
   List<HashCollectionInfo> findAllProjectedByEnabled(boolean enabled);
+
+  List<HashCollectionInfo> findAllProjectedByEnabledAndTopicListContains(boolean b, Topic topic);
 }

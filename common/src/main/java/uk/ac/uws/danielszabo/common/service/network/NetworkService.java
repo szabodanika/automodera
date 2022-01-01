@@ -55,6 +55,8 @@ public interface NetworkService {
 
   void removeNode(Node node);
 
+  Node getLocalNode();
+
   /**
    * this should return all the nodes in the database: - local node - operator nodes - nodes
    * subscribed to or publishing to
@@ -65,9 +67,19 @@ public interface NetworkService {
 
   List<Node> getAllArchives();
 
+  String resolveNodeId(String origin, String id) throws Exception;
+
+  Node getNodeByHost(String host) throws Exception;
+
   // HashCollections, Topics, Images
 
+  HashCollection downloadHashCollection(String host, String id) throws Exception;
+
+  void publishHashCollections(List<HashCollection> hashCollectionList, Node subscriber) throws Exception;
+
   Optional<Topic> getTopicById(String id) throws Exception;
+
+  List<HashCollection> requestAllHashCollectionsByArchive(Node node) throws Exception;
 
   // Certificate Requests
 
@@ -87,9 +99,6 @@ public interface NetworkService {
 
   CertificateRequest certificateRequest(String origin, Node localNode) throws Exception;
 
-  Node requestNodeInfo(String host) throws Exception;
-
-  List<HashCollection> requestAllHashCollectionsByArchive(Node node) throws Exception;
-
   void sendSubscription(Node node, Topic topic) throws Exception;
+
 }

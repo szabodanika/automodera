@@ -32,7 +32,7 @@ public interface HashCollectionService {
 
   Optional<HashCollection> findById(String id);
 
-  List<HashCollection> findByTopic(Topic topic);
+  List<HashCollection> findAllByTopic(Topic topic);
 
   List<HashCollection> findAll();
 
@@ -47,4 +47,6 @@ public interface HashCollectionService {
       throws IOException;
 
   List<HashCollection> findAllEnabledNoImages();
+
+  List<HashCollection> findAllEnabledNoImagesByTopic(Topic topic);
 }
