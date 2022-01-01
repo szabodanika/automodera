@@ -21,6 +21,7 @@
 package uk.ac.uws.danielszabo.hashnet.archive.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -91,9 +92,15 @@ public class HashRESTController {
   public ResponseEntity postSubscribe(@RequestBody Message message, HttpServletRequest request) {
     if (archiveServiceFacade.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
       Subscription subscription = (Subscription) message.getContent();
+
+//      Hibernate.initialize(subscription.getSubscriber());
+//      Hibernate.initialize(subscription.getPublisher());
+//      Hibernate.initialize(subscription.getTopic());
+
       try {
         archiveServiceFacade.storeNodeInfo(request.getRemoteAddr());
         archiveServiceFacade.saveSubscription(subscription);
+        archiveServiceFacade.syncHashCollectionsBySubscription(subscription);
       } catch (Exception e) {
         log.error("Failed to store subscription");
         e.printStackTrace();
@@ -103,7 +110,7 @@ public class HashRESTController {
           "Received subscription request from "
               + message.getCertificate().getId()
               + " for topic "
-              + subscription.getTopic().getId());
+              + subscription.getTopicId());
       return new ResponseEntity<>(HttpStatus.OK);
     } else {
       return new ResponseEntity<>(HttpStatus.FORBIDDEN);

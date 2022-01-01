@@ -233,6 +233,7 @@ public class NetworkServiceImpl implements NetworkService {
   @Override
   public HashCollection downloadHashCollection(String host, String id) throws Exception {
     HashCollection hashCollection = this.restService.downloadHashCollection(host, id);
+    hashCollection.getImageList().forEach(image -> image.setHashCollection(hashCollection));
     return hashCollectionRepository.save(hashCollection);
   }
 

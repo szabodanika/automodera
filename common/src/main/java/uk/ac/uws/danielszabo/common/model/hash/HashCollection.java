@@ -92,7 +92,7 @@ public class HashCollection {
   //    @XmlTransient
   private List<Topic> topicList;
 
-  @OneToMany(cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "hashCollection", cascade = CascadeType.ALL)
   @XmlElementWrapper(name = "imageList")
   @XmlElement(name = "image")
   @NonNull

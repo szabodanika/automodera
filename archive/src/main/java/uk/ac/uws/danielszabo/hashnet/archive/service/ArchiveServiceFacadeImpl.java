@@ -21,6 +21,7 @@
 package uk.ac.uws.danielszabo.hashnet.archive.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
 import uk.ac.uws.danielszabo.common.model.network.messages.HashCollectionsMessage;
@@ -198,9 +199,16 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
   @Override
   public void syncAllHashCollections() throws Exception {
     for (Subscription subscription : this.subscriptionService.getSubscriptions()) {
-      List<HashCollection> hashCollectionList =
-          hashCollectionService.findAllEnabledNoImagesByTopic(subscription.getTopic());
-      networkService.publishHashCollections(hashCollectionList, subscription.getSubscriber());
+      syncHashCollectionsBySubscription(subscription);
     }
+  }
+
+  @Override
+  public void syncHashCollectionsBySubscription(Subscription subscription) throws Exception {
+    Hibernate.initialize(subscription.getTopic());
+    log.debug(subscription.getSubscriberId() + " / " + subscription.getTopic().getId());
+    List<HashCollection> hashCollectionList =
+      hashCollectionService.findAllEnabledNoImagesByTopic(subscription.getTopic());
+    networkService.publishHashCollections(hashCollectionList, subscription.getSubscriber());
   }
 }

@@ -131,7 +131,7 @@ public class RestServiceImpl implements RestService {
     postAsXML(
         node.getHost(),
         "/hash/subscribe",
-        new Subscription(topic, node.getId(), localNode.getId()));
+        new Subscription(topic.getId(), node.getId(), localNode.getId()));
   }
 
   @Override

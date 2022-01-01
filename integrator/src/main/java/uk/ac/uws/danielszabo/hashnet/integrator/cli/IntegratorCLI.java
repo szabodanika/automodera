@@ -175,7 +175,7 @@ public class IntegratorCLI extends BaseNodeCLI {
     }
   }
 
-  @ShellMethod("Manage Hash Collections")
+  @ShellMethod("Lists current node info of every archive")
   public void archives() {
     log.info("Archives");
     List<Node> archiveList;
