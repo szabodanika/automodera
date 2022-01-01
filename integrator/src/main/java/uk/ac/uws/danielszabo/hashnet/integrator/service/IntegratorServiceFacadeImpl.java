@@ -46,7 +46,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -191,34 +190,35 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
     // sending subscription to every archive that has hash collections in that topic
 
     // for each archive
-    for(Node archive : getAllArchives()) {
+    for (Node archive : getAllArchives()) {
       // request info of all their hash collections (without hashes)
-      List<HashCollection> hashCollectionList = networkService.requestAllHashCollectionsByArchive(archive);
+      List<HashCollection> hashCollectionList =
+          networkService.requestAllHashCollectionsByArchive(archive);
       // for each hash collection
-      for(HashCollection hc : hashCollectionList) {
+      for (HashCollection hc : hashCollectionList) {
         // if it is tagged with the given topic
-        if(hc.getTopicList().contains(topic)){
+        if (hc.getTopicList().contains(topic)) {
 
           // let the archive know that we want to subscribe
           Subscription subscription =
-            new Subscription(topic.getId(), archive.getId(), localNodeService.get().getId());
+              new Subscription(topic.getId(), archive.getId(), localNodeService.get().getId());
           // TODO later on wait for archive to accept subscription request maybe
           subscriptionService.save(subscription);
           networkService.sendSubscription(archive, topic);
         }
       }
     }
-//    for (Node archive :
-//        hashCollectionService.findAllByTopic(topic).stream()
-//            .map(HashCollection::getArchive)
-//            .distinct()
-//            .collect(Collectors.toList())) {
-//      Subscription subscription =
-//          new Subscription(topic, archive.getId(), localNodeService.get().getId());
-//      // TODO later on wait for archive to accept subscription request maybe
-//      networkService.sendSubscription(archive, topic);
-//      subscriptionService.save(subscription);
-//    }
+    //    for (Node archive :
+    //        hashCollectionService.findAllByTopic(topic).stream()
+    //            .map(HashCollection::getArchive)
+    //            .distinct()
+    //            .collect(Collectors.toList())) {
+    //      Subscription subscription =
+    //          new Subscription(topic, archive.getId(), localNodeService.get().getId());
+    //      // TODO later on wait for archive to accept subscription request maybe
+    //      networkService.sendSubscription(archive, topic);
+    //      subscriptionService.save(subscription);
+    //    }
   }
 
   @Override

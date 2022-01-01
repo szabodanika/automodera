@@ -56,10 +56,8 @@ public class Topic {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o)
-      return true;
-    if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
-      return false;
+    if (this == o) return true;
+    if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
     Topic topic = (Topic) o;
     return id != null && Objects.equals(id, topic.id);
   }

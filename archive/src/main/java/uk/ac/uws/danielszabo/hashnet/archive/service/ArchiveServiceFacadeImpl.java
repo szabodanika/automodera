@@ -208,7 +208,7 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
     Hibernate.initialize(subscription.getTopic());
     log.debug(subscription.getSubscriberId() + " / " + subscription.getTopic().getId());
     List<HashCollection> hashCollectionList =
-      hashCollectionService.findAllEnabledNoImagesByTopic(subscription.getTopic());
+        hashCollectionService.findAllEnabledNoImagesByTopic(subscription.getTopic());
     networkService.publishHashCollections(hashCollectionList, subscription.getSubscriber());
   }
 }

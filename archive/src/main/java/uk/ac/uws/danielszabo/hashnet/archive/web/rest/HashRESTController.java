@@ -21,7 +21,6 @@
 package uk.ac.uws.danielszabo.hashnet.archive.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -93,9 +92,9 @@ public class HashRESTController {
     if (archiveServiceFacade.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
       Subscription subscription = (Subscription) message.getContent();
 
-//      Hibernate.initialize(subscription.getSubscriber());
-//      Hibernate.initialize(subscription.getPublisher());
-//      Hibernate.initialize(subscription.getTopic());
+      //      Hibernate.initialize(subscription.getSubscriber());
+      //      Hibernate.initialize(subscription.getPublisher());
+      //      Hibernate.initialize(subscription.getTopic());
 
       try {
         archiveServiceFacade.storeNodeInfo(request.getRemoteAddr());

@@ -43,10 +43,7 @@ public class Subscription {
 
   // XML transient because it is just a local db id
   // and it means nothing
-  @Id
-  @NonNull
-  @XmlTransient
-  private String id;
+  @Id @NonNull @XmlTransient private String id;
 
   // one subscription object for each topic even between the same publisher and subscriber nodes
   @JoinColumn(name = "topic_id", insertable = false, updatable = false)
@@ -87,6 +84,4 @@ public class Subscription {
     this.topicId = topicId;
     this.id = subscriberId + "/" + publisherId + "." + topicId;
   }
-
-
 }
