@@ -103,35 +103,74 @@ java -jar operator-1.0-SNAPSHOT.jar
 java -jar archive-1.0-SNAPSHOT.jar
 java -jar integrator-1.0-SNAPSHOT.jar
 ```
-### 4. Initialise Nodes
+### 4. Set up and run nodes
 
-Note: there is no integrator exacutable yet.
 
-#### 1. Initialise origin node
+#### 1. Initialise origin node and network configuration
 ```
 init --type ORIGIN --id origin --name 'HashNet Origin Node' --domain origin.hashnet.test --legal-name 'HashNet Test Organisation' --admin-email contact@origin.test --address-line1 '123 High Street' --address-line2 'Block B' --post-code AB12CD --country Scotland
+
+netinit --name 'HashNetPrototype' --environment dev --version 0.1 --origin origin.hashnet.test
 ```
-#### 2. Initialise archive node
+
+#### 2. Initialise archive node and connect to network
 ```
-init --id testarchive1 --name 'HashNet Test Archive Node 1' --domain archive1.hashnet.test --legal-name 'HashNet Test Organisation' --admin-email contact@archive.test --address-line1 '123 High Street' --address-line2 'Block A' --post-code AB12CD --country Scotland
+init --type ARCHIVE --id testarchive1 --name 'HashNet Test Archive Node 1' --domain archive1.hashnet.test --legal-name 'HashNet Test Organisation' --admin-email contact@archive.test --address-line1 '123 High Street' --post-code AB12CD --country Scotland
+
+connect origin.hashnet.test
 ```
-#### 3. Request certificate from origin node (archive)
+
+#### 3. Initialise integrator node and connect to network
+```
+init --type INTEGRATOR --id testintegrator1 --name 'HashNet Test Integrator Node 1' --domain api1.hashnet.test --legal-name 'Test UGC Platform' --admin-email contact@integrator.test --address-line1 '321 High Street' --post-code BA21DC --country Scotland
+```
+```
+connect origin.hashnet.test
+```
+
+#### 4. Request certificate from origin node (archive and integrator)
 ```
 localcert --request
 ```
-#### 4. Sign certificate (origin)
+#### 5. Sign certificates (origin)
 ```
-certreq --accept --id testarchive1 --message OK
+certreq --list
+
+```
+```
+certreq --accept --id [request id here]
 ```
 
-#### 5. Load configuration (optional, after restart)
-Currently the nodes do not load their configurations automatically after restarting them. The following command will tell them to read netconf.xml and configure themselves accordingly. The network data is stored separately in the application.properties file currently.
+#### 5. Check network connections
 ```
-load
+node --status --host origin.hashnet.test
+```
+or
+```
+node --info --host origin.hashnet.test
+```
+or
+```
+node --all
 ```
 
-## Modules
-*TODO*
+#### 6. Prepare topics and hash collection with archive node
+```
+topic --create --id topic1 --name TestTopic1
+topic --create --id topic2 --name TestTopic2
+topic --create --id topic3 --name TestTopic3
+```
+```
+hash --path "./testimages" --id collection1 --name "First Hash Collection" --description "This is just a test" --topics "topic1,topic2,topic3" --force-recalc
+```
+
+#### 7. Subscribe to topic and check local image with integrator node
+```
+subs --add --topic topic1
+```
+```
+check --image ./testimages/supra.jpeg --xml
+```
 
 
 ## Code Coverage
