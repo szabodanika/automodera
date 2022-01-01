@@ -33,7 +33,6 @@ import uk.ac.uws.danielszabo.common.service.image.TopicService;
 import uk.ac.uws.danielszabo.common.service.network.*;
 import uk.ac.uws.danielszabo.common.service.rest.RestServiceImpl;
 
-
 @Import({
   RestServiceImpl.class,
   HashServiceImpl.class,
