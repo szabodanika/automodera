@@ -44,15 +44,20 @@ public class Subscription {
   // XML transient because it is just a local db id
   // and it means nothing
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @NonNull
   @XmlTransient
-  private Long id;
+  private String id;
 
   // one subscription object for each topic even between the same publisher and subscriber nodes
-  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-  @JoinColumn(name = "topic_id")
-  @NonNull
+  @JoinColumn(name = "topic_id", insertable = false, updatable = false)
+  @ManyToOne(targetEntity = Topic.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @XmlTransient
+  @NotFound(action = NotFoundAction.IGNORE)
   private Topic topic;
+
+  @Column(name = "topic_id")
+  @NonNull
+  private String topicId;
 
   @JoinColumn(name = "publisher_id", insertable = false, updatable = false)
   @ManyToOne(targetEntity = Node.class, fetch = FetchType.EAGER)
@@ -75,4 +80,13 @@ public class Subscription {
   @Column(name = "subscriber_id")
   @NonNull
   private String subscriberId;
+
+  public Subscription(String publisherId, String subscriberId, String topicId) {
+    this.publisherId = publisherId;
+    this.subscriberId = subscriberId;
+    this.topicId = topicId;
+    this.id = subscriberId + "/" + publisherId + "." + topicId;
+  }
+
+
 }

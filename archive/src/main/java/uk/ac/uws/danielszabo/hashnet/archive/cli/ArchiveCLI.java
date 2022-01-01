@@ -155,6 +155,7 @@ public class ArchiveCLI extends BaseNodeCLI {
       }
     } else if (sync) {
       try {
+        log.info("Syncing hash collections...");
         archiveServiceFacade.syncAllHashCollections();
       } catch (Exception e) {
         log.error("Failed to sync hash collections");

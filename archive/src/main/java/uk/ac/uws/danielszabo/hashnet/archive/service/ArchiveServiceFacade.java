@@ -86,4 +86,6 @@ public interface ArchiveServiceFacade {
   void storeNodeInfo(String subscriberId) throws Exception;
 
   void syncAllHashCollections() throws Exception;
+
+  void syncHashCollectionsBySubscription(Subscription subscription) throws Exception;
 }

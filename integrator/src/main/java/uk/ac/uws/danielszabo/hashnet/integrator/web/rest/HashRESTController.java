@@ -66,7 +66,7 @@ public class HashRESTController {
           try {
             hashCollection.setArchive(
                 integratorServiceFacade.retrieveNodeById(hashCollection.getArchiveId()).get());
-            if (localHashCollection.get().getVersion() < hashCollection.getVersion()) {
+            if (!localHashCollection.isPresent()) {
               log.info(
                   "Downloading hash collection "
                       + hashCollection.getId()
