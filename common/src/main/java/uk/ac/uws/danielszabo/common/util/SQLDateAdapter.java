@@ -26,7 +26,7 @@ import java.sql.Date;
 public class SQLDateAdapter extends XmlAdapter<String, Date> {
 
   @Override
-  public Date unmarshal(String xml) throws Exception {
+  public Date unmarshal(String xml) throws NumberFormatException {
     Date date = new java.sql.Date(Long.parseLong(xml));
     return date;
   }
