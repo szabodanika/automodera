@@ -44,8 +44,10 @@ public class SQLDateAdapterTest extends TestCase {
     Date unmarshalledSQLDate = testSQLDateAdapter.unmarshal("1641067954546");
     assertEquals(new Date(1641067954546L), unmarshalledSQLDate);
 
-    assertThrows(NumberFormatException.class, () -> {
-      testSQLDateAdapter.unmarshal("NaN");
-    });
+    assertThrows(
+        NumberFormatException.class,
+        () -> {
+          testSQLDateAdapter.unmarshal("NaN");
+        });
   }
 }

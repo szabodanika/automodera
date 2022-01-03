@@ -22,16 +22,12 @@
 
 package uk.ac.uws.danielszabo.common.service.image;
 
-//import junit.framework.TestCase;
-import org.junit.jupiter.api.Assertions;
+// import junit.framework.TestCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
 import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
@@ -53,8 +49,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class HashCollectionServiceImplTest {
 
-  @Mock
-  private HashCollectionRepository hashCollectionRepository;
+  @Mock private HashCollectionRepository hashCollectionRepository;
 
   private HashCollectionService hashCollectionService;
 
@@ -71,18 +66,27 @@ public class HashCollectionServiceImplTest {
 
     // default case
 
-    Node testNode = new Node("testnode1", "Test Node 1", NodeType.INTEGRATOR, "testnode1.test", new Date(new java.util.Date().getTime()), new ArrayList<>(), new ArrayList<>());
+    Node testNode =
+        new Node(
+            "testnode1",
+            "Test Node 1",
+            NodeType.INTEGRATOR,
+            "testnode1.test",
+            new Date(new java.util.Date().getTime()),
+            new ArrayList<>(),
+            new ArrayList<>());
 
     when(hashCollectionRepository.save(any())).then(returnsFirstArg());
 
-    HashCollection hashCollection = hashCollectionService.generateHashCollection(
-      "./src/test/resources",
-      "test-collection",
-      "Test Collection",
-      "Description",
-      testNode,
-      List.of(new Topic("topic1", "Test Topic")),
-      false);
+    HashCollection hashCollection =
+        hashCollectionService.generateHashCollection(
+            "./src/test/resources",
+            "test-collection",
+            "Test Collection",
+            "Description",
+            testNode,
+            List.of(new Topic("topic1", "Test Topic")),
+            false);
 
     assertEquals("test-collection", hashCollection.getId());
     assertEquals("Test Collection", hashCollection.getName());
@@ -98,16 +102,16 @@ public class HashCollectionServiceImplTest {
 
     // images not accessible
 
-    assertDoesNotThrow(() -> {
-      hashCollectionService.generateHashCollection(
-        "nonexistentpath",
-        "test-collection",
-        "Test Collection",
-        "Description",
-        testNode,
-        List.of(new Topic("topic1", "Test Topic")),
-        false);
-    });
-
+    assertDoesNotThrow(
+        () -> {
+          hashCollectionService.generateHashCollection(
+              "nonexistentpath",
+              "test-collection",
+              "Test Collection",
+              "Description",
+              testNode,
+              List.of(new Topic("topic1", "Test Topic")),
+              false);
+        });
   }
 }
