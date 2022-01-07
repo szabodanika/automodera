@@ -23,7 +23,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>2.5.7</version>
+            <version>2.5.8</version>
         </dependency>
 
         <!-- Basic Spring libraries we need-->
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
-            <version>2.5.7</version>
+            <version>2.5.8</version>
         </dependency>
 
         <!-- database engine-->
