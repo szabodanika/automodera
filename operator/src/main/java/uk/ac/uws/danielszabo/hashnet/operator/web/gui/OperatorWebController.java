@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import uk.ac.uws.danielszabo.hashnet.operator.service.OperatorServiceFacade;
 
 import java.time.LocalDateTime;
@@ -43,4 +44,34 @@ public class OperatorWebController {
     model.addAttribute("date", LocalDateTime.now());
     return "index";
   }
+
+  @GetMapping("setup")
+  public String getSetup(Model model) {
+    model.addAttribute("date", LocalDateTime.now());
+    return "setup";
+  }
+
+  @GetMapping("info")
+  public String getInfo(Model model, @RequestParam(required = false) String nodeId) {
+    if(nodeId != null) {
+      operatorServiceFacade.findKnownNodeById(nodeId).ifPresent( n ->
+        model.addAttribute("node",n)
+      );
+    } else {
+      model.addAttribute("node", operatorServiceFacade.getLocalNode());
+    }
+    return "node";
+  }
+
+  @GetMapping("network")
+  public String getNodes(Model model) {
+    try {
+      model.addAttribute("nodes", operatorServiceFacade.findAllNodes());
+      model.addAttribute("network", operatorServiceFacade.getNetworkConfiguration());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return "network";
+  }
+
 }

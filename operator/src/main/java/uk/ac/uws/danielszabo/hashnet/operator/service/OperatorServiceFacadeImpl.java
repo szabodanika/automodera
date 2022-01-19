@@ -21,6 +21,7 @@
 package uk.ac.uws.danielszabo.hashnet.operator.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
 import uk.ac.uws.danielszabo.common.model.hash.Topic;
@@ -164,7 +165,8 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
   }
 
   @Override
-  public List<Node> findAllNodes() {
+  public List<Node> findAllNodes() throws Exception {
+    fetchAllNodeStatus();
     return networkService.getAllKnownNodes();
   }
 
@@ -201,6 +203,13 @@ public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
 
   @Override
   public Node getLocalNode() {
-    return localNodeService.get();
+    Node node = localNodeService.get();
+    Hibernate.initialize(node.getCertificate().getIssuer());
+    return node;
+  }
+
+  @Override
+  public void fetchAllNodeStatus() throws Exception {
+    networkService.fetchAllNodeStatus();
   }
 }

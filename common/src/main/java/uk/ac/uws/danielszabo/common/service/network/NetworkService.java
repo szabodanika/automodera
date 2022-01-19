@@ -45,6 +45,8 @@ public interface NetworkService {
 
   // Nodes
 
+  NodeStatus getNodeStatus(Node node) throws Exception;
+
   NodeStatus getNodeStatus(String address) throws Exception;
 
   List<Node> findAllNodes();
@@ -101,4 +103,6 @@ public interface NetworkService {
   CertificateRequest certificateRequest(String origin, Node localNode) throws Exception;
 
   void sendSubscription(Node node, Topic topic) throws Exception;
+
+  void fetchAllNodeStatus() throws Exception;
 }

@@ -39,6 +39,7 @@ import java.net.InetAddress;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -166,6 +167,15 @@ public class NetworkServiceImpl implements NetworkService {
   }
 
   @Override
+  public NodeStatus getNodeStatus(Node node) throws Exception {
+    NodeStatus status = restService.requestStatus(node.getHost());
+    node.setOnline(status.isOnline());
+    node.setActive(status.isActive());
+    saveNode(node);
+    return status;
+  }
+
+  @Override
   public NodeStatus getNodeStatus(String address) throws Exception {
     return restService.requestStatus(address);
   }
@@ -228,6 +238,13 @@ public class NetworkServiceImpl implements NetworkService {
   @Override
   public void sendSubscription(Node node, Topic topic) throws Exception {
     this.restService.sendSubscription(node, localNodeRepository.get().get().getLocal(), topic);
+  }
+
+  @Override
+  public void fetchAllNodeStatus() throws Exception {
+    for (Node node : getAllKnownNodes()) {
+      getNodeStatus(node);
+    }
   }
 
   @Override

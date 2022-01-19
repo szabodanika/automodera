@@ -57,7 +57,7 @@ public interface OperatorServiceFacade {
 
   List<HashCollection> retrieveHashCollectionByArchive(Node topic) throws Exception;
 
-  List<Node> findAllNodes();
+  List<Node> findAllNodes() throws Exception;
 
   Optional<Node> findKnownNodeById(String id);
 
@@ -72,4 +72,6 @@ public interface OperatorServiceFacade {
   ArchiveAddressesMessage getArchiveAddressesMessage();
 
   Node getLocalNode();
+
+  void fetchAllNodeStatus() throws Exception;
 }
