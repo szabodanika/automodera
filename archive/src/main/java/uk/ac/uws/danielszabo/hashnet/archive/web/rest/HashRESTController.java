@@ -109,7 +109,7 @@ public class HashRESTController {
           "Received subscription request from "
               + message.getCertificate().getId()
               + " for topic "
-              + subscription.getTopicId());
+              + subscription.getTopic());
       return new ResponseEntity<>(HttpStatus.OK);
     } else {
       return new ResponseEntity<>(HttpStatus.FORBIDDEN);

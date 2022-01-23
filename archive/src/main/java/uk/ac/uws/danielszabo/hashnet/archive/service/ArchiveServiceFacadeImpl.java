@@ -24,21 +24,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
+import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.messages.HashCollectionsMessage;
-import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
+import uk.ac.uws.danielszabo.common.model.network.node.NodeType;
 import uk.ac.uws.danielszabo.common.model.network.node.Subscription;
 import uk.ac.uws.danielszabo.common.service.hashing.HashService;
 import uk.ac.uws.danielszabo.common.service.image.HashCollectionService;
-import uk.ac.uws.danielszabo.common.service.image.TopicService;
 import uk.ac.uws.danielszabo.common.service.network.LocalNodeService;
 import uk.ac.uws.danielszabo.common.service.network.NetworkService;
 import uk.ac.uws.danielszabo.common.service.network.SubscriptionService;
+import uk.ac.uws.danielszabo.hashnet.archive.ArchiveServer;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,169 +48,213 @@ import java.util.Optional;
 @Service
 public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
 
-  private final HashService hashService;
+    private final LocalNodeService localNodeService;
 
-  private final LocalNodeService localNodeService;
+    private final NetworkService networkService;
 
-  private final NetworkService networkService;
+    private final SubscriptionService subscriptionService;
 
-  private final SubscriptionService subscriptionService;
+    private final HashCollectionService hashCollectionService;
 
-  private final HashCollectionService hashCollectionService;
-
-  private final TopicService topicService;
-
-  public ArchiveServiceFacadeImpl(
-      HashService hashService,
-      LocalNodeService localNodeService,
-      NetworkService networkService,
-      SubscriptionService subscriptionService,
-      HashCollectionService hashCollectionService,
-      TopicService topicService) {
-    this.hashService = hashService;
-    this.localNodeService = localNodeService;
-    this.networkService = networkService;
-    this.subscriptionService = subscriptionService;
-    this.hashCollectionService = hashCollectionService;
-    this.topicService = topicService;
-  }
-
-  @Override
-  public boolean verifyCertificate(NodeCertificate certificate) {
-    Optional<NodeCertificate> localCert = networkService.findCertificateById((certificate.getId()));
-    return localCert.map(nodeCertificate -> nodeCertificate.equals(certificate)).orElse(false);
-  }
-
-  @Override
-  public CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest) {
-    return networkService.saveCertificateRequest(certificateRequest);
-  }
-
-  @Override
-  public List<CertificateRequest> retrieveAllCertificateRequests() {
-    return networkService.findAllCertificateRequests();
-  }
-
-  @Override
-  public Optional<CertificateRequest> findCertificateRequestById(String id) {
-    return networkService.findCertificateRequestById(id);
-  }
-
-  @Override
-  public List<HashCollection> retrieveAllHashCollections() {
-    return hashCollectionService.findAll();
-  }
-
-  @Override
-  public Optional<HashCollection> retrieveHashCollectionById(String id) {
-    return hashCollectionService.findById(id);
-  }
-
-  @Override
-  public List<HashCollection> retrieveHashCollectionByTopic(Topic topic) {
-    return hashCollectionService.findAllByTopic(topic);
-  }
-
-  @Override
-  public List<HashCollection> retrieveHashCollectionByArchive(Node topic) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public List<Node> retrieveAllNodes() {
-    return networkService.getAllKnownNodes();
-  }
-
-  @Override
-  public Optional<Node> findKnownNodeById(String id) {
-    return networkService.findKnownNodeById(id);
-  }
-
-  @Override
-  public Node saveNode(Node node) {
-    return networkService.saveNode(node);
-  }
-
-  @Override
-  public void deleteNode(Node node) {
-    networkService.removeNode(node);
-  }
-
-  @Override
-  public List<Subscription> getSubscriptions() throws Exception {
-    return subscriptionService.getSubscriptions();
-  }
-
-  @Override
-  public void saveCertificate(NodeCertificate certificate) {
-    Node localNode = localNodeService.get();
-    certificate.setNode(localNode);
-    localNode.setCertificate(certificate);
-    localNodeService.set(localNode);
-  }
-
-  @Override
-  public HashCollection generateHashCollection(
-      String path,
-      String id,
-      String name,
-      String description,
-      List<Topic> topics,
-      boolean forceRecalc)
-      throws IOException {
-    return hashCollectionService.generateHashCollection(
-        path, id, name, description, localNodeService.get(), topics, forceRecalc);
-  }
-
-  @Override
-  public Topic findTopicById(String s) {
-    return topicService.findById(s).orElse(null);
-  }
-
-  @Override
-  public List<HashCollection> findAllHashCollections() {
-    return hashCollectionService.findAll();
-  }
-
-  @Override
-  public Optional<HashCollection> findHashCollectionById(String id) {
-    return hashCollectionService.findById(id);
-  }
-
-  @Override
-  public boolean checkCertificate(NodeCertificate certificate, String remoteAddr) {
-    return networkService.checkCertificate(certificate, remoteAddr);
-  }
-
-  @Override
-  public HashCollectionsMessage getHashCollectionReport() {
-    return new HashCollectionsMessage(hashCollectionService.findAllEnabledNoImages());
-  }
-
-  @Override
-  public Subscription saveSubscription(Subscription subscription) {
-    return subscriptionService.save(subscription);
-  }
-
-  @Override
-  public void storeNodeInfo(String host) throws Exception {
-    this.saveNode(networkService.getNodeByHost(host));
-  }
-
-  @Transactional
-  @Override
-  public void syncAllHashCollections() throws Exception {
-    for (Subscription subscription : this.subscriptionService.getSubscriptions()) {
-      syncHashCollectionsBySubscription(subscription);
+    public ArchiveServiceFacadeImpl(
+            HashService hashService,
+            LocalNodeService localNodeService,
+            NetworkService networkService,
+            SubscriptionService subscriptionService,
+            HashCollectionService hashCollectionService) {
+        this.localNodeService = localNodeService;
+        this.networkService = networkService;
+        this.subscriptionService = subscriptionService;
+        this.hashCollectionService = hashCollectionService;
     }
-  }
 
-  @Override
-  public void syncHashCollectionsBySubscription(Subscription subscription) throws Exception {
-    Hibernate.initialize(subscription.getTopic());
-    log.debug(subscription.getSubscriberId() + " / " + subscription.getTopic().getId());
-    List<HashCollection> hashCollectionList =
-        hashCollectionService.findAllEnabledNoImagesByTopic(subscription.getTopic());
-    networkService.publishHashCollections(hashCollectionList, subscription.getSubscriber());
-  }
+    @Override
+    public boolean verifyCertificate(NodeCertificate certificate) {
+        Optional<NodeCertificate> localCert = networkService.findCertificateById((certificate.getId()));
+        return localCert.map(nodeCertificate -> nodeCertificate.equals(certificate)).orElse(false);
+    }
+
+    @Override
+    public CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest) {
+        return networkService.saveCertificateRequest(certificateRequest);
+    }
+
+    @Override
+    public List<CertificateRequest> retrieveAllCertificateRequests() {
+        return networkService.findAllCertificateRequests();
+    }
+
+    @Override
+    public Optional<CertificateRequest> findCertificateRequestById(String id) {
+        return networkService.findCertificateRequestById(id);
+    }
+
+    @Override
+    public List<HashCollection> retrieveAllHashCollections() {
+        return hashCollectionService.findAll();
+    }
+
+    @Override
+    public Optional<HashCollection> retrieveHashCollectionById(String id) {
+        return hashCollectionService.findById(id);
+    }
+
+    @Override
+    public List<HashCollection> retrieveHashCollectionByTopic(String string) {
+        return hashCollectionService.findAllByTopic(string);
+    }
+
+    @Override
+    public List<HashCollection> retrieveHashCollectionByArchive(Node topic) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Node> retrieveAllNodes() {
+        return networkService.getAllKnownNodes();
+    }
+
+    @Override
+    public Optional<Node> findKnownNodeById(String id){
+        return networkService.findKnownNodeById(id);
+    }
+
+    @Override
+    public Node saveNode(Node node) {
+        return networkService.saveNode(node);
+    }
+
+    @Override
+    public void deleteNode(Node node) {
+        networkService.removeNode(node);
+    }
+
+    @Override
+    public List<Subscription> getSubscriptions() throws Exception {
+        return subscriptionService.getSubscriptions();
+    }
+
+    @Override
+    public void saveCertificate(NodeCertificate certificate) {
+        Node localNode = localNodeService.get();
+        certificate.setNode(localNode);
+        localNode.setCertificate(certificate);
+        localNodeService.set(localNode);
+    }
+
+    @Override
+    public HashCollection generateHashCollection(
+            String path,
+            String id,
+            String name,
+            String description,
+            List<String> strings,
+            boolean forceRecalc)
+            throws IOException {
+        return hashCollectionService.generateHashCollection(
+                path, id, name, description, localNodeService.get(), strings, forceRecalc);
+    }
+
+    @Override
+    public List<HashCollection> findAllHashCollections() {
+        return hashCollectionService.findAll();
+    }
+
+    @Override
+    public Optional<HashCollection> findHashCollectionById(String id) {
+        return hashCollectionService.findById(id);
+    }
+
+    @Override
+    public boolean checkCertificate(NodeCertificate certificate, String remoteAddr) {
+        return networkService.checkCertificate(certificate, remoteAddr);
+    }
+
+    @Override
+    public HashCollectionsMessage getHashCollectionReport() {
+        return new HashCollectionsMessage(hashCollectionService.findAllEnabledNoImages());
+    }
+
+    @Override
+    public Subscription saveSubscription(Subscription subscription) {
+        return subscriptionService.save(subscription);
+    }
+
+    @Override
+    public void storeNodeInfo(String host) throws Exception {
+        this.saveNode(networkService.getNodeByHost(host));
+    }
+
+    @Transactional
+    @Override
+    public void syncAllHashCollections() throws Exception {
+        for (Subscription subscription : this.subscriptionService.getSubscriptions()) {
+            syncHashCollectionsBySubscription(subscription);
+        }
+    }
+
+    @Override
+    public void syncHashCollectionsBySubscription(Subscription subscription) throws Exception {
+        Hibernate.initialize(subscription.getTopic());
+        log.debug(subscription.getSubscriberId() + " / " + subscription.getTopic());
+        List<HashCollection> hashCollectionList =
+                hashCollectionService.findAllEnabledNoImagesByTopic(subscription.getTopic());
+        networkService.publishHashCollections(hashCollectionList, subscription.getSubscriber());
+    }
+
+    @Override
+    public Node getLocalNode() {
+        Node node = localNodeService.get();
+        if (node != null) {
+            Hibernate.initialize(node.getCertificate().getIssuer());
+        }
+        return node;
+    }
+
+    @Override
+    public void shutDown() {
+        ArchiveServer.exit();
+    }
+
+    @Override
+    public void init(String id, String displayName, String domainName, String legalName, String adminEmail, String addressLine1, String addressLine2, String postCode, String country) {
+        localNodeService.init(id, NodeType.ARCHIVE, displayName, domainName, legalName, adminEmail, addressLine1, addressLine2, postCode, country);
+    }
+
+    @Override
+    public List<HashCollection> retrieveHashCollectionsByArchive(Node n)  {
+        if (n.equals(getLocalNode())) {
+            return findAllHashCollections();
+        } else {
+            try {
+                return networkService.requestAllHashCollectionsByArchive(n);
+            } catch (Exception e) {
+                n.setOnline(false);
+                n.setActive(false);
+                saveNode(n);
+                return new ArrayList<>();
+            }
+        }
+    }
+
+    @Override
+    public NetworkConfiguration getNetworkConfiguration() {
+        return networkService.getNetworkConfiguration();
+    }
+
+    @Override
+    public List<HashCollection> retrieveHashCollectionsByTopic(String topic)  {
+        return hashCollectionService.findAllByTopic(topic);
+    }
+
+    @Override
+    public List<CertificateRequest> findAllCertificateRequests() {
+        return networkService.findAllCertificateRequests();
+    }
+
+    @Override
+    public void connectToNetwork(String host) throws Exception {
+        networkService.getNetworkConfigurationFromOrigin(host);
+        networkService.certificateRequest(networkService.getNetworkConfiguration().getOrigin(), localNodeService.get());
+    }
 }

@@ -20,7 +20,6 @@
 
 package uk.ac.uws.danielszabo.common.service.network;
 
-import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.node.Subscription;
 
 import java.util.List;
@@ -29,13 +28,13 @@ import java.util.List;
 // on an integrator node, this will handle the archive nodes that the local node is subscribed to
 public interface SubscriptionService {
 
-  List<Subscription> getSubscriptions() throws Exception;
+  List<Subscription> getSubscriptions();
 
   Subscription save(Subscription subscription);
 
   boolean remove(Subscription subscription);
 
-  boolean isSubscribedTo(Topic topic);
+  boolean isSubscribedTo(String topic);
 
-  void removeByTopic(Topic topic);
+  void removeByTopic(String topic);
 }

@@ -21,34 +21,43 @@
 package uk.ac.uws.danielszabo.hashnet.integrator.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import uk.ac.uws.danielszabo.hashnet.integrator.model.HashReport;
 import uk.ac.uws.danielszabo.hashnet.integrator.service.IntegratorServiceFacade;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.file.Path;
 
 @Slf4j
 @RestController
-@RequestMapping("hasher")
+@RequestMapping("api")
 public class HasherRESTController {
 
-  private final IntegratorServiceFacade integratorServiceFacade;
+    private final IntegratorServiceFacade integratorServiceFacade;
 
-  public HasherRESTController(IntegratorServiceFacade integratorServiceFacade) {
-    this.integratorServiceFacade = integratorServiceFacade;
-  }
+    public HasherRESTController(IntegratorServiceFacade integratorServiceFacade) {
+        this.integratorServiceFacade = integratorServiceFacade;
+    }
 
-  //  @PostMapping(
-  //      value = "processedrequest",
-  //      consumes = MediaType.APPLICATION_XML_VALUE,
-  //      produces = MediaType.APPLICATION_XML_VALUE)
-  //  public ResponseEntity postRequest(@RequestBody Message message) {
-  //    CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
-  //    if (integratorServiceFacade
-  //        .findCertificateRequestById(certificateRequest.getId())
-  //        .isPresent()) {
-  //      NodeCertificate certificate = certificateRequest.getNode().getCertificate();
-  //      log.info("Received processed certificate from " + message.getCertificate().getId());
-  //      integratorServiceFacade.saveCertificate(certificate);
-  //      return new ResponseEntity(HttpStatus.OK);
-  //    } else return new ResponseEntity(HttpStatus.FORBIDDEN);
-  //  }
+    @CrossOrigin
+    @PostMapping("check")
+    public String postTest(Model model, @RequestParam("image") MultipartFile multipartFile) throws IOException, JAXBException {
+        multipartFile.transferTo(Path.of("./temp/" + multipartFile.getOriginalFilename()));
+        HashReport hashReport = integratorServiceFacade.checkImage("./temp/" + multipartFile.getOriginalFilename());
+
+        Marshaller marshallerObj = JAXBContext.newInstance(HashReport.class).createMarshaller();
+        StringWriter sw = new StringWriter();
+        marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+        marshallerObj.marshal(hashReport, sw);
+
+        return sw.toString();
+    }
+
 }

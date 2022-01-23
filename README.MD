@@ -154,19 +154,9 @@ or
 node --all
 ```
 
-#### 6. Prepare topics and hash collection with archive node
+#### 6. Subscribe to string and check local image with integrator node
 ```
-topic --create --id topic1 --name TestTopic1
-topic --create --id topic2 --name TestTopic2
-topic --create --id topic3 --name TestTopic3
-```
-```
-hash --path "./testimages" --id collection1 --name "First Hash Collection" --description "This is just a test" --topics "topic1,topic2,topic3" --force-recalc
-```
-
-#### 7. Subscribe to topic and check local image with integrator node
-```
-subs --add --topic topic1
+subs --add --topic string1
 ```
 ```
 check --image ./testimages/supra.jpeg --xml

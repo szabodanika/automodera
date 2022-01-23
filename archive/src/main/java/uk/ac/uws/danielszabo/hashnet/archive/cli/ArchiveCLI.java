@@ -20,7 +20,6 @@
 
 package uk.ac.uws.danielszabo.hashnet.archive.cli;
 
-import jline.internal.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Import;
 import org.springframework.shell.standard.ShellComponent;
@@ -28,10 +27,8 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import uk.ac.uws.danielszabo.common.cli.BaseNodeCLI;
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
-import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.node.Subscription;
 import uk.ac.uws.danielszabo.common.service.hashing.HashServiceImpl;
-import uk.ac.uws.danielszabo.common.service.image.TopicService;
 import uk.ac.uws.danielszabo.common.service.network.*;
 import uk.ac.uws.danielszabo.common.service.rest.RestServiceImpl;
 import uk.ac.uws.danielszabo.hashnet.archive.service.ArchiveServiceFacade;
@@ -56,10 +53,8 @@ public class ArchiveCLI extends BaseNodeCLI {
   public ArchiveCLI(
       LocalNodeService localNodeService,
       NetworkService networkService,
-      ArchiveServiceFacade archiveServiceFacade,
-      SubscriptionService subscriptionService,
-      TopicService topicService) {
-    super(localNodeService, networkService, topicService);
+      ArchiveServiceFacade archiveServiceFacade){
+    super(localNodeService, networkService);
     this.archiveServiceFacade = archiveServiceFacade;
   }
 
@@ -106,18 +101,11 @@ public class ArchiveCLI extends BaseNodeCLI {
       }
 
       log.info("Hashing images on path: " + path);
-      List<Topic> topicList = new ArrayList<>();
+      List<String> topicList = new ArrayList<>();
 
       // parse topics
-      Topic t;
       for (String s : topics.split(",")) {
-        t = archiveServiceFacade.findTopicById(s);
-        if (t == null) {
-          // if topic is not found, we do not create the collection
-          Log.error("Topic " + s + " does not exist. Please create it before proceeding.");
-          return;
-        }
-        topicList.add(t);
+        topicList.add(s);
       }
 
       // now try to generate collection

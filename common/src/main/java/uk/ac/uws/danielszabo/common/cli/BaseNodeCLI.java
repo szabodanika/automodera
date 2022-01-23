@@ -25,11 +25,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.model.network.node.NodeType;
 import uk.ac.uws.danielszabo.common.service.hashing.HashServiceImpl;
-import uk.ac.uws.danielszabo.common.service.image.TopicService;
 import uk.ac.uws.danielszabo.common.service.network.*;
 import uk.ac.uws.danielszabo.common.service.rest.RestServiceImpl;
 
@@ -53,20 +51,16 @@ public abstract class BaseNodeCLI {
   // service used to communicate with the network
   private final NetworkService networkService;
 
-  // service used to handle locally known topics
-  private final TopicService topicService;
-
   protected BaseNodeCLI(
-      LocalNodeService localNodeService, NetworkService networkService, TopicService topicService) {
+      LocalNodeService localNodeService, NetworkService networkService) {
     this.localNodeService = localNodeService;
     this.networkService = networkService;
-    this.topicService = topicService;
   }
 
   // example:
   // connect --origin origin.hashnet.test
   @ShellMethod("Connect to network by addressing origin node.")
-  public void connect(String origin) {
+  public void connect(java.lang.String origin) {
     try {
       networkService.getNetworkConfigurationFromOrigin(origin);
     } catch (Exception e) {
@@ -83,35 +77,35 @@ public abstract class BaseNodeCLI {
     }
   }
 
-  @ShellMethod("Manage known topics.")
-  public void topic(
-      @ShellOption(defaultValue = "false") boolean list,
-      @ShellOption(defaultValue = "false") boolean create,
-      @ShellOption(defaultValue = "false") boolean show,
-      @ShellOption(defaultValue = "") String id,
-      @ShellOption(defaultValue = "") String name) {
-    if (list) {
-      for (Topic t : topicService.findAll()) {
-        log.info(t.toString());
-      }
-    } else if (create) {
-      if (id.isBlank() || name.isBlank()) {
-        log.error("Please specify non-empty id and name");
-        return;
-      }
-      Topic topic = new Topic(id, name);
-      topicService.save(topic);
-      log.info("Saved topic " + topic.getId());
-    } else if (show) {
-      if (id.isBlank()) {
-        log.error("Please specify non-empty id");
-        return;
-      }
-      topicService.findById(id).ifPresent(topic -> log.info(topic.toString()));
-    } else {
-      log.error("Please specify one of the following: --list, --create, --show");
-    }
-  }
+//  @ShellMethod("Manage known topics.")
+//  public void topic(
+//      @ShellOption(defaultValue = "false") boolean list,
+//      @ShellOption(defaultValue = "false") boolean create,
+//      @ShellOption(defaultValue = "false") boolean show,
+//      @ShellOption(defaultValue = "") java.lang.String id,
+//      @ShellOption(defaultValue = "") java.lang.String name) {
+//    if (list) {
+//      for (String t : topicService.findAll()) {
+//        log.info(t.toString());
+//      }
+//    } else if (create) {
+//      if (id.isBlank() || name.isBlank()) {
+//        log.error("Please specify non-empty id and name");
+//        return;
+//      }
+//      String topic = new String(id, name);
+//      topicService.save(topic);
+//      log.info("Saved topic " + string);
+//    } else if (show) {
+//      if (id.isBlank()) {
+//        log.error("Please specify non-empty id");
+//        return;
+//      }
+//      topicService.findById(id).ifPresent(topic -> log.info(topic.toString()));
+//    } else {
+//      log.error("Please specify one of the following: --list, --create, --show");
+//    }
+//  }
 
   @ShellMethod("Show network and build info.")
   public void info() {
@@ -182,7 +176,7 @@ public abstract class BaseNodeCLI {
       // TODO separate request and reissue
 
       // TODO instead of always using the origin, we should find the closest operator from the list
-      String operator = networkService.getNetworkConfiguration().getOrigin();
+      java.lang.String operator = networkService.getNetworkConfiguration().getOrigin();
       try {
         if (networkService.certificateRequest(operator, localNodeService.get()) != null) {
           log.info("Sent certificate request to " + operator);
@@ -203,8 +197,8 @@ public abstract class BaseNodeCLI {
       @ShellOption(defaultValue = "false") boolean status,
       @ShellOption(defaultValue = "false") boolean info,
       @ShellOption(defaultValue = "false") boolean all,
-      @ShellOption(defaultValue = "") String id,
-      @ShellOption(defaultValue = "") String host) {
+      @ShellOption(defaultValue = "") java.lang.String id,
+      @ShellOption(defaultValue = "") java.lang.String host) {
 
     // user wants to request status
     if (status) {
@@ -294,16 +288,16 @@ public abstract class BaseNodeCLI {
   // '123 High Street' --post-code AB12CD --country Scotland
   @ShellMethod("Initialise local node configuration.")
   public void init(
-      String id,
-      NodeType type,
-      String name,
-      String domain,
-      String legalName,
-      String adminEmail,
-      String addressLine1,
-      @ShellOption(defaultValue = "N/A") String addressLine2,
-      String postCode,
-      String country) {
+          java.lang.String id,
+          NodeType type,
+          java.lang.String name,
+          java.lang.String domain,
+          java.lang.String legalName,
+          java.lang.String adminEmail,
+          java.lang.String addressLine1,
+          @ShellOption(defaultValue = "N/A") java.lang.String addressLine2,
+          java.lang.String postCode,
+          java.lang.String country) {
     localNodeService.init(
         id,
         type,

@@ -21,10 +21,10 @@
 package uk.ac.uws.danielszabo.common.service.rest;
 
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
-import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
+import uk.ac.uws.danielszabo.common.model.network.exception.TargetNodeUnreachableException;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.model.network.node.NodeStatus;
 
@@ -34,28 +34,28 @@ public interface RestService {
 
   NodeStatus requestStatus(String host);
 
-  Node getNodeByHost(String host) throws Exception;
+  Node getNodeByHost(String host) throws TargetNodeUnreachableException;
 
   // void because certificate requests are not handled automatically
   void sendCertificateRequest(String operator, CertificateRequest certificateRequest)
-      throws Exception;
+      throws TargetNodeUnreachableException;
 
-  void sendProcessedCertificateRequest(CertificateRequest certificateRequest) throws Exception;
+  void sendProcessedCertificateRequest(CertificateRequest certificateRequest) throws TargetNodeUnreachableException;
 
-  NetworkConfiguration sendNetworkConfigurationRequest(String origin) throws Exception;
+  NetworkConfiguration sendNetworkConfigurationRequest(String origin) throws TargetNodeUnreachableException;
 
-  boolean requestCertificateVerification(NodeCertificate certificate) throws Exception;
+  boolean requestCertificateVerification(NodeCertificate certificate) throws TargetNodeUnreachableException;
 
-  List<HashCollection> requestAllHashCollections(String host) throws Exception;
+  List<HashCollection> requestAllHashCollections(String host) throws TargetNodeUnreachableException;
 
   void publishHashCollections(List<HashCollection> hashCollectionList, String host)
-      throws Exception;
+      throws TargetNodeUnreachableException;
 
-  void sendSubscription(Node node, Node localNode, Topic topic) throws Exception;
+  void sendSubscription(Node node, Node localNode, String string) throws TargetNodeUnreachableException;
 
-  List<String> requestAllArchiveAddresses(String host) throws Exception;
+  List<String> requestAllArchiveAddresses(String host) throws TargetNodeUnreachableException;
 
-  HashCollection downloadHashCollection(String host, String id) throws Exception;
+  HashCollection downloadHashCollection(String host, String id) throws TargetNodeUnreachableException;
 
-  String getHostById(String origin, String id) throws Exception;
+  String getHostById(String origin, String id) throws TargetNodeUnreachableException;
 }

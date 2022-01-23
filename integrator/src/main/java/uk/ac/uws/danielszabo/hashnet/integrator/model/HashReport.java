@@ -25,7 +25,6 @@ package uk.ac.uws.danielszabo.hashnet.integrator.model;
 import lombok.*;
 import org.apache.commons.math3.exception.OutOfRangeException;
 import uk.ac.uws.danielszabo.common.model.hash.Image;
-import uk.ac.uws.danielszabo.common.model.hash.Topic;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -73,11 +72,10 @@ public class HashReport {
 
   @XmlElementWrapper(name = "topicList")
   @XmlElement(name = "topic")
-  @XmlIDREF
   @NonNull
-  private List<Topic> topicList;
+  private List<String> topicList;
 
-  public HashReport(Image highestMatch, double highestMatchScore, List<Topic> topicList) {
+  public HashReport(Image highestMatch, double highestMatchScore, List<String> topicList) {
     this.highestMatch = highestMatch;
     this.highestMatchScore = highestMatchScore;
     this.topicList = topicList;

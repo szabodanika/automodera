@@ -21,8 +21,8 @@
 package uk.ac.uws.danielszabo.hashnet.archive.service;
 
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
+import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.messages.HashCollectionsMessage;
-import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
@@ -46,7 +46,7 @@ public interface ArchiveServiceFacade {
 
   Optional<HashCollection> retrieveHashCollectionById(String id);
 
-  List<HashCollection> retrieveHashCollectionByTopic(Topic topic);
+  List<HashCollection> retrieveHashCollectionByTopic(String string);
 
   List<HashCollection> retrieveHashCollectionByArchive(Node topic);
 
@@ -63,15 +63,13 @@ public interface ArchiveServiceFacade {
   void saveCertificate(NodeCertificate certificate);
 
   HashCollection generateHashCollection(
-      String path,
-      String id,
-      String name,
-      String description,
-      List<Topic> topics,
-      boolean forceRecalc)
+          String path,
+          String id,
+          String name,
+          String description,
+          List<String> strings,
+          boolean forceRecalc)
       throws IOException;
-
-  Topic findTopicById(String s);
 
   List<HashCollection> findAllHashCollections();
 
@@ -88,4 +86,21 @@ public interface ArchiveServiceFacade {
   void syncAllHashCollections() throws Exception;
 
   void syncHashCollectionsBySubscription(Subscription subscription) throws Exception;
+
+  Node getLocalNode();
+
+    void shutDown();
+
+    void init(String id, String displayName, String domainName, String legalName, String adminEmail, String addressLine1, String addressLine2, String postCode, String country);
+
+    List<HashCollection> retrieveHashCollectionsByArchive(Node n) throws Exception;
+
+    NetworkConfiguration getNetworkConfiguration();
+
+    List<HashCollection> retrieveHashCollectionsByTopic(String topic) throws Exception;
+
+    List<CertificateRequest> findAllCertificateRequests();
+
+    void connectToNetwork(String host) throws Exception;
+
 }
