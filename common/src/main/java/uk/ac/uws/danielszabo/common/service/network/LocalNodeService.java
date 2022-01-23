@@ -29,7 +29,7 @@ public interface LocalNodeService {
 
   Node set(Node self);
 
-//  Node set();
+  //  Node set();
 
   Node init(
       String id,

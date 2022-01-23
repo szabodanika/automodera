@@ -30,56 +30,56 @@ import java.util.List;
 @Service
 public class SubscriptionServiceImpl implements SubscriptionService {
 
-    private final SubscriptionRepository subscriptionRepository;
+  private final SubscriptionRepository subscriptionRepository;
 
-    private final NetworkService networkService;
+  private final NetworkService networkService;
 
-    public SubscriptionServiceImpl(
-            SubscriptionRepository subscriptionRepository, NetworkService networkService) {
-        this.subscriptionRepository = subscriptionRepository;
-        this.networkService = networkService;
-    }
+  public SubscriptionServiceImpl(
+      SubscriptionRepository subscriptionRepository, NetworkService networkService) {
+    this.subscriptionRepository = subscriptionRepository;
+    this.networkService = networkService;
+  }
 
-    @Override
-    public List<Subscription> getSubscriptions() {
-        List<Subscription> subscriptions = subscriptionRepository.findAll();
-        for (Subscription subscription : subscriptions) {
-            if (subscription.getSubscriber() == null) {
-                try {
-                    subscription.setSubscriber(
-                            networkService.getNodeByHost(
-                                    networkService.resolveNodeId(
-                                            networkService.getNetworkConfiguration().getOrigin(),
-                                            subscription.getSubscriberId())));
-                } catch (TargetNodeUnreachableException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (subscription.getPublisher() == null) {
-                subscription.setPublisher(networkService.getLocalNode());
-            }
+  @Override
+  public List<Subscription> getSubscriptions() {
+    List<Subscription> subscriptions = subscriptionRepository.findAll();
+    for (Subscription subscription : subscriptions) {
+      if (subscription.getSubscriber() == null) {
+        try {
+          subscription.setSubscriber(
+              networkService.getNodeByHost(
+                  networkService.resolveNodeId(
+                      networkService.getNetworkConfiguration().getOrigin(),
+                      subscription.getSubscriberId())));
+        } catch (TargetNodeUnreachableException e) {
+          e.printStackTrace();
         }
-        return subscriptions;
+      }
+      if (subscription.getPublisher() == null) {
+        subscription.setPublisher(networkService.getLocalNode());
+      }
     }
+    return subscriptions;
+  }
 
-    @Override
-    public Subscription save(Subscription subscription) {
-        subscription.setId(subscription.getId());
-        return subscriptionRepository.save(subscription);
-    }
+  @Override
+  public Subscription save(Subscription subscription) {
+    subscription.setId(subscription.getId());
+    return subscriptionRepository.save(subscription);
+  }
 
-    @Override
-    public boolean remove(Subscription subscription) {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public boolean remove(Subscription subscription) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public boolean isSubscribedTo(String topic) {
-        return subscriptionRepository.findByTopic(topic).isPresent();
-    }
+  @Override
+  public boolean isSubscribedTo(String topic) {
+    return subscriptionRepository.findByTopic(topic).isPresent();
+  }
 
-    @Override
-    public void removeByTopic(String topic) {
-        subscriptionRepository.delete(subscriptionRepository.findByTopic(topic).get());
-    }
+  @Override
+  public void removeByTopic(String topic) {
+    subscriptionRepository.delete(subscriptionRepository.findByTopic(topic).get());
+  }
 }

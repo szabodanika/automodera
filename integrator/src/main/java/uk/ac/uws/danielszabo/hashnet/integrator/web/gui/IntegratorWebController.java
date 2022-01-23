@@ -32,201 +32,210 @@ import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.hashnet.integrator.model.HashReport;
 import uk.ac.uws.danielszabo.hashnet.integrator.service.IntegratorServiceFacade;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Optional;
 
 @Controller
 @RequestMapping()
 public class IntegratorWebController {
 
-    private final IntegratorServiceFacade integratorServiceFacade;
+  private final IntegratorServiceFacade integratorServiceFacade;
 
-    public IntegratorWebController(IntegratorServiceFacade integratorServiceFacade) {
-        this.integratorServiceFacade = integratorServiceFacade;
+  public IntegratorWebController(IntegratorServiceFacade integratorServiceFacade) {
+    this.integratorServiceFacade = integratorServiceFacade;
+  }
+
+  @GetMapping("")
+  public String getIndex(Model model) {
+    if (integratorServiceFacade.getLocalNode() == null) {
+      return "redirect:/setup";
     }
+    model.addAttribute("node", integratorServiceFacade.getLocalNode());
+    model.addAttribute("network", integratorServiceFacade.getNetworkConfiguration());
+    model.addAttribute("date", LocalDateTime.now());
 
-    @GetMapping("")
-    public String getIndex(Model model) {
-        if (integratorServiceFacade.getLocalNode() == null) {
-            return "redirect:/setup";
-        }
-        model.addAttribute("node", integratorServiceFacade.getLocalNode());
-        model.addAttribute("network", integratorServiceFacade.getNetworkConfiguration());
-        model.addAttribute("date", LocalDateTime.now());
-
-        CertificateRequest certificateRequest = integratorServiceFacade.findAllCertificateRequests().stream().findFirst().orElse(null);
-        if (certificateRequest != null) {
-            switch (certificateRequest.getStatus()) {
-                case WAITING -> model.addAttribute("connectionStatus", "Awaiting approval");
-                case ISSUED -> model.addAttribute("connectionStatus", "Joined");
-                case REJECTED -> model.addAttribute("connectionStatus", "Rejected");
-            }
-        } else {
-            model.addAttribute("connectionStatus", "Not connected");
-        }
-        return "index";
+    CertificateRequest certificateRequest =
+        integratorServiceFacade.findAllCertificateRequests().stream().findFirst().orElse(null);
+    if (certificateRequest != null) {
+      switch (certificateRequest.getStatus()) {
+        case WAITING -> model.addAttribute("connectionStatus", "Awaiting approval");
+        case ISSUED -> model.addAttribute("connectionStatus", "Joined");
+        case REJECTED -> model.addAttribute("connectionStatus", "Rejected");
+      }
+    } else {
+      model.addAttribute("connectionStatus", "Not connected");
     }
+    return "index";
+  }
 
-    @PostMapping("status")
-    public String postStatus(Model model, @RequestParam String status) {
-        if (integratorServiceFacade.getLocalNode() != null) {
-            switch (status) {
-                case "Active": {
-                    Node node = integratorServiceFacade.getLocalNode();
-                    node.setOnline(true);
-                    node.setActive(true);
-                    integratorServiceFacade.saveNode(node);
-                    break;
+  @PostMapping("status")
+  public String postStatus(Model model, @RequestParam String status) {
+    if (integratorServiceFacade.getLocalNode() != null) {
+      switch (status) {
+        case "Active":
+          {
+            Node node = integratorServiceFacade.getLocalNode();
+            node.setOnline(true);
+            node.setActive(true);
+            integratorServiceFacade.saveNode(node);
+            break;
+          }
+        case "Inactive":
+          {
+            Node node = integratorServiceFacade.getLocalNode();
+            node.setOnline(true);
+            node.setActive(false);
+            integratorServiceFacade.saveNode(node);
+            break;
+          }
+        case "Terminate":
+          {
+            Node node = integratorServiceFacade.getLocalNode();
+            node.setOnline(false);
+            node.setActive(false);
+            integratorServiceFacade.saveNode(node);
+            integratorServiceFacade.shutDown();
+            break;
+          }
+      }
+    }
+    return "redirect:/";
+  }
+
+  @GetMapping("setup")
+  public String getSetup(Model model) {
+    if (integratorServiceFacade.getLocalNode() == null) {
+      return "setup";
+    }
+    return "redirect:";
+  }
+
+  @PostMapping("setup")
+  public String postSetup(
+      Model model,
+      @RequestParam String id,
+      @RequestParam String displayName,
+      @RequestParam String legalName,
+      @RequestParam String addressLine1,
+      @RequestParam String addressLine2,
+      @RequestParam String postCode,
+      @RequestParam String country,
+      @RequestParam String domainName,
+      @RequestParam String adminEmail) {
+    if (integratorServiceFacade.getLocalNode() == null) {
+      integratorServiceFacade.init(
+          id,
+          displayName,
+          domainName,
+          legalName,
+          adminEmail,
+          addressLine1,
+          addressLine2,
+          postCode,
+          country);
+    }
+    return "redirect:";
+  }
+
+  @GetMapping("info")
+  public String getInfo(Model model, @RequestParam(required = false) String nodeId) {
+    if (nodeId != null) {
+      integratorServiceFacade
+          .findKnownNodeById(nodeId)
+          .ifPresent(
+              n -> {
+                model.addAttribute("node", n);
+                model.addAttribute("network", integratorServiceFacade.getNetworkConfiguration());
+                try {
+                  model.addAttribute(
+                      "collections", integratorServiceFacade.retrieveHashCollectionsByArchive(n));
+                } catch (Exception e) {
+                  e.printStackTrace();
                 }
-                case "Inactive": {
-                    Node node = integratorServiceFacade.getLocalNode();
-                    node.setOnline(true);
-                    node.setActive(false);
-                    integratorServiceFacade.saveNode(node);
-                    break;
-                }
-                case "Terminate": {
-                    Node node = integratorServiceFacade.getLocalNode();
-                    node.setOnline(false);
-                    node.setActive(false);
-                    integratorServiceFacade.saveNode(node);
-                    integratorServiceFacade.shutDown();
-                    break;
-                }
-            }
-        }
-        return "redirect:/";
+              });
+    } else {
+      model.addAttribute("node", integratorServiceFacade.getLocalNode());
     }
+    return "node";
+  }
 
-    @GetMapping("setup")
-    public String getSetup(Model model) {
-        if (integratorServiceFacade.getLocalNode() == null) {
-            return "setup";
-        }
-        return "redirect:";
+  //    @GetMapping("network")
+  //    public String getNetwork(Model model) throws Exception {
+  //        model.addAttribute("node", integratorServiceFacade.getLocalNode());
+  //        model.addAttribute("nodes", integratorServiceFacade.retrieveAllNodes());
+  //        model.addAttribute("network", integratorServiceFacade.getNetworkConfiguration());
+  //        return "network";
+  //    }
+
+  @PostMapping("network")
+  public String postNetwork(Model model, @RequestParam String origin) throws Exception {
+    integratorServiceFacade.connectToNetwork(origin);
+    return "redirect:/";
+  }
+
+  @GetMapping("collection")
+  public String getCollection(
+      Model model, @RequestParam String nodeId, @RequestParam String collectionId) {
+    Node node = integratorServiceFacade.findKnownNodeById(nodeId).orElse(null);
+    if (node != null) {
+      model.addAttribute("node", node);
+      model.addAttribute(
+          "collection",
+          integratorServiceFacade.retrieveHashCollectionById(collectionId).orElse(null));
     }
+    return "collection";
+  }
 
-    @PostMapping("setup")
-    public String postSetup(Model model,
-                            @RequestParam String id,
-                            @RequestParam String displayName,
-                            @RequestParam String legalName,
-                            @RequestParam String addressLine1,
-                            @RequestParam String addressLine2,
-                            @RequestParam String postCode,
-                            @RequestParam String country,
-                            @RequestParam String domainName,
-                            @RequestParam String adminEmail) {
-        if (integratorServiceFacade.getLocalNode() == null) {
-            integratorServiceFacade.init(id,
-                    displayName,
-                    domainName,
-                    legalName,
-                    adminEmail,
-                    addressLine1,
-                    addressLine2,
-                    postCode,
-                    country);
-        }
-        return "redirect:";
-    }
+  @GetMapping("topic")
+  public String getTopic(Model model, @RequestParam String topic) throws Exception {
 
-    @GetMapping("info")
-    public String getInfo(Model model, @RequestParam(required = false) String nodeId) {
-        if (nodeId != null) {
-            integratorServiceFacade.findKnownNodeById(nodeId).ifPresent(n ->
-                    {
-                        model.addAttribute("node", n);
-                        model.addAttribute("network", integratorServiceFacade.getNetworkConfiguration());
-                        try {
-                            model.addAttribute("collections", integratorServiceFacade.retrieveHashCollectionsByArchive(n));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-            );
-        } else {
-            model.addAttribute("node", integratorServiceFacade.getLocalNode());
-        }
-        return "node";
-    }
+    model.addAttribute("node", integratorServiceFacade.getLocalNode());
+    model.addAttribute("topic", topic);
+    model.addAttribute(
+        "collections", integratorServiceFacade.retrieveHashCollectionsByTopic(topic));
+    return "topic";
+  }
 
-//    @GetMapping("network")
-//    public String getNetwork(Model model) throws Exception {
-//        model.addAttribute("node", integratorServiceFacade.getLocalNode());
-//        model.addAttribute("nodes", integratorServiceFacade.retrieveAllNodes());
-//        model.addAttribute("network", integratorServiceFacade.getNetworkConfiguration());
-//        return "network";
-//    }
+  @GetMapping("collections")
+  public String getCollections(Model model) {
+    model.addAttribute("node", integratorServiceFacade.getLocalNode());
+    model.addAttribute("collections", integratorServiceFacade.retrieveDownloadedHashCollections());
+    return "collections";
+  }
 
-    @PostMapping("network")
-    public String postNetwork(Model model, @RequestParam String origin) throws Exception {
-        integratorServiceFacade.connectToNetwork(origin);
-        return "redirect:/";
-    }
+  @GetMapping("subscriptions")
+  public String getSubscriptions(Model model) {
+    model.addAttribute("node", integratorServiceFacade.getLocalNode());
+    model.addAttribute("subscriptions", integratorServiceFacade.getSubscriptions());
+    return "subscriptions";
+  }
 
-    @GetMapping("collection")
-    public String getCollection(Model model, @RequestParam String nodeId, @RequestParam String collectionId) {
-        Node node = integratorServiceFacade.findKnownNodeById(nodeId).orElse(null);
-        if (node != null) {
-            model.addAttribute("node", node);
-            model.addAttribute("collection", integratorServiceFacade.retrieveHashCollectionById(collectionId).orElse(null));
-        }
-        return "collection";
-    }
+  @PostMapping("subscription")
+  public String postSubscription(Model model, @RequestParam String topic) {
+    integratorServiceFacade.addSubscription(topic);
+    model.addAttribute("subscriptions", integratorServiceFacade.getSubscriptions());
+    return "redirect:/subscriptions";
+  }
 
-    @GetMapping("topic")
-    public String getTopic(Model model, @RequestParam String topic) throws Exception {
+  @GetMapping("test")
+  public String getTest(Model model) {
+    model.addAttribute("node", integratorServiceFacade.getLocalNode());
+    model.addAttribute("subscriptions", integratorServiceFacade.getSubscriptions());
+    return "test";
+  }
 
-        model.addAttribute("node", integratorServiceFacade.getLocalNode());
-        model.addAttribute("topic", topic);
-        model.addAttribute("collections", integratorServiceFacade.retrieveHashCollectionsByTopic(topic));
-        return "topic";
-    }
+  @PostMapping("test")
+  public String postTest(Model model, @RequestParam("image") MultipartFile multipartFile)
+      throws IOException {
+    model.addAttribute("node", integratorServiceFacade.getLocalNode());
 
-    @GetMapping("collections")
-    public String getCollections(Model model) {
-        model.addAttribute("node", integratorServiceFacade.getLocalNode());
-        model.addAttribute("collections", integratorServiceFacade.retrieveDownloadedHashCollections());
-        return "collections";
-    }
+    multipartFile.transferTo(Path.of("./temp/" + multipartFile.getOriginalFilename()));
+    HashReport hashReport =
+        integratorServiceFacade.checkImage("./temp/" + multipartFile.getOriginalFilename());
+    model.addAttribute("hashReport", hashReport);
+    model.addAttribute("subscriptions", integratorServiceFacade.getSubscriptions());
 
-    @GetMapping("subscriptions")
-    public String getSubscriptions(Model model) {
-        model.addAttribute("node", integratorServiceFacade.getLocalNode());
-        model.addAttribute("subscriptions", integratorServiceFacade.getSubscriptions());
-        return "subscriptions";
-    }
-
-    @PostMapping("subscription")
-    public String postSubscription(Model model, @RequestParam String topic) {
-        integratorServiceFacade.addSubscription(topic);
-        model.addAttribute("subscriptions", integratorServiceFacade.getSubscriptions());
-        return "redirect:/subscriptions";
-    }
-
-    @GetMapping("test")
-    public String getTest(Model model) {
-        model.addAttribute("node", integratorServiceFacade.getLocalNode());
-        model.addAttribute("subscriptions", integratorServiceFacade.getSubscriptions());
-        return "test";
-    }
-
-    @PostMapping("test")
-    public String postTest(Model model, @RequestParam("image") MultipartFile multipartFile) throws IOException {
-        model.addAttribute("node", integratorServiceFacade.getLocalNode());
-
-        multipartFile.transferTo(Path.of("./temp/" + multipartFile.getOriginalFilename()));
-        HashReport hashReport = integratorServiceFacade.checkImage("./temp/" + multipartFile.getOriginalFilename());
-        model.addAttribute("hashReport", hashReport);
-        model.addAttribute("subscriptions", integratorServiceFacade.getSubscriptions());
-
-        return "test";
-    }
-
-
+    return "test";
+  }
 }

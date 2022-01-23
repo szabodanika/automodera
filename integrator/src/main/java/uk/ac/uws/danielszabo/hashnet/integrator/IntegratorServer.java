@@ -38,22 +38,22 @@ import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 @EnableJpaRepositories("uk.ac.uws.danielszabo.common.repository")
 public class IntegratorServer {
 
-    private static SpringApplication application;
+  private static SpringApplication application;
 
-    private static ConfigurableApplicationContext applicationContext;
+  private static ConfigurableApplicationContext applicationContext;
 
-    public IntegratorServer(ConfigurableApplicationContext applicationContext) {
-        IntegratorServer.applicationContext = applicationContext;
-    }
+  public IntegratorServer(ConfigurableApplicationContext applicationContext) {
+    IntegratorServer.applicationContext = applicationContext;
+  }
 
-    public static void main(String[] args) {
-        application = new SpringApplication(IntegratorServer.class);
-        application.run(args);
-    }
+  public static void main(String[] args) {
+    application = new SpringApplication(IntegratorServer.class);
+    application.run(args);
+  }
 
-    public static void exit() {
-        log.info("Shutting down...");
-        applicationContext.close();
-        System.exit(0);
-    }
+  public static void exit() {
+    log.info("Shutting down...");
+    applicationContext.close();
+    System.exit(0);
+  }
 }

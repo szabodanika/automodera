@@ -39,25 +39,26 @@ import java.nio.file.Path;
 @RequestMapping("api")
 public class HasherRESTController {
 
-    private final IntegratorServiceFacade integratorServiceFacade;
+  private final IntegratorServiceFacade integratorServiceFacade;
 
-    public HasherRESTController(IntegratorServiceFacade integratorServiceFacade) {
-        this.integratorServiceFacade = integratorServiceFacade;
-    }
+  public HasherRESTController(IntegratorServiceFacade integratorServiceFacade) {
+    this.integratorServiceFacade = integratorServiceFacade;
+  }
 
-    @CrossOrigin
-    @PostMapping("check")
-    public String postTest(Model model, @RequestParam("image") MultipartFile multipartFile) throws IOException, JAXBException {
-        multipartFile.transferTo(Path.of("./temp/" + multipartFile.getOriginalFilename()));
-        HashReport hashReport = integratorServiceFacade.checkImage("./temp/" + multipartFile.getOriginalFilename());
+  @CrossOrigin
+  @PostMapping("check")
+  public String postTest(Model model, @RequestParam("image") MultipartFile multipartFile)
+      throws IOException, JAXBException {
+    multipartFile.transferTo(Path.of("./temp/" + multipartFile.getOriginalFilename()));
+    HashReport hashReport =
+        integratorServiceFacade.checkImage("./temp/" + multipartFile.getOriginalFilename());
 
-        Marshaller marshallerObj = JAXBContext.newInstance(HashReport.class).createMarshaller();
-        StringWriter sw = new StringWriter();
-        marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+    Marshaller marshallerObj = JAXBContext.newInstance(HashReport.class).createMarshaller();
+    StringWriter sw = new StringWriter();
+    marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-        marshallerObj.marshal(hashReport, sw);
+    marshallerObj.marshal(hashReport, sw);
 
-        return sw.toString();
-    }
-
+    return sw.toString();
+  }
 }

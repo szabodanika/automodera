@@ -75,14 +75,16 @@ public interface NetworkService {
 
   // HashCollections, Topics, Images
 
-  HashCollection downloadHashCollection(String host, String id) throws TargetNodeUnreachableException;
+  HashCollection downloadHashCollection(String host, String id)
+      throws TargetNodeUnreachableException;
 
   void publishHashCollections(List<HashCollection> hashCollectionList, Node subscriber)
       throws Exception;
 
-//  Optional<String> getTopicById(String id) throws Exception;
+  //  Optional<String> getTopicById(String id) throws Exception;
 
-  List<HashCollection> requestAllHashCollectionsByArchive(Node node) throws TargetNodeUnreachableException;
+  List<HashCollection> requestAllHashCollectionsByArchive(Node node)
+      throws TargetNodeUnreachableException;
 
   // Certificate Requests
 

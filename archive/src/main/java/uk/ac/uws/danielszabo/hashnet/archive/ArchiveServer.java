@@ -20,7 +20,6 @@
 
 package uk.ac.uws.danielszabo.hashnet.archive;
 
-import javafx.scene.shape.Arc;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -39,22 +38,22 @@ import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 @EnableJpaRepositories("uk.ac.uws.danielszabo.common.repository")
 public class ArchiveServer {
 
-    private static SpringApplication application;
+  private static SpringApplication application;
 
-    private static ConfigurableApplicationContext applicationContext;
+  private static ConfigurableApplicationContext applicationContext;
 
-    public ArchiveServer(ConfigurableApplicationContext applicationContext) {
-        ArchiveServer.applicationContext = applicationContext;
-    }
+  public ArchiveServer(ConfigurableApplicationContext applicationContext) {
+    ArchiveServer.applicationContext = applicationContext;
+  }
 
-    public static void main(String[] args) {
-        application = new SpringApplication(ArchiveServer.class);
-        application.run(args);
-    }
+  public static void main(String[] args) {
+    application = new SpringApplication(ArchiveServer.class);
+    application.run(args);
+  }
 
-    public static void exit() {
-        log.info("Shutting down...");
-        applicationContext.close();
-        System.exit(0);
-    }
+  public static void exit() {
+    log.info("Shutting down...");
+    applicationContext.close();
+    System.exit(0);
+  }
 }

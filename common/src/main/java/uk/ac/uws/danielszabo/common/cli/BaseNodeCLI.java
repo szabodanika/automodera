@@ -51,8 +51,7 @@ public abstract class BaseNodeCLI {
   // service used to communicate with the network
   private final NetworkService networkService;
 
-  protected BaseNodeCLI(
-      LocalNodeService localNodeService, NetworkService networkService) {
+  protected BaseNodeCLI(LocalNodeService localNodeService, NetworkService networkService) {
     this.localNodeService = localNodeService;
     this.networkService = networkService;
   }
@@ -77,35 +76,35 @@ public abstract class BaseNodeCLI {
     }
   }
 
-//  @ShellMethod("Manage known topics.")
-//  public void topic(
-//      @ShellOption(defaultValue = "false") boolean list,
-//      @ShellOption(defaultValue = "false") boolean create,
-//      @ShellOption(defaultValue = "false") boolean show,
-//      @ShellOption(defaultValue = "") java.lang.String id,
-//      @ShellOption(defaultValue = "") java.lang.String name) {
-//    if (list) {
-//      for (String t : topicService.findAll()) {
-//        log.info(t.toString());
-//      }
-//    } else if (create) {
-//      if (id.isBlank() || name.isBlank()) {
-//        log.error("Please specify non-empty id and name");
-//        return;
-//      }
-//      String topic = new String(id, name);
-//      topicService.save(topic);
-//      log.info("Saved topic " + string);
-//    } else if (show) {
-//      if (id.isBlank()) {
-//        log.error("Please specify non-empty id");
-//        return;
-//      }
-//      topicService.findById(id).ifPresent(topic -> log.info(topic.toString()));
-//    } else {
-//      log.error("Please specify one of the following: --list, --create, --show");
-//    }
-//  }
+  //  @ShellMethod("Manage known topics.")
+  //  public void topic(
+  //      @ShellOption(defaultValue = "false") boolean list,
+  //      @ShellOption(defaultValue = "false") boolean create,
+  //      @ShellOption(defaultValue = "false") boolean show,
+  //      @ShellOption(defaultValue = "") java.lang.String id,
+  //      @ShellOption(defaultValue = "") java.lang.String name) {
+  //    if (list) {
+  //      for (String t : topicService.findAll()) {
+  //        log.info(t.toString());
+  //      }
+  //    } else if (create) {
+  //      if (id.isBlank() || name.isBlank()) {
+  //        log.error("Please specify non-empty id and name");
+  //        return;
+  //      }
+  //      String topic = new String(id, name);
+  //      topicService.save(topic);
+  //      log.info("Saved topic " + string);
+  //    } else if (show) {
+  //      if (id.isBlank()) {
+  //        log.error("Please specify non-empty id");
+  //        return;
+  //      }
+  //      topicService.findById(id).ifPresent(topic -> log.info(topic.toString()));
+  //    } else {
+  //      log.error("Please specify one of the following: --list, --create, --show");
+  //    }
+  //  }
 
   @ShellMethod("Show network and build info.")
   public void info() {
@@ -288,16 +287,16 @@ public abstract class BaseNodeCLI {
   // '123 High Street' --post-code AB12CD --country Scotland
   @ShellMethod("Initialise local node configuration.")
   public void init(
-          java.lang.String id,
-          NodeType type,
-          java.lang.String name,
-          java.lang.String domain,
-          java.lang.String legalName,
-          java.lang.String adminEmail,
-          java.lang.String addressLine1,
-          @ShellOption(defaultValue = "N/A") java.lang.String addressLine2,
-          java.lang.String postCode,
-          java.lang.String country) {
+      java.lang.String id,
+      NodeType type,
+      java.lang.String name,
+      java.lang.String domain,
+      java.lang.String legalName,
+      java.lang.String adminEmail,
+      java.lang.String addressLine1,
+      @ShellOption(defaultValue = "N/A") java.lang.String addressLine2,
+      java.lang.String postCode,
+      java.lang.String country) {
     localNodeService.init(
         id,
         type,

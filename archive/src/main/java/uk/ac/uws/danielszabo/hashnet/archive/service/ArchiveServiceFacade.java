@@ -63,12 +63,12 @@ public interface ArchiveServiceFacade {
   void saveCertificate(NodeCertificate certificate);
 
   HashCollection generateHashCollection(
-          String path,
-          String id,
-          String name,
-          String description,
-          List<String> strings,
-          boolean forceRecalc)
+      String path,
+      String id,
+      String name,
+      String description,
+      List<String> strings,
+      boolean forceRecalc)
       throws IOException;
 
   List<HashCollection> findAllHashCollections();
@@ -89,18 +89,26 @@ public interface ArchiveServiceFacade {
 
   Node getLocalNode();
 
-    void shutDown();
+  void shutDown();
 
-    void init(String id, String displayName, String domainName, String legalName, String adminEmail, String addressLine1, String addressLine2, String postCode, String country);
+  void init(
+      String id,
+      String displayName,
+      String domainName,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      String addressLine2,
+      String postCode,
+      String country);
 
-    List<HashCollection> retrieveHashCollectionsByArchive(Node n) throws Exception;
+  List<HashCollection> retrieveHashCollectionsByArchive(Node n) throws Exception;
 
-    NetworkConfiguration getNetworkConfiguration();
+  NetworkConfiguration getNetworkConfiguration();
 
-    List<HashCollection> retrieveHashCollectionsByTopic(String topic) throws Exception;
+  List<HashCollection> retrieveHashCollectionsByTopic(String topic) throws Exception;
 
-    List<CertificateRequest> findAllCertificateRequests();
+  List<CertificateRequest> findAllCertificateRequests();
 
-    void connectToNetwork(String host) throws Exception;
-
+  void connectToNetwork(String host) throws Exception;
 }

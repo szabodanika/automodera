@@ -35,5 +35,4 @@ public interface HashCollectionRepository extends JpaRepository<HashCollection, 
   List<HashCollectionInfo> findAllProjectedByEnabled(boolean enabled);
 
   List<HashCollection> findAllByImageListIsNotEmpty();
-
 }

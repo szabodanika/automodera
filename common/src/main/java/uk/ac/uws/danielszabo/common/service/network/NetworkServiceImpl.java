@@ -44,340 +44,343 @@ import java.util.Random;
 @Service
 public class NetworkServiceImpl implements NetworkService {
 
-    protected final ApplicationEventPublisher applicationEventPublisher;
+  protected final ApplicationEventPublisher applicationEventPublisher;
 
-    protected final RestService restService;
+  protected final RestService restService;
 
-    protected final NetworkConfigurationRepository networkConfigurationRepository;
+  protected final NetworkConfigurationRepository networkConfigurationRepository;
 
-    protected final CertificateRequestRepository certificateRequestRepository;
+  protected final CertificateRequestRepository certificateRequestRepository;
 
-    protected final NodeRepository nodeRepository;
+  protected final NodeRepository nodeRepository;
 
-    protected final LocalNodeRepository localNodeRepository;
+  protected final LocalNodeRepository localNodeRepository;
 
-    private final HashCollectionRepository hashCollectionRepository;
+  private final HashCollectionRepository hashCollectionRepository;
 
-    public NetworkServiceImpl(
-            ApplicationEventPublisher applicationEventPublisher,
-            NetworkConfigurationRepository networkConfigurationRepository,
-            RestService restService,
-            CertificateRequestRepository certificateRequestRepository,
-            NodeRepository nodeRepository,
-            LocalNodeRepository localNodeRepository,
-            HashCollectionRepository hashCollectionRepository) {
-        this.applicationEventPublisher = applicationEventPublisher;
-        this.networkConfigurationRepository = networkConfigurationRepository;
-        this.restService = restService;
-        this.certificateRequestRepository = certificateRequestRepository;
-        this.nodeRepository = nodeRepository;
-        this.localNodeRepository = localNodeRepository;
-        this.hashCollectionRepository = hashCollectionRepository;
+  public NetworkServiceImpl(
+      ApplicationEventPublisher applicationEventPublisher,
+      NetworkConfigurationRepository networkConfigurationRepository,
+      RestService restService,
+      CertificateRequestRepository certificateRequestRepository,
+      NodeRepository nodeRepository,
+      LocalNodeRepository localNodeRepository,
+      HashCollectionRepository hashCollectionRepository) {
+    this.applicationEventPublisher = applicationEventPublisher;
+    this.networkConfigurationRepository = networkConfigurationRepository;
+    this.restService = restService;
+    this.certificateRequestRepository = certificateRequestRepository;
+    this.nodeRepository = nodeRepository;
+    this.localNodeRepository = localNodeRepository;
+    this.hashCollectionRepository = hashCollectionRepository;
+  }
+
+  @Override
+  public NetworkConfiguration getNetworkConfiguration() {
+    return networkConfigurationRepository.get().orElse(null);
+  }
+
+  @Override
+  public NetworkConfiguration saveNetworkConfiguration(NetworkConfiguration networkConfiguration) {
+    if (networkConfiguration == null) {
+      log.error("Cannot overwrite network config with null.");
+      return null;
+    } else {
+      NetworkConfigurationUpdatedEvent event =
+          new NetworkConfigurationUpdatedEvent(this, networkConfiguration);
+      applicationEventPublisher.publishEvent(event);
+      return networkConfigurationRepository.save(networkConfiguration);
     }
+  }
 
-    @Override
-    public NetworkConfiguration getNetworkConfiguration() {
-        return networkConfigurationRepository.get().orElse(null);
-    }
+  @Override
+  public boolean checkCertificate(NodeCertificate certificate, String remoteAddr) {
+    // if this is certificate authority (operator or origin) node
+    // then we check our local database, otherwise we request confirmation
+    // from the issuer.
+    // TODO later on this should work with cryptography instead of web requests - what if CA node is
+    // offline?
 
-    @Override
-    public NetworkConfiguration saveNetworkConfiguration(NetworkConfiguration networkConfiguration) {
-        if (networkConfiguration == null) {
-            log.error("Cannot overwrite network config with null.");
-            return null;
+    try {
+      // check that certificate was sent by the node it was issued to
+      if (InetAddress.getByName(certificate.getHost()).getHostAddress().equals(remoteAddr)) {
+        // check if we are verifying an origin node certificate (self certificate)
+        if (certificate.getHost().equals(networkConfigurationRepository.get().get().getOrigin())) {
+          // it will be OK as long as it comes from the correct address
+          return true;
+        } else if (localNodeRepository
+            // this certificate was issued by the local node
+            .get()
+            .get()
+            .getLocal()
+            .getId()
+            .equals(certificate.getIssuer().getId())) {
+          boolean result =
+              localNodeRepository
+                  .get()
+                  .get()
+                  .getLocal()
+                  .getIssuedCertificates()
+                  .contains(certificate);
+
+          log.info(
+              "Verifying certificate "
+                  + certificate.getId()
+                  + " locally: "
+                  + (result ? "VALID" : "INVALID"));
+          return result;
         } else {
-            NetworkConfigurationUpdatedEvent event =
-                    new NetworkConfigurationUpdatedEvent(this, networkConfiguration);
-            applicationEventPublisher.publishEvent(event);
-            return networkConfigurationRepository.save(networkConfiguration);
+          // this certificate was issued by someone else
+          // so we ask the issuer to check it
+          boolean result = restService.requestCertificateVerification(certificate);
+          log.info(
+              "Verifying certificate "
+                  + certificate.getId()
+                  + " at "
+                  + certificate.getIssuer().getHost()
+                  + " "
+                  + (result ? "VALID" : "INVALID"));
+          return result;
         }
+      } else {
+        log.info(
+            "Verifying certificate "
+                + certificate.getId()
+                + " at "
+                + certificate.getIssuer().getHost()
+                + " INVALID (sent from incorrect address) ");
+        return false;
+      }
+    } catch (Exception e) {
+      log.error("Failed to verify certificate " + certificate.getId() + " " + e);
+      e.printStackTrace();
+      return false;
     }
+  }
 
-    @Override
-    public boolean checkCertificate(NodeCertificate certificate, String remoteAddr) {
-        // if this is certificate authority (operator or origin) node
-        // then we check our local database, otherwise we request confirmation
-        // from the issuer.
-        // TODO later on this should work with cryptography instead of web requests - what if CA node is
-        // offline?
+  @Override
+  public Optional<NodeCertificate> findCertificateById(String id) {
+    Node node = nodeRepository.findById(id).orElse(null);
+    if (node == null) return Optional.empty();
+    return Optional.ofNullable(node.getCertificate());
+  }
 
-        try {
-            // check that certificate was sent by the node it was issued to
-            if (InetAddress.getByName(certificate.getHost()).getHostAddress().equals(remoteAddr)) {
-                // check if we are verifying an origin node certificate (self certificate)
-                if (certificate.getHost().equals(networkConfigurationRepository.get().get().getOrigin())) {
-                    // it will be OK as long as it comes from the correct address
-                    return true;
-                } else if (localNodeRepository
-                        // this certificate was issued by the local node
-                        .get()
-                        .get()
-                        .getLocal()
-                        .getId()
-                        .equals(certificate.getIssuer().getId())) {
-                    boolean result =
-                            localNodeRepository
-                                    .get()
-                                    .get()
-                                    .getLocal()
-                                    .getIssuedCertificates()
-                                    .contains(certificate);
+  @Override
+  public NodeStatus getNodeStatus(Node node) {
+    NodeStatus status = restService.requestStatus(node.getHost());
+    node.setOnline(status.isOnline());
+    node.setActive(status.isActive());
+    saveNode(node);
+    return status;
+  }
 
-                    log.info(
-                            "Verifying certificate "
-                                    + certificate.getId()
-                                    + " locally: "
-                                    + (result ? "VALID" : "INVALID"));
-                    return result;
-                } else {
-                    // this certificate was issued by someone else
-                    // so we ask the issuer to check it
-                    boolean result = restService.requestCertificateVerification(certificate);
-                    log.info(
-                            "Verifying certificate "
-                                    + certificate.getId()
-                                    + " at "
-                                    + certificate.getIssuer().getHost()
-                                    + " "
-                                    + (result ? "VALID" : "INVALID"));
-                    return result;
-                }
-            } else {
-                log.info(
-                        "Verifying certificate "
-                                + certificate.getId()
-                                + " at "
-                                + certificate.getIssuer().getHost()
-                                + " INVALID (sent from incorrect address) ");
-                return false;
-            }
-        } catch (Exception e) {
-            log.error("Failed to verify certificate " + certificate.getId() + " " + e);
-            e.printStackTrace();
-            return false;
-        }
+  @Override
+  public NodeStatus getNodeStatus(String address) throws Exception {
+    return restService.requestStatus(address);
+  }
+
+  @Override
+  public List<Node> findAllNodes() {
+    return nodeRepository.findAll();
+  }
+
+  @Override
+  public Optional<Node> findKnownNodeById(String id) {
+    Optional<Node> optionalNode = nodeRepository.findById(id);
+    optionalNode.ifPresent(this::getNodeStatus);
+    return optionalNode;
+  }
+
+  @Override
+  public Node saveNode(Node node) {
+    return nodeRepository.save(node);
+  }
+
+  @Override
+  public void removeNode(Node node) {
+    nodeRepository.delete(node);
+  }
+
+  @Override
+  public Node getLocalNode() {
+    return localNodeRepository.get().get().getLocal();
+  }
+
+  @Override
+  public CertificateRequest certificateRequest(String origin, Node localNode) throws Exception {
+    if (certificateRequestRepository.findAll().isEmpty()) {
+      CertificateRequest certReq =
+          new CertificateRequest(
+              localNode.getId() + "-" + (int) (new Random().nextDouble() * Integer.MAX_VALUE),
+              localNode);
+      restService.sendCertificateRequest(origin, certReq);
+      certificateRequestRepository.save(certReq);
+      return certReq;
+    } else {
+      log.error("Did not send certificate request because one is already in progress");
+      return null;
     }
+  }
 
-    @Override
-    public Optional<NodeCertificate> findCertificateById(String id) {
-        Node node = nodeRepository.findById(id).orElse(null);
-        if (node == null) return Optional.empty();
-        return Optional.ofNullable(node.getCertificate());
+  @Override
+  public String resolveNodeId(String origin, String id) throws TargetNodeUnreachableException {
+    return restService.getHostById(origin, id);
+  }
+
+  @Override
+  public Node getNodeByHost(String host) throws TargetNodeUnreachableException {
+    return nodeRepository.save(restService.getNodeByHost(host));
+  }
+
+  @Override
+  public List<HashCollection> requestAllHashCollectionsByArchive(Node node)
+      throws TargetNodeUnreachableException {
+    List<HashCollection> hashCollectionList = restService.requestAllHashCollections(node.getHost());
+    node.setHashCollectionList(hashCollectionList);
+    hashCollectionRepository.saveAll(hashCollectionList);
+    nodeRepository.save(node);
+    return hashCollectionList;
+  }
+
+  @Override
+  public void sendSubscription(Node node, String string) throws TargetNodeUnreachableException {
+    this.restService.sendSubscription(node, localNodeRepository.get().get().getLocal(), string);
+  }
+
+  @Override
+  public void fetchAllNodeStatus() throws Exception {
+    for (Node node : getAllKnownNodes()) {
+      if (!node.equals(getLocalNode())) {
+        getNodeStatus(node);
+      }
     }
+  }
 
-    @Override
-    public NodeStatus getNodeStatus(Node node) {
-        NodeStatus status = restService.requestStatus(node.getHost());
-        node.setOnline(status.isOnline());
-        node.setActive(status.isActive());
-        saveNode(node);
-        return status;
+  @Override
+  public HashCollection downloadHashCollection(String host, String id)
+      throws TargetNodeUnreachableException {
+    HashCollection hashCollection = this.restService.downloadHashCollection(host, id);
+    hashCollection.getImageList().forEach(image -> image.setHashCollection(hashCollection));
+    return hashCollectionRepository.save(hashCollection);
+  }
+
+  @Override
+  public void publishHashCollections(List<HashCollection> hashCollectionList, Node subscriber)
+      throws Exception {
+    restService.publishHashCollections(hashCollectionList, subscriber.getHost());
+  }
+
+  //    @Override
+  //    public Optional<String> getTopicById(String topic) throws Exception {
+  //        // Find all the hash collections of all the known archive nodes
+  //        // that are tagged with a topic by the specified id
+  //        // and place them in a topic object
+  //        String string = null;
+  //        log.info("Collecting hash collections of topic " + id + " at");
+  //
+  //        // findAllByNodeType will only return known nodes
+  //        // so we request fresh info from all the hosts
+  //        // returned by the origin
+  //        try {
+  //            updateArchiveRepository();
+  //        } catch (Exception e) {
+  //            log.error("Failed to update archive repository: " + e.getMessage());
+  //        }
+  //
+  //        // now we request fresh hashcollection list from each archive
+  //        // and compile them into one topic object
+  //
+  //        // for each archive node
+  //        for (Node n : nodeRepository.findAllByNodeType(NodeType.ARCHIVE)) {
+  //            log.info("\t- " + n.getId());
+  //            // for each hash collection
+  //            for (HashCollection hashCollection : this.requestAllHashCollectionsByArchive(n)) {
+  //                // setting archive manually, but later this should be set by jpa automatically
+  //                hashCollection.setArchive(n);
+  //                // for each topic
+  //                for (String t : hashCollection.getTopicList()) {
+  //                    // if topic id matches the one we are looking for
+  //                    if (t.equals(id)) {
+  //                        // if our main topic object is null, initialise it
+  //                        if (string == null) {
+  //                            string = t;
+  //                        }
+  //                        // otherwise just add this hash collection to that topic
+  //                        // we need ot initialise the hashcollection list but hopefully
+  //                        // this will be done automatically later by jpa
+  //                        //            if (topic.getHashCollectionList() == null)
+  //                        //              topic.setHashCollectionList(new ArrayList<>());
+  //                        //            topic.getHashCollectionList().add(hashCollection);
+  //                    }
+  //                }
+  //            }
+  //        }
+  //        return Optional.ofNullable(string);
+  //    }
+
+  @Override
+  public List<Node> getAllArchives() {
+    try {
+      updateArchiveRepository();
+    } catch (Exception e) {
+      log.error("Failed to update archive repository: " + e.getMessage());
     }
+    return nodeRepository.findAllByNodeType(NodeType.ARCHIVE);
+  }
 
-    @Override
-    public NodeStatus getNodeStatus(String address) throws Exception {
-        return restService.requestStatus(address);
+  @Override
+  public Optional<CertificateRequest> findCertificateRequestById(String id) {
+    return certificateRequestRepository.findById(id);
+  }
+
+  @Override
+  public void getNetworkConfigurationFromOrigin(String originHost) throws Exception {
+    NetworkConfiguration networkConfiguration;
+    if ((networkConfiguration = networkConfigurationRepository.get().orElse(null)) != null) {
+      log.error("You are already connected to a network: " + networkConfiguration.getName());
+    } else {
+      networkConfiguration = restService.sendNetworkConfigurationRequest(originHost);
+      if (networkConfiguration != null) {
+        saveNetworkConfiguration(networkConfiguration);
+      }
     }
+  }
 
-    @Override
-    public List<Node> findAllNodes() {
-        return nodeRepository.findAll();
+  @Override
+  public List<Node> getAllKnownNodes() {
+    return nodeRepository.findAll();
+  }
+
+  @Override
+  public List<CertificateRequest> findAllCertificateRequests() {
+    return certificateRequestRepository.findAll();
+  }
+
+  @Override
+  public CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest) {
+    return certificateRequestRepository.save(certificateRequest);
+  }
+
+  @Override
+  public void sendProcessedCertificateRequest(CertificateRequest certificateRequest)
+      throws Exception {
+    restService.sendProcessedCertificateRequest(certificateRequest);
+  }
+
+  @Override
+  public void removeCertificate(NodeCertificate certificate) {
+    throw new UnsupportedOperationException();
+  }
+
+  private List<String> getAllArchiveAddresses() throws Exception {
+    log.info("Requesting list of all archive addresses from origin");
+    return this.restService.requestAllArchiveAddresses(
+        networkConfigurationRepository.get().get().getOrigin());
+  }
+
+  private void updateArchiveRepository() throws Exception {
+    for (String host : getAllArchiveAddresses()) {
+      nodeRepository.save(restService.getNodeByHost(host));
     }
-
-    @Override
-    public Optional<Node> findKnownNodeById(String id)  {
-        Optional<Node> optionalNode= nodeRepository.findById(id);
-        optionalNode.ifPresent(this::getNodeStatus);
-        return optionalNode;
-    }
-
-    @Override
-    public Node saveNode(Node node) {
-        return nodeRepository.save(node);
-    }
-
-    @Override
-    public void removeNode(Node node) {
-        nodeRepository.delete(node);
-    }
-
-    @Override
-    public Node getLocalNode() {
-        return localNodeRepository.get().get().getLocal();
-    }
-
-    @Override
-    public CertificateRequest certificateRequest(String origin, Node localNode) throws Exception {
-        if (certificateRequestRepository.findAll().isEmpty()) {
-            CertificateRequest certReq =
-                    new CertificateRequest(
-                            localNode.getId() + "-" + (int) (new Random().nextDouble() * Integer.MAX_VALUE), localNode);
-            restService.sendCertificateRequest(origin, certReq);
-            certificateRequestRepository.save(certReq);
-            return certReq;
-        } else {
-            log.error("Did not send certificate request because one is already in progress");
-            return null;
-        }
-    }
-
-    @Override
-    public String resolveNodeId(String origin, String id) throws TargetNodeUnreachableException {
-        return restService.getHostById(origin, id);
-    }
-
-    @Override
-    public Node getNodeByHost(String host) throws TargetNodeUnreachableException {
-        return nodeRepository.save(restService.getNodeByHost(host));
-    }
-
-    @Override
-    public List<HashCollection> requestAllHashCollectionsByArchive(Node node) throws TargetNodeUnreachableException {
-        List<HashCollection> hashCollectionList = restService.requestAllHashCollections(node.getHost());
-        node.setHashCollectionList(hashCollectionList);
-        hashCollectionRepository.saveAll(hashCollectionList);
-        nodeRepository.save(node);
-        return hashCollectionList;
-    }
-
-    @Override
-    public void sendSubscription(Node node, String string) throws TargetNodeUnreachableException {
-        this.restService.sendSubscription(node, localNodeRepository.get().get().getLocal(), string);
-    }
-
-    @Override
-    public void fetchAllNodeStatus() throws Exception {
-        for (Node node : getAllKnownNodes()) {
-            if (!node.equals(getLocalNode())) {
-                getNodeStatus(node);
-            }
-        }
-    }
-
-    @Override
-    public HashCollection downloadHashCollection(String host, String id) throws TargetNodeUnreachableException {
-        HashCollection hashCollection = this.restService.downloadHashCollection(host, id);
-        hashCollection.getImageList().forEach(image -> image.setHashCollection(hashCollection));
-        return hashCollectionRepository.save(hashCollection);
-    }
-
-    @Override
-    public void publishHashCollections(List<HashCollection> hashCollectionList, Node subscriber)
-            throws Exception {
-        restService.publishHashCollections(hashCollectionList, subscriber.getHost());
-    }
-
-//    @Override
-//    public Optional<String> getTopicById(String topic) throws Exception {
-//        // Find all the hash collections of all the known archive nodes
-//        // that are tagged with a topic by the specified id
-//        // and place them in a topic object
-//        String string = null;
-//        log.info("Collecting hash collections of topic " + id + " at");
-//
-//        // findAllByNodeType will only return known nodes
-//        // so we request fresh info from all the hosts
-//        // returned by the origin
-//        try {
-//            updateArchiveRepository();
-//        } catch (Exception e) {
-//            log.error("Failed to update archive repository: " + e.getMessage());
-//        }
-//
-//        // now we request fresh hashcollection list from each archive
-//        // and compile them into one topic object
-//
-//        // for each archive node
-//        for (Node n : nodeRepository.findAllByNodeType(NodeType.ARCHIVE)) {
-//            log.info("\t- " + n.getId());
-//            // for each hash collection
-//            for (HashCollection hashCollection : this.requestAllHashCollectionsByArchive(n)) {
-//                // setting archive manually, but later this should be set by jpa automatically
-//                hashCollection.setArchive(n);
-//                // for each topic
-//                for (String t : hashCollection.getTopicList()) {
-//                    // if topic id matches the one we are looking for
-//                    if (t.equals(id)) {
-//                        // if our main topic object is null, initialise it
-//                        if (string == null) {
-//                            string = t;
-//                        }
-//                        // otherwise just add this hash collection to that topic
-//                        // we need ot initialise the hashcollection list but hopefully
-//                        // this will be done automatically later by jpa
-//                        //            if (topic.getHashCollectionList() == null)
-//                        //              topic.setHashCollectionList(new ArrayList<>());
-//                        //            topic.getHashCollectionList().add(hashCollection);
-//                    }
-//                }
-//            }
-//        }
-//        return Optional.ofNullable(string);
-//    }
-
-    @Override
-    public List<Node> getAllArchives() {
-        try {
-            updateArchiveRepository();
-        } catch (Exception e) {
-            log.error("Failed to update archive repository: " + e.getMessage());
-        }
-        return nodeRepository.findAllByNodeType(NodeType.ARCHIVE);
-    }
-
-    @Override
-    public Optional<CertificateRequest> findCertificateRequestById(String id) {
-        return certificateRequestRepository.findById(id);
-    }
-
-    @Override
-    public void getNetworkConfigurationFromOrigin(String originHost) throws Exception {
-        NetworkConfiguration networkConfiguration;
-        if ((networkConfiguration = networkConfigurationRepository.get().orElse(null)) != null) {
-            log.error("You are already connected to a network: " + networkConfiguration.getName());
-        } else {
-            networkConfiguration = restService.sendNetworkConfigurationRequest(originHost);
-            if (networkConfiguration != null) {
-                saveNetworkConfiguration(networkConfiguration);
-            }
-        }
-    }
-
-    @Override
-    public List<Node> getAllKnownNodes() {
-        return nodeRepository.findAll();
-    }
-
-    @Override
-    public List<CertificateRequest> findAllCertificateRequests() {
-        return certificateRequestRepository.findAll();
-    }
-
-    @Override
-    public CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest) {
-        return certificateRequestRepository.save(certificateRequest);
-    }
-
-    @Override
-    public void sendProcessedCertificateRequest(CertificateRequest certificateRequest)
-            throws Exception {
-        restService.sendProcessedCertificateRequest(certificateRequest);
-    }
-
-    @Override
-    public void removeCertificate(NodeCertificate certificate) {
-        throw new UnsupportedOperationException();
-    }
-
-    private List<String> getAllArchiveAddresses() throws Exception {
-        log.info("Requesting list of all archive addresses from origin");
-        return this.restService.requestAllArchiveAddresses(
-                networkConfigurationRepository.get().get().getOrigin());
-    }
-
-    private void updateArchiveRepository() throws Exception {
-        for (String host : getAllArchiveAddresses()) {
-            nodeRepository.save(restService.getNodeByHost(host));
-        }
-    }
+  }
 }

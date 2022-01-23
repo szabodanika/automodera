@@ -38,24 +38,24 @@ import uk.ac.uws.danielszabo.hashnet.archive.service.ArchiveServiceFacade;
 @RequestMapping("cert")
 public class CertRESTController {
 
-    private final ArchiveServiceFacade archiveServiceFacade;
+  private final ArchiveServiceFacade archiveServiceFacade;
 
-    public CertRESTController(ArchiveServiceFacade archiveServiceFacade) {
-        this.archiveServiceFacade = archiveServiceFacade;
-    }
+  public CertRESTController(ArchiveServiceFacade archiveServiceFacade) {
+    this.archiveServiceFacade = archiveServiceFacade;
+  }
 
-    @PostMapping(
-            value = "processedrequest",
-            consumes = MediaType.APPLICATION_XML_VALUE,
-            produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity postRequest(@RequestBody Message message) {
-        CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
-        if (archiveServiceFacade.findCertificateRequestById(certificateRequest.getId()).isPresent()) {
-            NodeCertificate certificate = certificateRequest.getNode().getCertificate();
-            log.info("Received processed certificate from " + message.getCertificate().getId());
-            archiveServiceFacade.saveCertificate(certificate);
-            archiveServiceFacade.saveCertificateRequest(certificateRequest);
-            return new ResponseEntity(HttpStatus.OK);
-        } else return new ResponseEntity(HttpStatus.FORBIDDEN);
-    }
+  @PostMapping(
+      value = "processedrequest",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity postRequest(@RequestBody Message message) {
+    CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
+    if (archiveServiceFacade.findCertificateRequestById(certificateRequest.getId()).isPresent()) {
+      NodeCertificate certificate = certificateRequest.getNode().getCertificate();
+      log.info("Received processed certificate from " + message.getCertificate().getId());
+      archiveServiceFacade.saveCertificate(certificate);
+      archiveServiceFacade.saveCertificateRequest(certificateRequest);
+      return new ResponseEntity(HttpStatus.OK);
+    } else return new ResponseEntity(HttpStatus.FORBIDDEN);
+  }
 }

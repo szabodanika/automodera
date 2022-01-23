@@ -34,71 +34,80 @@ import java.util.Optional;
 
 public interface IntegratorServiceFacade {
 
-    boolean verifyCertificate(NodeCertificate certificate);
+  boolean verifyCertificate(NodeCertificate certificate);
 
-    CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest);
+  CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest);
 
-    List<CertificateRequest> retrieveAllCertificateRequests();
+  List<CertificateRequest> retrieveAllCertificateRequests();
 
-    Optional<CertificateRequest> findCertificateRequestById(String id);
+  Optional<CertificateRequest> findCertificateRequestById(String id);
 
-    List<HashCollection> retrieveAllHashCollections();
+  List<HashCollection> retrieveAllHashCollections();
 
-    Optional<HashCollection> retrieveHashCollectionById(String id);
+  Optional<HashCollection> retrieveHashCollectionById(String id);
 
-    List<HashCollection> retrieveHashCollectionByTopic(String string);
+  List<HashCollection> retrieveHashCollectionByTopic(String string);
 
-    List<HashCollection> retrieveHashCollectionByArchive(Node topic);
+  List<HashCollection> retrieveHashCollectionByArchive(Node topic);
 
-    List<Node> retrieveAllNodes();
+  List<Node> retrieveAllNodes();
 
-    Optional<Node> retrieveNodeById(String id);
+  Optional<Node> retrieveNodeById(String id);
 
-    Node saveNode(Node node);
+  Node saveNode(Node node);
 
-    void deleteNode(Node node);
+  void deleteNode(Node node);
 
-    List<Subscription> getSubscriptions();
+  List<Subscription> getSubscriptions();
 
-    void saveCertificate(NodeCertificate certificate);
+  void saveCertificate(NodeCertificate certificate);
 
-    List<HashCollection> findAllHashCollections();
+  List<HashCollection> findAllHashCollections();
 
-    Optional<HashCollection> findHashCollectionById(String id);
+  Optional<HashCollection> findHashCollectionById(String id);
 
-    boolean checkCertificate(NodeCertificate certificate, String remoteAddr);
+  boolean checkCertificate(NodeCertificate certificate, String remoteAddr);
 
-    void updateHashCollections() throws Exception;
+  void updateHashCollections() throws Exception;
 
-    Optional<Node> retrieveNodeByHost(String host) throws Exception;
+  Optional<Node> retrieveNodeByHost(String host) throws Exception;
 
-    void addSubscription(String string);
+  void addSubscription(String string);
 
-    List<Node> getAllArchives();
+  List<Node> getAllArchives();
 
-    HashCollection downloadHashCollection(String host, String id) throws Exception;
+  HashCollection downloadHashCollection(String host, String id) throws Exception;
 
-    void removeSubscriptionByTopic(String topic);
+  void removeSubscriptionByTopic(String topic);
 
-    HashReport checkImage(String image) throws IOException;
+  HashReport checkImage(String image) throws IOException;
 
-    Node getLocalNode();
+  Node getLocalNode();
 
-    void shutDown();
+  void shutDown();
 
-    void init(String id, String displayName, String domainName, String legalName, String adminEmail, String addressLine1, String addressLine2, String postCode, String country);
+  void init(
+      String id,
+      String displayName,
+      String domainName,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      String addressLine2,
+      String postCode,
+      String country);
 
-    List<HashCollection> retrieveHashCollectionsByArchive(Node n) throws Exception;
+  List<HashCollection> retrieveHashCollectionsByArchive(Node n) throws Exception;
 
-    NetworkConfiguration getNetworkConfiguration();
+  NetworkConfiguration getNetworkConfiguration();
 
-    List<HashCollection> retrieveHashCollectionsByTopic(String topic) throws Exception;
+  List<HashCollection> retrieveHashCollectionsByTopic(String topic) throws Exception;
 
-    List<CertificateRequest> findAllCertificateRequests();
+  List<CertificateRequest> findAllCertificateRequests();
 
-    void connectToNetwork(String host) throws Exception;
+  void connectToNetwork(String host) throws Exception;
 
-    Optional<Node> findKnownNodeById(String nodeId);
+  Optional<Node> findKnownNodeById(String nodeId);
 
-    List<HashCollection> retrieveDownloadedHashCollections();
+  List<HashCollection> retrieveDownloadedHashCollections();
 }

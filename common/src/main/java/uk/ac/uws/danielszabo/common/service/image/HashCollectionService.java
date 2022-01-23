@@ -49,5 +49,5 @@ public interface HashCollectionService {
 
   List<HashCollection> findAllEnabledNoImagesByTopic(String topic);
 
-    List<HashCollection> findAllDownloaded();
+  List<HashCollection> findAllDownloaded();
 }

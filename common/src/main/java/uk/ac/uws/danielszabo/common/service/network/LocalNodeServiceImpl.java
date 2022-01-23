@@ -36,112 +36,113 @@ import java.util.Optional;
 @Service
 public class LocalNodeServiceImpl implements LocalNodeService {
 
-    private final ApplicationEventPublisher applicationEventPublisher;
+  private final ApplicationEventPublisher applicationEventPublisher;
 
-    private final LocalNodeRepository localNodeRepository;
+  private final LocalNodeRepository localNodeRepository;
 
-    private final NodeRepository nodeRepository;
+  private final NodeRepository nodeRepository;
 
-    private final NodeFactory nodeFactory;
+  private final NodeFactory nodeFactory;
 
-//  private Node localNode;
+  //  private Node localNode;
 
-    public LocalNodeServiceImpl(
-            ApplicationEventPublisher applicationEventPublisher,
-            LocalNodeRepository localNodeRepository,
-            NodeRepository nodeRepository, NodeFactory nodeFactory) {
-        this.applicationEventPublisher = applicationEventPublisher;
-        this.localNodeRepository = localNodeRepository;
-        this.nodeRepository = nodeRepository;
-        this.nodeFactory = nodeFactory;
+  public LocalNodeServiceImpl(
+      ApplicationEventPublisher applicationEventPublisher,
+      LocalNodeRepository localNodeRepository,
+      NodeRepository nodeRepository,
+      NodeFactory nodeFactory) {
+    this.applicationEventPublisher = applicationEventPublisher;
+    this.localNodeRepository = localNodeRepository;
+    this.nodeRepository = nodeRepository;
+    this.nodeFactory = nodeFactory;
+  }
+
+  @Override
+  public Node get() {
+    Optional<LocalNode> optionalNode = localNodeRepository.get();
+    if (optionalNode.isEmpty()) {
+      return null;
+    } else {
+      return optionalNode.get().getLocal();
     }
+  }
 
-    @Override
-    public Node get() {
-        Optional<LocalNode> optionalNode = localNodeRepository.get();
-        if (optionalNode.isEmpty()) {
-            return null;
-        } else {
-            return optionalNode.get().getLocal();
-        }
+  @Override
+  public Node set(Node self) {
+    if (self == null) {
+      log.error("Cannot overwrite local config with null.");
+      return null;
+    } else {
+      LocalNodeUpdatedEvent event = new LocalNodeUpdatedEvent(this, self);
+      if (localNodeRepository.get().isEmpty()) {
+        localNodeRepository.save(new LocalNode(self));
+      }
+      applicationEventPublisher.publishEvent(event);
+      return nodeRepository.save(self);
     }
+  }
 
-    @Override
-    public Node set(Node self) {
-        if (self == null) {
-            log.error("Cannot overwrite local config with null.");
-            return null;
-        } else {
-            LocalNodeUpdatedEvent event = new LocalNodeUpdatedEvent(this, self);
-            if (localNodeRepository.get().isEmpty()) {
-                localNodeRepository.save(new LocalNode(self));
-            }
-            applicationEventPublisher.publishEvent(event);
-            return nodeRepository.save(self);
-        }
+  @Override
+  public Node init(
+      String id,
+      NodeType nodeType,
+      String name,
+      String domain,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      String addressLine2,
+      String postCode,
+      String country) {
+    Node node;
+    switch (nodeType) {
+      case INTEGRATOR -> node =
+          nodeFactory.getIntegratorNode(
+              id,
+              name,
+              domain,
+              legalName,
+              adminEmail,
+              addressLine1,
+              addressLine2,
+              postCode,
+              country);
+      case ARCHIVE -> node =
+          nodeFactory.getArchiveNode(
+              id,
+              name,
+              domain,
+              legalName,
+              adminEmail,
+              addressLine1,
+              addressLine2,
+              postCode,
+              country);
+      case OPERATOR -> node =
+          nodeFactory.getOperatorNode(
+              id,
+              name,
+              domain,
+              legalName,
+              adminEmail,
+              addressLine1,
+              addressLine2,
+              postCode,
+              country);
+      case ORIGIN -> node =
+          nodeFactory.getOriginNode(
+              id,
+              name,
+              domain,
+              legalName,
+              adminEmail,
+              addressLine1,
+              addressLine2,
+              postCode,
+              country);
+      default -> throw new IllegalStateException("Unexpected value: " + nodeType);
     }
-
-    @Override
-    public Node init(
-            String id,
-            NodeType nodeType,
-            String name,
-            String domain,
-            String legalName,
-            String adminEmail,
-            String addressLine1,
-            String addressLine2,
-            String postCode,
-            String country) {
-        Node node;
-        switch (nodeType) {
-            case INTEGRATOR -> node =
-                    nodeFactory.getIntegratorNode(
-                            id,
-                            name,
-                            domain,
-                            legalName,
-                            adminEmail,
-                            addressLine1,
-                            addressLine2,
-                            postCode,
-                            country);
-            case ARCHIVE -> node =
-                    nodeFactory.getArchiveNode(
-                            id,
-                            name,
-                            domain,
-                            legalName,
-                            adminEmail,
-                            addressLine1,
-                            addressLine2,
-                            postCode,
-                            country);
-            case OPERATOR -> node =
-                    nodeFactory.getOperatorNode(
-                            id,
-                            name,
-                            domain,
-                            legalName,
-                            adminEmail,
-                            addressLine1,
-                            addressLine2,
-                            postCode,
-                            country);
-            case ORIGIN -> node =
-                    nodeFactory.getOriginNode(
-                            id,
-                            name,
-                            domain,
-                            legalName,
-                            adminEmail,
-                            addressLine1,
-                            addressLine2,
-                            postCode,
-                            country);
-            default -> throw new IllegalStateException("Unexpected value: " + nodeType);
-        }
-        set(node);
-        return node;
-    }
+    set(node);
+    return node;
+  }
 }

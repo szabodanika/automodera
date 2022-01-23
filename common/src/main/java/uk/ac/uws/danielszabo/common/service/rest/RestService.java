@@ -40,22 +40,27 @@ public interface RestService {
   void sendCertificateRequest(String operator, CertificateRequest certificateRequest)
       throws TargetNodeUnreachableException;
 
-  void sendProcessedCertificateRequest(CertificateRequest certificateRequest) throws TargetNodeUnreachableException;
+  void sendProcessedCertificateRequest(CertificateRequest certificateRequest)
+      throws TargetNodeUnreachableException;
 
-  NetworkConfiguration sendNetworkConfigurationRequest(String origin) throws TargetNodeUnreachableException;
+  NetworkConfiguration sendNetworkConfigurationRequest(String origin)
+      throws TargetNodeUnreachableException;
 
-  boolean requestCertificateVerification(NodeCertificate certificate) throws TargetNodeUnreachableException;
+  boolean requestCertificateVerification(NodeCertificate certificate)
+      throws TargetNodeUnreachableException;
 
   List<HashCollection> requestAllHashCollections(String host) throws TargetNodeUnreachableException;
 
   void publishHashCollections(List<HashCollection> hashCollectionList, String host)
       throws TargetNodeUnreachableException;
 
-  void sendSubscription(Node node, Node localNode, String string) throws TargetNodeUnreachableException;
+  void sendSubscription(Node node, Node localNode, String string)
+      throws TargetNodeUnreachableException;
 
   List<String> requestAllArchiveAddresses(String host) throws TargetNodeUnreachableException;
 
-  HashCollection downloadHashCollection(String host, String id) throws TargetNodeUnreachableException;
+  HashCollection downloadHashCollection(String host, String id)
+      throws TargetNodeUnreachableException;
 
   String getHostById(String origin, String id) throws TargetNodeUnreachableException;
 }

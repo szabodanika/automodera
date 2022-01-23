@@ -53,7 +53,7 @@ public class ArchiveCLI extends BaseNodeCLI {
   public ArchiveCLI(
       LocalNodeService localNodeService,
       NetworkService networkService,
-      ArchiveServiceFacade archiveServiceFacade){
+      ArchiveServiceFacade archiveServiceFacade) {
     super(localNodeService, networkService);
     this.archiveServiceFacade = archiveServiceFacade;
   }

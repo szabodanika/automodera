@@ -55,11 +55,9 @@ public class HashCollectionServiceImpl implements HashCollectionService {
 
   @Override
   public List<HashCollection> findAllByTopic(java.lang.String string) {
-      return hashCollectionRepository
-              .findAll()
-              .stream()
-              .filter(hashCollection -> hashCollection.getTopicList().contains(string))
-              .collect(Collectors.toList());
+    return hashCollectionRepository.findAll().stream()
+        .filter(hashCollection -> hashCollection.getTopicList().contains(string))
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -69,13 +67,13 @@ public class HashCollectionServiceImpl implements HashCollectionService {
 
   @Override
   public HashCollection generateHashCollection(
-          java.lang.String path,
-          java.lang.String id,
-          java.lang.String name,
-          java.lang.String description,
-          Node archive,
-          List<java.lang.String> strings,
-          boolean forceRecalc)
+      java.lang.String path,
+      java.lang.String id,
+      java.lang.String name,
+      java.lang.String description,
+      Node archive,
+      List<java.lang.String> strings,
+      boolean forceRecalc)
       throws IOException {
 
     // prepare new hashcollection or load it from repository
@@ -95,7 +93,7 @@ public class HashCollectionServiceImpl implements HashCollectionService {
                     true,
                     archive,
                     archive.getId(),
-                        strings,
+                    strings,
                     new ArrayList<>()));
     // get all the files
     File directoryPath = new File(path);
@@ -163,10 +161,8 @@ public class HashCollectionServiceImpl implements HashCollectionService {
 
   @Override
   public List<HashCollection> findAllEnabledNoImagesByTopic(String string) {
-    return hashCollectionRepository
-        .findAllProjectedByEnabled(true)
-        .stream()
-            .filter(hashCollectionInfo -> hashCollectionInfo.getTopicList().contains(string))
+    return hashCollectionRepository.findAllProjectedByEnabled(true).stream()
+        .filter(hashCollectionInfo -> hashCollectionInfo.getTopicList().contains(string))
         .map(
             h ->
                 new HashCollection(
@@ -181,8 +177,8 @@ public class HashCollectionServiceImpl implements HashCollectionService {
         .collect(Collectors.toList());
   }
 
-    @Override
-    public List<HashCollection> findAllDownloaded() {
-        return hashCollectionRepository.findAllByImageListIsNotEmpty();
-    }
+  @Override
+  public List<HashCollection> findAllDownloaded() {
+    return hashCollectionRepository.findAllByImageListIsNotEmpty();
+  }
 }

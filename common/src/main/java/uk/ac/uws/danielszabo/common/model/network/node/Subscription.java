@@ -43,8 +43,7 @@ public class Subscription {
   // and it means nothing
   @Id @NonNull @XmlTransient private String id;
 
-  @NonNull
-  private String topic;
+  @NonNull private String topic;
 
   @JoinColumn(name = "publisher_id", insertable = false, updatable = false)
   @ManyToOne(targetEntity = Node.class, fetch = FetchType.EAGER)
@@ -75,8 +74,7 @@ public class Subscription {
     this.id = subscriberId + "/" + publisherId + "." + topic;
   }
 
-
   public String getId() {
-      return subscriberId + "/" + publisherId + "." + topic;
+    return subscriberId + "/" + publisherId + "." + topic;
   }
 }
