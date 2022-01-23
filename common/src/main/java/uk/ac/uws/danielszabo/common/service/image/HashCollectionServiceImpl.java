@@ -25,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
 import uk.ac.uws.danielszabo.common.model.hash.Image;
-import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.repository.HashCollectionRepository;
 import uk.ac.uws.danielszabo.common.service.hashing.HashService;
@@ -50,13 +49,17 @@ public class HashCollectionServiceImpl implements HashCollectionService {
   }
 
   @Override
-  public Optional<HashCollection> findById(String id) {
+  public Optional<HashCollection> findById(java.lang.String id) {
     return hashCollectionRepository.findById(id);
   }
 
   @Override
-  public List<HashCollection> findAllByTopic(Topic topic) {
-    return hashCollectionRepository.findAllByTopicListContains(topic);
+  public List<HashCollection> findAllByTopic(java.lang.String string) {
+      return hashCollectionRepository
+              .findAll()
+              .stream()
+              .filter(hashCollection -> hashCollection.getTopicList().contains(string))
+              .collect(Collectors.toList());
   }
 
   @Override
@@ -66,13 +69,13 @@ public class HashCollectionServiceImpl implements HashCollectionService {
 
   @Override
   public HashCollection generateHashCollection(
-      String path,
-      String id,
-      String name,
-      String description,
-      Node archive,
-      List<Topic> topics,
-      boolean forceRecalc)
+          java.lang.String path,
+          java.lang.String id,
+          java.lang.String name,
+          java.lang.String description,
+          Node archive,
+          List<java.lang.String> strings,
+          boolean forceRecalc)
       throws IOException {
 
     // prepare new hashcollection or load it from repository
@@ -92,12 +95,12 @@ public class HashCollectionServiceImpl implements HashCollectionService {
                     true,
                     archive,
                     archive.getId(),
-                    topics,
+                        strings,
                     new ArrayList<>()));
     // get all the files
     File directoryPath = new File(path);
     if (!path.endsWith("/")) path += "/";
-    String imageFileNames[] = directoryPath.list();
+    java.lang.String imageFileNames[] = directoryPath.list();
 
     // check if we actually found files
     if (imageFileNames == null || imageFileNames.length == 0) {
@@ -159,10 +162,11 @@ public class HashCollectionServiceImpl implements HashCollectionService {
   }
 
   @Override
-  public List<HashCollection> findAllEnabledNoImagesByTopic(Topic topic) {
+  public List<HashCollection> findAllEnabledNoImagesByTopic(String string) {
     return hashCollectionRepository
-        .findAllProjectedByEnabledAndTopicListContains(true, topic)
+        .findAllProjectedByEnabled(true)
         .stream()
+            .filter(hashCollectionInfo -> hashCollectionInfo.getTopicList().contains(string))
         .map(
             h ->
                 new HashCollection(
@@ -176,4 +180,9 @@ public class HashCollectionServiceImpl implements HashCollectionService {
                     new ArrayList<>()))
         .collect(Collectors.toList());
   }
+
+    @Override
+    public List<HashCollection> findAllDownloaded() {
+        return hashCollectionRepository.findAllByImageListIsNotEmpty();
+    }
 }

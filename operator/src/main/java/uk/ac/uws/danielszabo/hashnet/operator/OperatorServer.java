@@ -21,9 +21,11 @@
 package uk.ac.uws.danielszabo.hashnet.operator;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -37,8 +39,22 @@ import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 @EnableJpaRepositories("uk.ac.uws.danielszabo.common.repository")
 public class OperatorServer {
 
-  public static void main(String[] args) {
-    SpringApplication application = new SpringApplication(OperatorServer.class);
-    application.run(args);
-  }
+    private static SpringApplication application;
+
+    private static ConfigurableApplicationContext applicationContext;
+
+    public OperatorServer(ConfigurableApplicationContext applicationContext) {
+        OperatorServer.applicationContext = applicationContext;
+    }
+
+    public static void main(String[] args) {
+        application = new SpringApplication(OperatorServer.class);
+        application.run(args);
+    }
+
+    public static void exit() {
+        log.info("Shutting down...");
+        applicationContext.close();
+        System.exit(0);
+    }
 }

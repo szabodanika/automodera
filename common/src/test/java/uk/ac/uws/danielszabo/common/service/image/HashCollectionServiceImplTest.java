@@ -29,7 +29,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
-import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.model.network.node.NodeType;
 import uk.ac.uws.danielszabo.common.repository.HashCollectionRepository;
@@ -85,13 +84,13 @@ public class HashCollectionServiceImplTest {
             "Test Collection",
             "Description",
             testNode,
-            List.of(new Topic("topic1", "Test Topic")),
+            List.of("topic1"),
             false);
 
     assertEquals("test-collection", hashCollection.getId());
     assertEquals("Test Collection", hashCollection.getName());
     assertEquals("Description", hashCollection.getDescription());
-    assertEquals(List.of(new Topic("topic1", "Test Topic")), hashCollection.getTopicList());
+    assertEquals(List.of("topic1"), hashCollection.getTopicList());
     assertEquals(9, hashCollection.getImageList().size());
     assertTrue(hashCollection.isEnabled());
     assertNotNull(hashCollection.getCreated());
@@ -110,7 +109,7 @@ public class HashCollectionServiceImplTest {
               "Test Collection",
               "Description",
               testNode,
-              List.of(new Topic("topic1", "Test Topic")),
+              List.of("topic1"),
               false);
         });
   }

@@ -21,10 +21,10 @@
 package uk.ac.uws.danielszabo.common.service.network;
 
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
-import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.cert.NodeCertificate;
+import uk.ac.uws.danielszabo.common.model.network.exception.TargetNodeUnreachableException;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.model.network.node.NodeStatus;
 
@@ -69,20 +69,20 @@ public interface NetworkService {
 
   List<Node> getAllArchives();
 
-  String resolveNodeId(String origin, String id) throws Exception;
+  String resolveNodeId(String origin, String id) throws TargetNodeUnreachableException;
 
-  Node getNodeByHost(String host) throws Exception;
+  Node getNodeByHost(String host) throws TargetNodeUnreachableException;
 
   // HashCollections, Topics, Images
 
-  HashCollection downloadHashCollection(String host, String id) throws Exception;
+  HashCollection downloadHashCollection(String host, String id) throws TargetNodeUnreachableException;
 
   void publishHashCollections(List<HashCollection> hashCollectionList, Node subscriber)
       throws Exception;
 
-  Optional<Topic> getTopicById(String id) throws Exception;
+//  Optional<String> getTopicById(String id) throws Exception;
 
-  List<HashCollection> requestAllHashCollectionsByArchive(Node node) throws Exception;
+  List<HashCollection> requestAllHashCollectionsByArchive(Node node) throws TargetNodeUnreachableException;
 
   // Certificate Requests
 
@@ -102,7 +102,7 @@ public interface NetworkService {
 
   CertificateRequest certificateRequest(String origin, Node localNode) throws Exception;
 
-  void sendSubscription(Node node, Topic topic) throws Exception;
+  void sendSubscription(Node node, String string) throws TargetNodeUnreachableException;
 
   void fetchAllNodeStatus() throws Exception;
 }

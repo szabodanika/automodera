@@ -27,11 +27,9 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import uk.ac.uws.danielszabo.common.cli.BaseNodeCLI;
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
-import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.common.model.network.node.Subscription;
 import uk.ac.uws.danielszabo.common.service.hashing.HashServiceImpl;
-import uk.ac.uws.danielszabo.common.service.image.TopicService;
 import uk.ac.uws.danielszabo.common.service.network.*;
 import uk.ac.uws.danielszabo.common.service.rest.RestServiceImpl;
 import uk.ac.uws.danielszabo.hashnet.integrator.model.HashReport;
@@ -46,146 +44,134 @@ import java.util.List;
 import java.util.Optional;
 
 @Import({
-  RestServiceImpl.class,
-  HashServiceImpl.class,
-  LocalNodeServiceImpl.class,
-  NetworkServiceImpl.class,
-  SubscriptionServiceImpl.class
+        RestServiceImpl.class,
+        HashServiceImpl.class,
+        LocalNodeServiceImpl.class,
+        NetworkServiceImpl.class,
+        SubscriptionServiceImpl.class
 })
 @Slf4j
 @ShellComponent
 public class IntegratorCLI extends BaseNodeCLI {
 
-  private final IntegratorServiceFacade integratorServiceFacade;
+    private final IntegratorServiceFacade integratorServiceFacade;
 
-  public IntegratorCLI(
-      LocalNodeService localNodeService,
-      NetworkService networkService,
-      IntegratorServiceFacade integratorServiceFacade,
-      TopicService topicService) {
-    super(localNodeService, networkService, topicService);
-    this.integratorServiceFacade = integratorServiceFacade;
-  }
+    public IntegratorCLI(
+            LocalNodeService localNodeService,
+            NetworkService networkService,
+            IntegratorServiceFacade integratorServiceFacade) {
+        super(localNodeService, networkService);
+        this.integratorServiceFacade = integratorServiceFacade;
+    }
 
-  // for example:
-  @ShellMethod("Manage Subscriptions")
-  public void subs(
-      @ShellOption(defaultValue = "false") boolean list,
-      @ShellOption(defaultValue = "false") boolean add,
-      @ShellOption(defaultValue = "false") boolean remove,
-      @ShellOption(defaultValue = "") String topic) {
+    // for example:
+    @ShellMethod("Manage Subscriptions")
+    public void subs(
+            @ShellOption(defaultValue = "false") boolean list,
+            @ShellOption(defaultValue = "false") boolean add,
+            @ShellOption(defaultValue = "false") boolean remove,
+            @ShellOption(defaultValue = "") String topic) {
 
-    if (list) {
-      log.info("Subscriptions");
-      List<Subscription> hashCollections;
-      try {
-        if (!(hashCollections = integratorServiceFacade.getSubscriptions()).isEmpty()) {
-          for (Subscription s : hashCollections) {
-            // TODO make this a little nicer
-            log.info(s.toString());
-          }
-        } else {
-          log.info("No subscription found");
+        if (list) {
+            log.info("Subscriptions");
+            List<Subscription> hashCollections;
+            try {
+                if (!(hashCollections = integratorServiceFacade.getSubscriptions()).isEmpty()) {
+                    for (Subscription s : hashCollections) {
+                        // TODO make this a little nicer
+                        log.info(s.toString());
+                    }
+                } else {
+                    log.info("No subscription found");
+                }
+            } catch (Exception e) {
+                log.error("Failed to retrieve subscriptions");
+                e.printStackTrace();
+            }
+        } else if (add) {
+            if (!topic.isBlank()) {
+                try {
+                    integratorServiceFacade.addSubscription(topic);
+                } catch (Exception e) {
+                    log.error("Failed to communicate subscription with archives");
+                    e.printStackTrace();
+                }
+            } else {
+                log.error("Please specify non-empty topic ID");
+            }
+        } else if (remove) {
+            if (!topic.isBlank()) {
+                integratorServiceFacade.removeSubscriptionByTopic(topic);
+                log.info("Successfully unsubscribed from ");
+            }
         }
-      } catch (Exception e) {
-        log.error("Failed to retrieve subscriptions");
-        e.printStackTrace();
-      }
-    } else if (add) {
-      if (!topic.isBlank()) {
-        Optional<Topic> optionalTopic = null;
+    }
+
+    @ShellMethod("Manage Hash Collections")
+    public void hash(
+            @ShellOption(defaultValue = "false") boolean list,
+            @ShellOption(defaultValue = "false") boolean show,
+            @ShellOption(defaultValue = "sync") boolean sync,
+            @ShellOption(defaultValue = "") String id) {
+
+        if (list) {
+            List<HashCollection> hashCollections;
+            if (!(hashCollections = integratorServiceFacade.findAllHashCollections()).isEmpty()) {
+                for (HashCollection hc : hashCollections) {
+                    // TODO make this a little nicer
+                    log.info(hc.toString());
+                }
+            } else {
+                log.info("No hash collections found");
+            }
+
+        } else if (show) {
+            if (id.isBlank()) {
+                log.error("Please specify non-empty id");
+                return;
+            }
+            integratorServiceFacade.findHashCollectionById(id).ifPresent(h -> log.info(h.toString()));
+        } else if (sync) {
+            try {
+                integratorServiceFacade.updateHashCollections();
+            } catch (Exception e) {
+                log.error("Failed to update hash collections");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @ShellMethod("Manage Hash Collections")
+    public void check(String image, @ShellOption(defaultValue = "false") boolean xml) {
         try {
-          optionalTopic = integratorServiceFacade.findTopicById(topic);
-        } catch (Exception e) {
-          log.error("Failed to retrieve topic " + topic + ": " + e.getMessage());
-          return;
-        }
-        if (optionalTopic.isPresent()) {
-          try {
-            integratorServiceFacade.addSubscription(optionalTopic.get());
-          } catch (Exception e) {
-            log.error("Failed to communicate subscription with archives");
+            if (xml) {
+                Marshaller marshallerObj = JAXBContext.newInstance(HashReport.class).createMarshaller();
+                StringWriter sw = new StringWriter();
+                marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+                marshallerObj.marshal(integratorServiceFacade.checkImage(image), sw);
+
+                System.out.println(sw);
+
+            } else {
+                log.info(integratorServiceFacade.checkImage(image).toString());
+            }
+        } catch (IOException | JAXBException e) {
             e.printStackTrace();
-          }
+        }
+    }
+
+    @ShellMethod("Lists current node info of every archive")
+    public void archives() {
+        log.info("Archives");
+        List<Node> archiveList;
+        if (!(archiveList = integratorServiceFacade.getAllArchives()).isEmpty()) {
+            for (Node n : archiveList) {
+                // TODO make this a little nicer
+                log.info(n.toString());
+            }
         } else {
-          log.error("Topic not found");
+            log.info("No archives found");
         }
-      } else {
-        log.error("Please specify non-empty topic ID");
-      }
-    } else if (remove) {
-      if (!topic.isBlank()) {
-        integratorServiceFacade.removeSubscriptionByTopic(topic);
-        log.info("Successfully unsubscribed from ");
-      }
     }
-  }
-
-  @ShellMethod("Manage Hash Collections")
-  public void hash(
-      @ShellOption(defaultValue = "false") boolean list,
-      @ShellOption(defaultValue = "false") boolean show,
-      @ShellOption(defaultValue = "sync") boolean sync,
-      @ShellOption(defaultValue = "") String id) {
-
-    if (list) {
-      List<HashCollection> hashCollections;
-      if (!(hashCollections = integratorServiceFacade.findAllHashCollections()).isEmpty()) {
-        for (HashCollection hc : hashCollections) {
-          // TODO make this a little nicer
-          log.info(hc.toString());
-        }
-      } else {
-        log.info("No hash collections found");
-      }
-
-    } else if (show) {
-      if (id.isBlank()) {
-        log.error("Please specify non-empty id");
-        return;
-      }
-      integratorServiceFacade.findHashCollectionById(id).ifPresent(h -> log.info(h.toString()));
-    } else if (sync) {
-      try {
-        integratorServiceFacade.updateHashCollections();
-      } catch (Exception e) {
-        log.error("Failed to update hash collections");
-        e.printStackTrace();
-      }
-    }
-  }
-
-  @ShellMethod("Manage Hash Collections")
-  public void check(String image, @ShellOption(defaultValue = "false") boolean xml) {
-    try {
-      if (xml) {
-        Marshaller marshallerObj = JAXBContext.newInstance(HashReport.class).createMarshaller();
-        StringWriter sw = new StringWriter();
-        marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-        marshallerObj.marshal(integratorServiceFacade.checkImage(image), sw);
-
-        System.out.println(sw);
-
-      } else {
-        log.info(integratorServiceFacade.checkImage(image).toString());
-      }
-    } catch (IOException | JAXBException e) {
-      e.printStackTrace();
-    }
-  }
-
-  @ShellMethod("Lists current node info of every archive")
-  public void archives() {
-    log.info("Archives");
-    List<Node> archiveList;
-    if (!(archiveList = integratorServiceFacade.getAllArchives()).isEmpty()) {
-      for (Node n : archiveList) {
-        // TODO make this a little nicer
-        log.info(n.toString());
-      }
-    } else {
-      log.info("No archives found");
-    }
-  }
 }

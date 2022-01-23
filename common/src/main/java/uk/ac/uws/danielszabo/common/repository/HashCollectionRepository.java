@@ -25,17 +25,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
 import uk.ac.uws.danielszabo.common.model.hash.HashCollectionInfo;
-import uk.ac.uws.danielszabo.common.model.hash.Topic;
 
 import java.util.List;
 
 @Import(HashCollectionRepository.class)
 @Repository
-public interface HashCollectionRepository extends JpaRepository<HashCollection, String> {
-
-  <T> List<T> findAllByTopicListContains(Topic topic);
+public interface HashCollectionRepository extends JpaRepository<HashCollection, java.lang.String> {
 
   List<HashCollectionInfo> findAllProjectedByEnabled(boolean enabled);
 
-  List<HashCollectionInfo> findAllProjectedByEnabledAndTopicListContains(boolean b, Topic topic);
+  List<HashCollection> findAllByImageListIsNotEmpty();
+
 }

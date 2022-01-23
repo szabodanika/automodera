@@ -23,8 +23,6 @@ package uk.ac.uws.danielszabo.common.model.network.node;
 import lombok.*;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
-import uk.ac.uws.danielszabo.common.model.hash.Topic;
-
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -45,16 +43,8 @@ public class Subscription {
   // and it means nothing
   @Id @NonNull @XmlTransient private String id;
 
-  // one subscription object for each topic even between the same publisher and subscriber nodes
-  @JoinColumn(name = "topic_id", insertable = false, updatable = false)
-  @ManyToOne(targetEntity = Topic.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-  @XmlTransient
-  @NotFound(action = NotFoundAction.IGNORE)
-  private Topic topic;
-
-  @Column(name = "topic_id")
   @NonNull
-  private String topicId;
+  private String topic;
 
   @JoinColumn(name = "publisher_id", insertable = false, updatable = false)
   @ManyToOne(targetEntity = Node.class, fetch = FetchType.EAGER)
@@ -65,7 +55,7 @@ public class Subscription {
 
   @Column(name = "publisher_id")
   @NonNull
-  private String publisherId;
+  private java.lang.String publisherId;
 
   @JoinColumn(name = "subscriber_id", insertable = false, updatable = false)
   @ManyToOne(targetEntity = Node.class, fetch = FetchType.EAGER)
@@ -78,10 +68,15 @@ public class Subscription {
   @NonNull
   private String subscriberId;
 
-  public Subscription(String publisherId, String subscriberId, String topicId) {
+  public Subscription(String publisherId, String subscriberId, String topic) {
     this.publisherId = publisherId;
     this.subscriberId = subscriberId;
-    this.topicId = topicId;
-    this.id = subscriberId + "/" + publisherId + "." + topicId;
+    this.topic = topic;
+    this.id = subscriberId + "/" + publisherId + "." + topic;
+  }
+
+
+  public String getId() {
+      return subscriberId + "/" + publisherId + "." + topic;
   }
 }

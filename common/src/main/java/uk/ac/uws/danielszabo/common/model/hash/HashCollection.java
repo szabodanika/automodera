@@ -80,17 +80,18 @@ public class HashCollection {
   @NonNull
   private String archiveId;
 
-  @ManyToMany(cascade = CascadeType.ALL)
-  @JoinTable(
-      name = "hashcollection_topic",
-      joinColumns = @JoinColumn(name = "topic_id"),
-      inverseJoinColumns = @JoinColumn(name = "hashcollection_id"))
+//  @ManyToMany(cascade = CascadeType.ALL)
+//  @JoinTable(
+//      name = "hashcollection_topic",
+//      joinColumns = @JoinColumn(name = "topic_id"),
+//      inverseJoinColumns = @JoinColumn(name = "hashcollection_id"))
   @XmlElementWrapper(name = "topicList")
   @XmlElement(name = "topic")
-  @ToString.Exclude
+//  @ToString.Exclude
   @NonNull
+  @Convert(converter = TopicListStringConverter.class)
   //    @XmlTransient
-  private List<Topic> topicList;
+  private List<String> topicList;
 
   @OneToMany(mappedBy = "hashCollection", cascade = CascadeType.ALL)
   @XmlElementWrapper(name = "imageList")
@@ -99,4 +100,9 @@ public class HashCollection {
   @ToString.Exclude
   //  @XmlTransient
   private List<Image> imageList;
+
+  public long getSizeInBytes() {
+      //TODO implement
+     return -1;
+  }
 }

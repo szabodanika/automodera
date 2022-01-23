@@ -38,25 +38,26 @@ import uk.ac.uws.danielszabo.hashnet.integrator.service.IntegratorServiceFacade;
 @RequestMapping("cert")
 public class CertRESTController {
 
-  private final IntegratorServiceFacade integratorServiceFacade;
+    private final IntegratorServiceFacade integratorServiceFacade;
 
-  public CertRESTController(IntegratorServiceFacade integratorServiceFacade) {
-    this.integratorServiceFacade = integratorServiceFacade;
-  }
+    public CertRESTController(IntegratorServiceFacade integratorServiceFacade) {
+        this.integratorServiceFacade = integratorServiceFacade;
+    }
 
-  @PostMapping(
-      value = "processedrequest",
-      consumes = MediaType.APPLICATION_XML_VALUE,
-      produces = MediaType.APPLICATION_XML_VALUE)
-  public ResponseEntity postRequest(@RequestBody Message message) {
-    CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
-    if (integratorServiceFacade
-        .findCertificateRequestById(certificateRequest.getId())
-        .isPresent()) {
-      NodeCertificate certificate = certificateRequest.getNode().getCertificate();
-      log.info("Received processed certificate from " + message.getCertificate().getId());
-      integratorServiceFacade.saveCertificate(certificate);
-      return new ResponseEntity(HttpStatus.OK);
-    } else return new ResponseEntity(HttpStatus.FORBIDDEN);
-  }
+    @PostMapping(
+            value = "processedrequest",
+            consumes = MediaType.APPLICATION_XML_VALUE,
+            produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity postRequest(@RequestBody Message message) {
+        CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
+        if (integratorServiceFacade
+                .findCertificateRequestById(certificateRequest.getId())
+                .isPresent()) {
+            NodeCertificate certificate = certificateRequest.getNode().getCertificate();
+            log.info("Received processed certificate from " + message.getCertificate().getId());
+            integratorServiceFacade.saveCertificate(certificate);
+            integratorServiceFacade.saveCertificateRequest(certificateRequest);
+            return new ResponseEntity(HttpStatus.OK);
+        } else return new ResponseEntity(HttpStatus.FORBIDDEN);
+    }
 }

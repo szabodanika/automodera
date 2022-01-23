@@ -20,58 +20,190 @@
 
 package uk.ac.uws.danielszabo.hashnet.operator.web.gui;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
+import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
+import uk.ac.uws.danielszabo.common.model.network.node.Node;
+import uk.ac.uws.danielszabo.hashnet.operator.OperatorServer;
 import uk.ac.uws.danielszabo.hashnet.operator.service.OperatorServiceFacade;
 
 import java.time.LocalDateTime;
 
 @Controller
-@RequestMapping("operator")
+@RequestMapping()
 public class OperatorWebController {
 
-  private final OperatorServiceFacade operatorServiceFacade;
+    private final OperatorServiceFacade operatorServiceFacade;
 
-  public OperatorWebController(OperatorServiceFacade operatorServiceFacade) {
-    this.operatorServiceFacade = operatorServiceFacade;
-  }
-
-  @GetMapping("")
-  public String getIndex(Model model) {
-    model.addAttribute("date", LocalDateTime.now());
-    return "index";
-  }
-
-  @GetMapping("setup")
-  public String getSetup(Model model) {
-    model.addAttribute("date", LocalDateTime.now());
-    return "setup";
-  }
-
-  @GetMapping("info")
-  public String getInfo(Model model, @RequestParam(required = false) String nodeId) {
-    if(nodeId != null) {
-      operatorServiceFacade.findKnownNodeById(nodeId).ifPresent( n ->
-        model.addAttribute("node",n)
-      );
-    } else {
-      model.addAttribute("node", operatorServiceFacade.getLocalNode());
+    public OperatorWebController(OperatorServiceFacade operatorServiceFacade) {
+        this.operatorServiceFacade = operatorServiceFacade;
     }
-    return "node";
-  }
 
-  @GetMapping("network")
-  public String getNodes(Model model) {
-    try {
-      model.addAttribute("nodes", operatorServiceFacade.findAllNodes());
-      model.addAttribute("network", operatorServiceFacade.getNetworkConfiguration());
-    } catch (Exception e) {
-      e.printStackTrace();
+    @GetMapping("")
+    public String getIndex(Model model) {
+        if (operatorServiceFacade.getLocalNode() == null) {
+            return "redirect:/setup";
+        }
+        model.addAttribute("node", operatorServiceFacade.getLocalNode());
+        model.addAttribute("date", LocalDateTime.now());
+        return "index";
     }
-    return "network";
-  }
+
+    @PostMapping("status")
+    public String postStatus(Model model, @RequestParam String status) {
+        switch (status) {
+            case "Active": {
+                Node node = operatorServiceFacade.getLocalNode();
+                node.setOnline(true);
+                node.setActive(true);
+                operatorServiceFacade.saveNode(node);
+                break;
+            }
+            case "Inactive": {
+                Node node = operatorServiceFacade.getLocalNode();
+                node.setOnline(true);
+                node.setActive(false);
+                operatorServiceFacade.saveNode(node);
+                break;
+            }
+            case "Terminate": {
+                Node node = operatorServiceFacade.getLocalNode();
+                node.setOnline(false);
+                node.setActive(false);
+                OperatorServer.exit();
+                operatorServiceFacade.saveNode(node);
+                operatorServiceFacade.shutDown();
+                break;
+            }
+        }
+        return "redirect:/";
+    }
+
+    @GetMapping("setup")
+    public String getSetup(Model model) {
+        return "setup";
+    }
+
+    @PostMapping("setup")
+    public String postSetup(Model model,
+                            @RequestParam String id,
+                            @RequestParam String displayName,
+                            @RequestParam String legalName,
+                            @RequestParam String addressLine1,
+                            @RequestParam String addressLine2,
+                            @RequestParam String postCode,
+                            @RequestParam String country,
+                            @RequestParam String domainName,
+                            @RequestParam String adminEmail) {
+        operatorServiceFacade.init(id,
+                displayName,
+                domainName,
+                legalName,
+                adminEmail,
+                addressLine1,
+                addressLine2,
+                postCode,
+                country);
+        return "redirect:/";
+    }
+
+    @GetMapping("info")
+    public String getInfo(Model model, @RequestParam(required = false) String nodeId) {
+        if (nodeId != null) {
+            operatorServiceFacade.findKnownNodeById(nodeId).ifPresent(n ->
+                    {
+                        model.addAttribute("node", n);
+                        try {
+                            model.addAttribute("collections", operatorServiceFacade.retrieveHashCollectionsByArchive(n));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+            );
+        } else {
+            model.addAttribute("node", operatorServiceFacade.getLocalNode());
+        }
+        return "node";
+    }
+
+    @GetMapping("netinit")
+    public String getNetInit(Model model) {
+        model.addAttribute("node", operatorServiceFacade.getLocalNode());
+        return "netinit";
+    }
+
+    @PostMapping("netinit")
+    public String postNetInit(Model model,
+                              @RequestParam String displayName,
+                              @RequestParam String environment,
+                              @RequestParam String version) {
+        NetworkConfiguration networkConfiguration =
+                new NetworkConfiguration(displayName, environment, version, operatorServiceFacade.getLocalNode().getHost());
+        operatorServiceFacade.saveNetworkConfiguration(networkConfiguration);
+        return "redirect:/network";
+    }
+
+    @GetMapping("network")
+    public String getNetwork(Model model) throws Exception {
+        model.addAttribute("node", operatorServiceFacade.getLocalNode());
+        model.addAttribute("nodes", operatorServiceFacade.findAllNodes());
+        model.addAttribute("network", operatorServiceFacade.getNetworkConfiguration());
+        return "network";
+    }
+
+    @GetMapping("collection")
+    public String getCollection(Model model, @RequestParam String nodeId, @RequestParam String collectionId) {
+        Node node = operatorServiceFacade.findKnownNodeById(nodeId).orElse(null);
+        if (node != null) {
+            model.addAttribute("node", node);
+            model.addAttribute("collection", operatorServiceFacade.retrieveHashCollectionById(collectionId).orElse(null));
+        }
+        return "collection";
+    }
+
+    @GetMapping("topic")
+    public String getTopic(Model model, @RequestParam String topic) {
+
+        model.addAttribute("node", operatorServiceFacade.getLocalNode());
+        model.addAttribute("topic", topic);
+        model.addAttribute("collections", operatorServiceFacade.retrieveHashCollectionsByTopic(topic));
+        return "topic";
+    }
+
+    @GetMapping("certreqs")
+    public String getCertReqs(Model model) {
+        model.addAttribute("node", operatorServiceFacade.getLocalNode());
+        model.addAttribute("certreqs", operatorServiceFacade.findAllCertificateRequests());
+        return "certreqs";
+    }
+
+    @GetMapping("certreq")
+    public String getCertReq(Model model, @RequestParam String certreqId) {
+        model.addAttribute("node", operatorServiceFacade.getLocalNode());
+        model.addAttribute("certreq", operatorServiceFacade.findCertificateRequestById(certreqId).orElse(null));
+        return "certreq";
+    }
+
+    @PostMapping("certdecision")
+    public String postCertDecision(Model model, @RequestParam String certReqId, @RequestParam String message, @RequestParam Boolean decision) throws Exception {
+
+        model.addAttribute("node", operatorServiceFacade.getLocalNode());
+        operatorServiceFacade.handleCertificateRequest(
+                operatorServiceFacade.findCertificateRequestById(certReqId).get(),
+                decision ? CertificateRequest.Status.ISSUED : CertificateRequest.Status.REJECTED, message
+        );
+
+        model.addAttribute("certreq", operatorServiceFacade.findCertificateRequestById(certReqId).orElse(null));
+
+        return "certreq";
+    }
 
 }

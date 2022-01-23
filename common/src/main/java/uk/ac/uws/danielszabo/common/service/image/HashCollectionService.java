@@ -21,7 +21,6 @@
 package uk.ac.uws.danielszabo.common.service.image;
 
 import uk.ac.uws.danielszabo.common.model.hash.HashCollection;
-import uk.ac.uws.danielszabo.common.model.hash.Topic;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
 
 import java.io.IOException;
@@ -32,7 +31,7 @@ public interface HashCollectionService {
 
   Optional<HashCollection> findById(String id);
 
-  List<HashCollection> findAllByTopic(Topic topic);
+  List<HashCollection> findAllByTopic(String topic);
 
   List<HashCollection> findAll();
 
@@ -42,11 +41,13 @@ public interface HashCollectionService {
       String name,
       String description,
       Node archive,
-      List<Topic> topics,
+      List<String> strings,
       boolean forceRecalc)
       throws IOException;
 
   List<HashCollection> findAllEnabledNoImages();
 
-  List<HashCollection> findAllEnabledNoImagesByTopic(Topic topic);
+  List<HashCollection> findAllEnabledNoImagesByTopic(String topic);
+
+    List<HashCollection> findAllDownloaded();
 }

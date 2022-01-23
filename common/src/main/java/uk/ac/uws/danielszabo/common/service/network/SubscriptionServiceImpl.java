@@ -21,7 +21,7 @@
 package uk.ac.uws.danielszabo.common.service.network;
 
 import org.springframework.stereotype.Service;
-import uk.ac.uws.danielszabo.common.model.hash.Topic;
+import uk.ac.uws.danielszabo.common.model.network.exception.TargetNodeUnreachableException;
 import uk.ac.uws.danielszabo.common.model.network.node.Subscription;
 import uk.ac.uws.danielszabo.common.repository.SubscriptionRepository;
 
@@ -30,55 +30,56 @@ import java.util.List;
 @Service
 public class SubscriptionServiceImpl implements SubscriptionService {
 
-  private final SubscriptionRepository subscriptionRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
-  private final NetworkService networkService;
+    private final NetworkService networkService;
 
-  public SubscriptionServiceImpl(
-      SubscriptionRepository subscriptionRepository, NetworkService networkService) {
-    this.subscriptionRepository = subscriptionRepository;
-    this.networkService = networkService;
-  }
-
-  @Override
-  public List<Subscription> getSubscriptions() throws Exception {
-    List<Subscription> subscriptions = subscriptionRepository.findAll();
-    for (Subscription subscription : subscriptions) {
-      try {
-        if (subscription.getSubscriber() == null) {
-          subscription.setSubscriber(
-              networkService.getNodeByHost(
-                  networkService.resolveNodeId(
-                      networkService.getNetworkConfiguration().getOrigin(),
-                      subscription.getSubscriberId())));
-        }
-        if (subscription.getPublisher() == null) {
-          subscription.setPublisher(networkService.getLocalNode());
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+    public SubscriptionServiceImpl(
+            SubscriptionRepository subscriptionRepository, NetworkService networkService) {
+        this.subscriptionRepository = subscriptionRepository;
+        this.networkService = networkService;
     }
-    return subscriptions;
-  }
 
-  @Override
-  public Subscription save(Subscription subscription) {
-    return subscriptionRepository.save(subscription);
-  }
+    @Override
+    public List<Subscription> getSubscriptions() {
+        List<Subscription> subscriptions = subscriptionRepository.findAll();
+        for (Subscription subscription : subscriptions) {
+            if (subscription.getSubscriber() == null) {
+                try {
+                    subscription.setSubscriber(
+                            networkService.getNodeByHost(
+                                    networkService.resolveNodeId(
+                                            networkService.getNetworkConfiguration().getOrigin(),
+                                            subscription.getSubscriberId())));
+                } catch (TargetNodeUnreachableException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (subscription.getPublisher() == null) {
+                subscription.setPublisher(networkService.getLocalNode());
+            }
+        }
+        return subscriptions;
+    }
 
-  @Override
-  public boolean remove(Subscription subscription) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Subscription save(Subscription subscription) {
+        subscription.setId(subscription.getId());
+        return subscriptionRepository.save(subscription);
+    }
 
-  @Override
-  public boolean isSubscribedTo(Topic topic) {
-    return subscriptionRepository.findByTopic(topic).isPresent();
-  }
+    @Override
+    public boolean remove(Subscription subscription) {
+        throw new UnsupportedOperationException();
+    }
 
-  @Override
-  public void removeByTopic(Topic topic) {
-    subscriptionRepository.delete(subscriptionRepository.findByTopic(topic).get());
-  }
+    @Override
+    public boolean isSubscribedTo(String topic) {
+        return subscriptionRepository.findByTopic(topic).isPresent();
+    }
+
+    @Override
+    public void removeByTopic(String topic) {
+        subscriptionRepository.delete(subscriptionRepository.findByTopic(topic).get());
+    }
 }

@@ -78,5 +78,6 @@ public class CertificateRequest implements Serializable {
   public CertificateRequest(String id, Node localNode) {
     this.id = id;
     this.node = localNode;
+    this.date = new Date(new java.util.Date().getTime());
   }
 }

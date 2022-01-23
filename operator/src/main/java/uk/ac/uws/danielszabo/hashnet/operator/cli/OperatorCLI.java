@@ -28,7 +28,6 @@ import uk.ac.uws.danielszabo.common.cli.BaseNodeCLI;
 import uk.ac.uws.danielszabo.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.common.model.network.node.Node;
-import uk.ac.uws.danielszabo.common.service.image.TopicService;
 import uk.ac.uws.danielszabo.common.service.network.LocalNodeService;
 import uk.ac.uws.danielszabo.common.service.network.NetworkService;
 import uk.ac.uws.danielszabo.hashnet.operator.service.OperatorServiceFacade;
@@ -44,9 +43,8 @@ public class OperatorCLI extends BaseNodeCLI {
   public OperatorCLI(
       LocalNodeService localNodeService,
       NetworkService networkService,
-      OperatorServiceFacade operatorServiceFacade,
-      TopicService topicService) {
-    super(localNodeService, networkService, topicService);
+      OperatorServiceFacade operatorServiceFacade) {
+    super(localNodeService, networkService);
     this.operatorServiceFacade = operatorServiceFacade;
   }
 
@@ -120,7 +118,7 @@ public class OperatorCLI extends BaseNodeCLI {
       Node node = operatorServiceFacade.findKnownNodeById(id).orElse(null);
       if (node != null) {
         try {
-          log.info(operatorServiceFacade.retrieveHashCollectionByArchive(node).toString());
+          log.info(operatorServiceFacade.retrieveHashCollectionsByArchive(node).toString());
         } catch (Exception e) {
           log.error(
               "Failed to retrieve hash collection from archive " + id + ": " + e.getMessage());

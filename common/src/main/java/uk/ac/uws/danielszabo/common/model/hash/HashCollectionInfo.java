@@ -26,9 +26,9 @@ import java.sql.Date;
 import java.util.List;
 
 public interface HashCollectionInfo {
-  String getId();
+  java.lang.String getId();
 
-  String getName();
+  java.lang.String getName();
 
   int getVersion();
 
@@ -36,11 +36,11 @@ public interface HashCollectionInfo {
 
   Date getUpdated();
 
-  String getDescription();
+  java.lang.String getDescription();
 
   boolean isEnabled();
 
-  List<Topic> getTopicList();
+  List<String> getTopicList();
 
-  String getArchiveId();
+  java.lang.String getArchiveId();
 }
