@@ -103,13 +103,13 @@ public class IntegratorWebController {
     return "redirect:/";
   }
 
-    @GetMapping("network")
-    public String getNetwork(Model model) throws Exception {
-        model.addAttribute("node", integratorServiceFacade.getLocalNode());
-        model.addAttribute("nodes", integratorServiceFacade.retrieveAllNodes());
-        model.addAttribute("network", integratorServiceFacade.getNetworkConfiguration());
-        return "common-network";
-    }
+  @GetMapping("network")
+  public String getNetwork(Model model) throws Exception {
+    model.addAttribute("node", integratorServiceFacade.getLocalNode());
+    model.addAttribute("nodes", integratorServiceFacade.retrieveAllNodes());
+    model.addAttribute("network", integratorServiceFacade.getNetworkConfiguration());
+    return "common-network";
+  }
 
   @GetMapping("setup")
   public String getSetup(Model model) {

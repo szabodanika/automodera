@@ -171,12 +171,12 @@ public class ArchiveWebController {
     return "common-network";
   }
 
-    @GetMapping("subscriptions")
-    public String getSubscriptions(Model model) {
-        model.addAttribute("node", archiveServiceFacade.getLocalNode());
-        model.addAttribute("subscriptions", archiveServiceFacade.getSubscriptions());
-        return "archive-subscriptions";
-    }
+  @GetMapping("subscriptions")
+  public String getSubscriptions(Model model) {
+    model.addAttribute("node", archiveServiceFacade.getLocalNode());
+    model.addAttribute("subscriptions", archiveServiceFacade.getSubscriptions());
+    return "archive-subscriptions";
+  }
 
   @GetMapping("collection")
   public String getCollection(

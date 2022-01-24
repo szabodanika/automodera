@@ -130,7 +130,7 @@ public class ArchiveServiceFacadeImpl implements ArchiveServiceFacade {
   }
 
   @Override
-  public List<Subscription> getSubscriptions()  {
+  public List<Subscription> getSubscriptions() {
     return subscriptionService.getSubscriptions();
   }
 
