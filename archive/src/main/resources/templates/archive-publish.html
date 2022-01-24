@@ -1,0 +1,88 @@
+<!--
+  ~ Copyright (c) Daniel Szabo 2021.
+  ~
+  ~ GitHub: https://github.com/szabodanika
+  ~ Email: daniel.szabo99@outlook.com
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" class="bg-light">
+
+<head>
+    <!-- Bootstrap 5.0.1 css-->
+    <link href="/bootstrap-5.0.2-dist/css/bootstrap.css"
+          rel="stylesheet">
+    <!-- Bootstrap 5.0.1 JS-->
+    <script href="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+
+    <!--    Bootstrap Icon Pack 1.7.2 -->
+    <link rel="stylesheet" href="/bootstrap-icons-1.7.2/bootstrap-icons.css">
+</head>
+
+<body class="bg-light">
+<span th:include="archive-nav.html"></span>
+<div class="container-sm p-4 bg-white shadow-sm" style="max-width: 1000px">
+        <div class="col">
+            <h6 class="mb-3">
+                Create new Collection
+            </h6>
+            <hr>
+            <form method="post">
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                            <label for="id" class="form-label">ID</label>
+                            <input type="text" class="form-control" id="id" name="id" required>
+                            <div class="form-text">This will be the unique identifier of this collection
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-3">
+                            <label for="displayName" class="form-label">Display Name</label>
+                            <input type="text" class="form-control" id="displayName" name="displayName" required>
+                            <div class="form-text">This will be displayed as the name of this collection
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="description" name="description" required>
+                            <div class="form-text">Please describe the contents of this collection</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="topics" class="form-label">Topics</label>
+                    <input type="text" class="form-control" id="topics" name="topics" required>
+                    <div class="form-text">Please list topics divided by commas ('topic1,topic2,topic3')</div>
+                </div>
+                <div class="mb-3">
+                    <label for="path" class="form-label">Path</label>
+                    <input type="text" class="form-control" id="path" name="path" required>
+                    <div class="form-text">Please specify the path of the directory containing the images to publish</div>
+                </div>
+                <div class="d-grid gap-2 col-6 mx-auto">
+                    <button class="btn btn-primary"  type="submit" >Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

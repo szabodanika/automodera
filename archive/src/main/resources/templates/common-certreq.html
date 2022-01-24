@@ -1,0 +1,209 @@
+<!--
+  ~ Copyright (c) Daniel Szabo 2021.
+  ~
+  ~ GitHub: https://github.com/szabodanika
+  ~ Email: daniel.szabo99@outlook.com
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" class="bg-light">
+
+<head>
+    <!-- Bootstrap 5.0.1 css-->
+    <link href="/bootstrap-5.0.2-dist/css/bootstrap.css"
+          rel="stylesheet">
+    <!-- Bootstrap 5.0.1 JS-->
+    <script href="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+
+    <!--    Bootstrap Icon Pack 1.7.2 -->
+    <link rel="stylesheet" href="/bootstrap-icons-1.7.2/bootstrap-icons.css">
+</head>
+
+<body class="bg-light">
+<span th:include="archive-nav.html"></span>
+<div class="container-sm p-4 bg-white shadow-sm" style="max-width: 1000px">
+        <div th:if="${certreq != null}"
+             class="col">
+            <h6 class="mb-3">
+                Request
+            </h6>
+            <table class="table table-sm table-bordered bg-light">
+                <tr>
+                    <td>
+                        ID
+                    </td>
+                    <td th:text="${certreq.id}"></td>
+                </tr>
+                <tr>
+                    <td>
+                        Node
+                    </td>
+                    <td th:if="${certreq.node.certificate.node.id != null}">
+                        <a th:href="${'/info?nodeId=' + certreq.node.certificate.node.id}"
+                           th:text="${certreq.node.certificate.node.id}">
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Status
+                    </td>
+                    <td th:text="${certreq.status}"></td>
+                </tr>
+                <tr>
+                    <td>
+                        Date
+                    </td>
+                    <td th:text="${certreq.date}"></td>
+                </tr>
+                <tr>
+                    <td>
+                        Message
+                    </td>
+                    <td th:text="${certreq.message}"></td>
+                </tr>
+            </table>
+
+            <h6 class="mb-3">
+                Certificate
+            </h6>
+            <table class="table table-sm table-bordered bg-light">
+                <tr>
+                    <td>
+                        Legal
+                        Name
+                    </td>
+                    <td th:text="${certreq.node.certificate.legalName}"></td>
+                </tr>
+                <tr>
+                    <td>
+                        Address
+                        Line
+                        1
+                    </td>
+                    <td th:text="${certreq.node.certificate.addressLine1}"></td>
+                </tr>
+                <tr>
+                    <td>
+                        Address
+                        Line
+                        2
+                    </td>
+                    <td th:text="${certreq.node.certificate.addressLine2}"></td>
+                </tr>
+                <tr>
+                    <td>
+                        Post
+                        Code
+                    </td>
+                    <td th:text="${certreq.node.certificate.postCode}"></td>
+                </tr>
+                <tr>
+                    <td>
+                        Country
+                    </td>
+                    <td th:text="${certreq.node.certificate.country}"></td>
+                </tr>
+                <tr>
+                    <td>
+                        Admin
+                        Email
+                    </td>
+                    <td>
+                        <a th:text="${certreq.node.certificate.adminEmail}"
+                           th:href="${'mailto:' + certreq.node.certificate.adminEmail}">
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Host Name
+                    </td>
+                    <td>
+                        <a th:text="${certreq.node.certificate.host}"
+                           th:href="${'http://' + certreq.node.certificate.host}">
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Issue
+                        Date
+                    </td>
+                    <td th:if="${certreq.node.certificate.issued != null}"
+                        th:text="${certreq.node.certificate.issued}"></td>
+                    <td th:if="${certreq.node.certificate.issued == null}">
+                        NULL
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Expiration
+                        Date
+                    </td>
+                    <td th:if="${certreq.node.certificate.expiration != null}"
+                        th:text="${certreq.node.certificate.expiration}"></td>
+                    <td th:if="${certreq.node.certificate.expiration == null}">
+                        NULL
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Network
+                        Rights
+                    </td>
+                    <td th:text="${certreq.node.certificate.networkRights}"></td>
+                </tr>
+                <tr>
+                    <td>
+                        Issued
+                        By
+                    </td>
+                    <td th:if="${certreq.node.certificate.issuer != null}">
+                        <a th:href="${'/info?nodeId=' + certreq.node.certificate.issuer.id}"
+                           th:text="${certreq.node.certificate.issuer.id}">
+                        </a>
+                    </td>
+                    <td th:if="${certreq.node.certificate.issuer == null}">
+                        NULL
+                    </td>
+                </tr>
+            </table>
+
+            <form action="certdecision" method="post">
+                <div class="mb-3">
+                    <label for="message" class="form-label">Message</label>
+                    <input type="text" class="form-control" id="message" name="message">
+                    <div class="form-text">You can send an optional message with your decision</div>
+                </div>
+                <input type="hidden" name="certReqId" th:value="${certreq.id}">
+                <button type="submit" class="btn btn-outline-primary" name="decision" value="true">
+                    <i class="bi bi-hand-thumbs-up"></i>
+                    Accept</button>
+                <button type="submit" class="btn btn-outline-danger" name="decision" value="false">
+                    <i class="bi bi-hand-thumbs-down"></i>Reject</button>
+            </form>
+        </div>
+        <div th:if="${certreq == null}">
+            <p>
+                Certificate request not found!
+            </p>
+        </div>
+</div>
+</body>
+
+</html>

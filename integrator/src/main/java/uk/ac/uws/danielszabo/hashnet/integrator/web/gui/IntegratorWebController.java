@@ -66,7 +66,7 @@ public class IntegratorWebController {
     } else {
       model.addAttribute("connectionStatus", "Not connected");
     }
-    return "index";
+    return "common-index";
   }
 
   @PostMapping("status")
@@ -103,10 +103,18 @@ public class IntegratorWebController {
     return "redirect:/";
   }
 
+    @GetMapping("network")
+    public String getNetwork(Model model) throws Exception {
+        model.addAttribute("node", integratorServiceFacade.getLocalNode());
+        model.addAttribute("nodes", integratorServiceFacade.retrieveAllNodes());
+        model.addAttribute("network", integratorServiceFacade.getNetworkConfiguration());
+        return "common-network";
+    }
+
   @GetMapping("setup")
   public String getSetup(Model model) {
     if (integratorServiceFacade.getLocalNode() == null) {
-      return "setup";
+      return "common-setup";
     }
     return "redirect:";
   }
@@ -157,7 +165,7 @@ public class IntegratorWebController {
     } else {
       model.addAttribute("node", integratorServiceFacade.getLocalNode());
     }
-    return "node";
+    return "common-node";
   }
 
   //    @GetMapping("network")
@@ -184,7 +192,7 @@ public class IntegratorWebController {
           "collection",
           integratorServiceFacade.retrieveHashCollectionById(collectionId).orElse(null));
     }
-    return "collection";
+    return "common-collection";
   }
 
   @GetMapping("topic")
@@ -194,21 +202,21 @@ public class IntegratorWebController {
     model.addAttribute("topic", topic);
     model.addAttribute(
         "collections", integratorServiceFacade.retrieveHashCollectionsByTopic(topic));
-    return "topic";
+    return "common-topic";
   }
 
   @GetMapping("collections")
   public String getCollections(Model model) {
     model.addAttribute("node", integratorServiceFacade.getLocalNode());
     model.addAttribute("collections", integratorServiceFacade.retrieveDownloadedHashCollections());
-    return "collections";
+    return "integrator-collections";
   }
 
   @GetMapping("subscriptions")
   public String getSubscriptions(Model model) {
     model.addAttribute("node", integratorServiceFacade.getLocalNode());
     model.addAttribute("subscriptions", integratorServiceFacade.getSubscriptions());
-    return "subscriptions";
+    return "integrator-subscriptions";
   }
 
   @PostMapping("subscription")
@@ -222,7 +230,7 @@ public class IntegratorWebController {
   public String getTest(Model model) {
     model.addAttribute("node", integratorServiceFacade.getLocalNode());
     model.addAttribute("subscriptions", integratorServiceFacade.getSubscriptions());
-    return "test";
+    return "integrator-test";
   }
 
   @PostMapping("test")
@@ -236,6 +244,6 @@ public class IntegratorWebController {
     model.addAttribute("hashReport", hashReport);
     model.addAttribute("subscriptions", integratorServiceFacade.getSubscriptions());
 
-    return "test";
+    return "integrator-test";
   }
 }

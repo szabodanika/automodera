@@ -1,0 +1,81 @@
+<!--
+  ~ Copyright (c) Daniel Szabo 2021.
+  ~
+  ~ GitHub: https://github.com/szabodanika
+  ~ Email: daniel.szabo99@outlook.com
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<nav class="navbar navbar-expand-sm navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid">
+        <ul class="navbar-nav">
+            <a class="navbar-brand" href="/">
+                <b>
+                    #DIST
+                </b>
+            </a>
+            <li class="nav-item">
+                <a class="nav-link btn btn-primary btn-sm me-2"
+                   th:classappend="${#request.getServletPath()=='/'?'active':''
+                       + (node != null?'':' disabled')}"
+                   href="/">
+                    <i class="bi bi-house"></i>
+                    Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link btn btn-primary btn-sm me-2"
+                   th:classappend="${#request.getServletPath()=='/collections'?'active':''
+                       + (node != null?'':' disabled')}"
+                   href="/collections">
+                    <i class="bi bi-journals"></i>
+                    Collections</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link btn btn-primary btn-sm me-2"
+                   th:classappend="${#request.getServletPath()=='/topics'?'active':''
+                       + (node != null?'':' disabled')}"
+                   href="/topics">
+                    <i class="bi bi-bookmarks"></i>
+                    Topics</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link btn btn-primary btn-sm me-2"
+                   th:classappend="${#request.getServletPath()=='/subscriptions'?'active':''
+                       + (node != null?'':' disabled')}"
+                   href="/subscriptions">
+                    <i class="bi bi-bell"></i>
+                    Subscriptions</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link btn btn-primary btn-sm me-2"
+                   th:classappend="${#request.getServletPath()=='/test'?'active':''
+                       + (node != null?'':' disabled')}"
+                   href="/test">
+                    <i class="bi bi-box"></i>
+                    Test
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link btn btn-primary btn-sm me-2"
+                   th:classappend="
+                       ${#request.getServletPath()=='/nodes'?'active':''
+                           + (node != null?'':' disabled')}"
+                   href="/network">
+                    <i class="bi bi-diagram-3"></i>
+                    Network
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>

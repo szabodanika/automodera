@@ -1,0 +1,233 @@
+<!--
+  ~ Copyright (c) Daniel Szabo 2021.
+  ~
+  ~ GitHub: https://github.com/szabodanika
+  ~ Email: daniel.szabo99@outlook.com
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" class="bg-light">
+
+<head>
+    <!-- Bootstrap 5.0.1 css-->
+    <link href="/bootstrap-5.0.2-dist/css/bootstrap.css"
+          rel="stylesheet">
+    <!-- Bootstrap 5.0.1 JS-->
+    <script href="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+
+    <!--    Bootstrap Icon Pack 1.7.2 -->
+    <link rel="stylesheet" href="/bootstrap-icons-1.7.2/bootstrap-icons.css">
+</head>
+
+<body class="bg-light">
+<span th:include="archive-nav.html"></span>
+<div class="container-sm p-4 bg-white shadow-sm" style="max-width: 1000px">
+    <h4 th:if="${node.nodeType.toString().equals('ORIGIN')}">
+        Welcome to the Operator dashboard!
+    </h4>
+    <h4 th:if="${node.nodeType.toString().equals('ARCHIVE')}">
+        Welcome to the Archive dashboard!
+    </h4>
+    <h4 th:if="${node.nodeType.toString().equals('INTEGRATOR')}">
+        Welcome to the Integrator dashboard!
+    </h4>
+    <hr>
+    <div th:if="${node != null}"
+         class="col">
+        <div class="row">
+            <div class="col">
+                <h6>
+                    Local Info
+                </h6>
+                <table class="table table-sm table-bordered bg-light">
+                    <tr>
+                        <td>
+                            ID
+                        </td>
+                        <td>
+                            <a th:href="${'/info?nodeId=' + node.id}"
+                               th:text="${node.id}">
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Name
+                        </td>
+                        <td th:text="${node.name}"></td>
+
+                    </tr>
+                    <tr>
+                        <td>
+                            Type
+                        </td>
+                        <td th:if="${node.nodeType.toString().equals('ORIGIN')}">
+                            Origin
+                        </td>
+                        <td th:if="${node.nodeType.toString().equals('ARCHIVE')}">
+                            Archive
+                        </td>
+                        <td th:if="${node.nodeType.toString().equals('INTEGRATOR')}">
+                            Integrator
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Host
+                        </td>
+                        <td>
+                            <a th:text="${node.host}"
+                               th:href="${'http://' + node.host}">
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Status
+                        </td>
+                        <td th:if="${node.active && node.online}"
+                            class="text-success">
+                            <i class="bi bi-cloud-fill"></i>
+                            Online (Active)
+                        </td>
+                        <td th:if="${!node.active && node.online}"
+                            class="text-warning">
+                            <i class="bi bi-cloud-moon"></i>
+                            Online (Inactive)
+                        </td>
+                        <td th:if="${!node.online}"
+                            class="text-danger">
+                            <i class="bi bi-cloud-slash"></i>
+                            Offline
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col">
+                <h6>
+                    Control
+                </h6>
+                <div class="mb-3">
+                    <form action="/status" method="POST">
+                        <button type="submit"
+                                class="btn btn-outline-success"
+                                name="status"
+                                value="Active">
+                            <i class="bi bi-play-fill"></i>
+                            Activate
+                        </button>
+                        <button type="submit"
+                                class="btn btn-outline-warning"
+                                name="status"
+                                value="Inactive">
+                            <i class="bi bi-pause-fill"></i>
+                            Deactivate
+                        </button>
+                        <button type="submit"
+                                class="btn btn-outline-danger"
+                                name="status"
+                                value="Terminate">
+                            <i class="bi bi-stop-fill"></i>
+                            Shut Down
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div th:if="${network != null}" class="col">
+                <h6>
+                    Network
+                </h6>
+                <table class="table table-sm table-bordered bg-light">
+                    <tr>
+                        <td>
+                            Name
+                        </td>
+                        <td th:text="${network.name}"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Environment
+                        </td>
+                        <td th:text="${network.environment}"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Origin
+                        </td>
+                        <td>
+                            <a th:text="${network.origin}"
+                               th:href="${'http://' + network.origin}">
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Version
+                        </td>
+                        <td th:text="${network.version}"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Status
+                        </td>
+                        <td th:text="${connectionStatus}"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col">
+                <h6>
+                    Connect
+                </h6>
+                <form method="post" action="network">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">http://</span>
+                        <input type="text"
+                               class="form-control"
+                               id="origin"
+                               name="origin"
+                               required
+                               placeholder="api.example.org"/>
+                    </div>
+                    <div class=" gap-2 mb-3">
+                        <button type="submit"
+                                class="btn btn-outline-success col">
+                            <i class="bi bi-ethernet"></i>
+                            Test Connection
+                        </button>
+                        <button type="submit"
+                                class="btn btn-outline-primary col">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            Connect
+                        </button>
+                        <button type="submit"
+                                class="btn btn-outline-danger col">
+                            <i class="bi bi-box-arrow-left"></i>
+                            Disconnect
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>

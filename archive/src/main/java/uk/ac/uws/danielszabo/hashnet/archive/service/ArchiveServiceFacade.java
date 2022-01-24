@@ -58,7 +58,7 @@ public interface ArchiveServiceFacade {
 
   void deleteNode(Node node);
 
-  List<Subscription> getSubscriptions() throws Exception;
+  List<Subscription> getSubscriptions();
 
   void saveCertificate(NodeCertificate certificate);
 

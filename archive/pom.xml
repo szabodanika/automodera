@@ -93,13 +93,13 @@
             </plugin>
         </plugins>
 
-        <!-- used to inject maven properties in to application.properties file-->
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
+<!--        &lt;!&ndash; used to inject maven properties in to application.properties file&ndash;&gt;-->
+<!--        <resources>-->
+<!--            <resource>-->
+<!--                <directory>src/main/resources</directory>-->
+<!--                <filtering>true</filtering>-->
+<!--            </resource>-->
+<!--        </resources>-->
     </build>
 
 </project>
