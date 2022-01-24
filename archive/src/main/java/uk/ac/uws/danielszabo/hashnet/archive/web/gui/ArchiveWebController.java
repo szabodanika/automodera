@@ -63,7 +63,7 @@ public class ArchiveWebController {
     } else {
       model.addAttribute("connectionStatus", "Not connected");
     }
-    return "index";
+    return "common-index";
   }
 
   @PostMapping("status")
@@ -103,7 +103,7 @@ public class ArchiveWebController {
   @GetMapping("setup")
   public String getSetup(Model model) {
     if (archiveServiceFacade.getLocalNode() == null) {
-      return "setup";
+      return "common-setup";
     }
     return "redirect:";
   }
@@ -154,7 +154,7 @@ public class ArchiveWebController {
     } else {
       model.addAttribute("node", archiveServiceFacade.getLocalNode());
     }
-    return "node";
+    return "common-node";
   }
 
   @GetMapping("network")
@@ -162,14 +162,21 @@ public class ArchiveWebController {
     model.addAttribute("node", archiveServiceFacade.getLocalNode());
     model.addAttribute("nodes", archiveServiceFacade.retrieveAllNodes());
     model.addAttribute("network", archiveServiceFacade.getNetworkConfiguration());
-    return "network";
+    return "common-network";
   }
 
   @PostMapping("network")
   public String postNetwork(Model model, @RequestParam String origin) throws Exception {
     archiveServiceFacade.connectToNetwork(origin);
-    return "network";
+    return "common-network";
   }
+
+    @GetMapping("subscriptions")
+    public String getSubscriptions(Model model) {
+        model.addAttribute("node", archiveServiceFacade.getLocalNode());
+        model.addAttribute("subscriptions", archiveServiceFacade.getSubscriptions());
+        return "archive-subscriptions";
+    }
 
   @GetMapping("collection")
   public String getCollection(
@@ -180,7 +187,7 @@ public class ArchiveWebController {
       model.addAttribute(
           "collection", archiveServiceFacade.retrieveHashCollectionById(collectionId).orElse(null));
     }
-    return "collection";
+    return "common-collection";
   }
 
   @GetMapping("topic")
@@ -189,21 +196,21 @@ public class ArchiveWebController {
     model.addAttribute("node", archiveServiceFacade.getLocalNode());
     model.addAttribute("topic", topic);
     model.addAttribute("collections", archiveServiceFacade.retrieveHashCollectionsByTopic(topic));
-    return "topic";
+    return "common-topic";
   }
 
   @GetMapping("collections")
   public String getCollections(Model model) {
     model.addAttribute("node", archiveServiceFacade.getLocalNode());
     model.addAttribute("collections", archiveServiceFacade.retrieveAllHashCollections());
-    return "collections";
+    return "archive-collections";
   }
 
   @GetMapping("publish")
   public String getPublish(Model model) {
     model.addAttribute("node", archiveServiceFacade.getLocalNode());
     //        model.addAttribute("topics", archiveServiceFacade.getAllTopics());
-    return "publish";
+    return "archive-publish";
   }
 
   @PostMapping("publish")

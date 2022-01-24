@@ -1,0 +1,88 @@
+<!--
+  ~ Copyright (c) Daniel Szabo 2021.
+  ~
+  ~ GitHub: https://github.com/szabodanika
+  ~ Email: daniel.szabo99@outlook.com
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" class="bg-light">
+
+<head>
+    <!-- Bootstrap 5.0.1 css-->
+    <link href="/bootstrap-5.0.2-dist/css/bootstrap.css"
+          rel="stylesheet">
+    <!-- Bootstrap 5.0.1 JS-->
+    <script href="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+
+    <!--    Bootstrap Icon Pack 1.7.2 -->
+    <link rel="stylesheet" href="/bootstrap-icons-1.7.2/bootstrap-icons.css">
+</head>
+
+<body class="bg-light">
+<span th:include="archive-nav.html"></span>
+<div class="container-sm pt-3 bg-white shadow-sm" style="max-width: 1000px">
+    <div class="card-body pt-2 pb-5">
+
+        <a class="btn btn-primary mb-3"
+           href="publish">
+            <i class="bi bi-file-earmark-plus"></i>
+            Create new collection
+        </a>
+        <h6 class="mb-3">
+            Published Collections
+        </h6>
+        <table class="table table-sm table-striped table-hover table-bordered">
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Topics
+                </th>
+            </tr>
+            <th:block
+                    th:each="collection : ${collections}">
+                <tr>
+                    <td>
+                        <a th:text="${collection.id}"
+                           th:href="${'/collection?nodeId=' + node.id +
+                           '&collectionId=' + collection.id}"></a>
+                    </td>
+                    <td th:text="${collection.name}"></td>
+                    <td th:text="${collection.created}"></td>
+                    <td>
+                        <th:block th:each="topic : ${collection.topicList}">
+                            <a th:text="${topic}"
+                               th:href="${'/topic?topic=' + topic}"></a>
+                            <br>
+                        </th:block>
+                    </td>
+                </tr>
+            </th:block>
+        </table>
+    </div>
+</div>
+</body>
+
+</html>

@@ -292,7 +292,7 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
       String country) {
     localNodeService.init(
         id,
-        NodeType.ARCHIVE,
+        NodeType.INTEGRATOR,
         displayName,
         domainName,
         legalName,

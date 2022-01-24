@@ -50,8 +50,9 @@ public class OperatorWebController {
       return "redirect:/setup";
     }
     model.addAttribute("node", operatorServiceFacade.getLocalNode());
+    model.addAttribute("network", operatorServiceFacade.getNetworkConfiguration());
     model.addAttribute("date", LocalDateTime.now());
-    return "index";
+    return "common-index";
   }
 
   @PostMapping("status")
@@ -89,7 +90,7 @@ public class OperatorWebController {
 
   @GetMapping("setup")
   public String getSetup(Model model) {
-    return "setup";
+    return "common-setup";
   }
 
   @PostMapping("setup")
@@ -135,13 +136,13 @@ public class OperatorWebController {
     } else {
       model.addAttribute("node", operatorServiceFacade.getLocalNode());
     }
-    return "node";
+    return "common-node";
   }
 
   @GetMapping("netinit")
   public String getNetInit(Model model) {
     model.addAttribute("node", operatorServiceFacade.getLocalNode());
-    return "netinit";
+    return "operator-netinit";
   }
 
   @PostMapping("netinit")
@@ -162,7 +163,7 @@ public class OperatorWebController {
     model.addAttribute("node", operatorServiceFacade.getLocalNode());
     model.addAttribute("nodes", operatorServiceFacade.findAllNodes());
     model.addAttribute("network", operatorServiceFacade.getNetworkConfiguration());
-    return "network";
+    return "common-network";
   }
 
   @GetMapping("collection")
@@ -175,7 +176,7 @@ public class OperatorWebController {
           "collection",
           operatorServiceFacade.retrieveHashCollectionById(collectionId).orElse(null));
     }
-    return "collection";
+    return "common-collection";
   }
 
   @GetMapping("topic")
@@ -184,14 +185,14 @@ public class OperatorWebController {
     model.addAttribute("node", operatorServiceFacade.getLocalNode());
     model.addAttribute("topic", topic);
     model.addAttribute("collections", operatorServiceFacade.retrieveHashCollectionsByTopic(topic));
-    return "topic";
+    return "common-topic";
   }
 
   @GetMapping("certreqs")
   public String getCertReqs(Model model) {
     model.addAttribute("node", operatorServiceFacade.getLocalNode());
     model.addAttribute("certreqs", operatorServiceFacade.findAllCertificateRequests());
-    return "certreqs";
+    return "operator-certreqs";
   }
 
   @GetMapping("certreq")
@@ -199,7 +200,7 @@ public class OperatorWebController {
     model.addAttribute("node", operatorServiceFacade.getLocalNode());
     model.addAttribute(
         "certreq", operatorServiceFacade.findCertificateRequestById(certreqId).orElse(null));
-    return "certreq";
+    return "common-certreq";
   }
 
   @PostMapping("certdecision")
@@ -219,6 +220,6 @@ public class OperatorWebController {
     model.addAttribute(
         "certreq", operatorServiceFacade.findCertificateRequestById(certReqId).orElse(null));
 
-    return "certreq";
+    return "common-certreq";
   }
 }
