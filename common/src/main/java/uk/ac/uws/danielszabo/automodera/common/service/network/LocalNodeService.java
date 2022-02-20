@@ -29,36 +29,34 @@ import java.util.List;
 
 public interface LocalNodeService {
 
-    Node get();
+  Node get();
 
-    Node set(Node self);
+  Node set(Node self);
 
-    Node init(
-            String id,
-            NodeType nodeType,
-            String name,
-            String domain,
-            String legalName,
-            String adminEmail,
-            String addressLine1,
-            String addressLine2,
-            String postCode,
-            String country);
-    /**
-     * This method will add the subscription
-     * and persist the changes on the local node
-     *
-     * @param topic
-     */
-    void addSubscription(String topic);
+  Node init(
+      String id,
+      NodeType nodeType,
+      String name,
+      String domain,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      String addressLine2,
+      String postCode,
+      String country);
+  /**
+   * This method will add the subscription and persist the changes on the local node
+   *
+   * @param topic
+   */
+  void addSubscription(String topic);
 
-    /**
-     * This method will add the subscription
-     * and persist the changes on the local node
-     *
-     * @param topic
-     */
-    void removeSubscription(String topic);
+  /**
+   * This method will add the subscription and persist the changes on the local node
+   *
+   * @param topic
+   */
+  void removeSubscription(String topic);
 
-    List<String> getSubscriptions(String topic);
+  List<String> getSubscriptions(String topic);
 }

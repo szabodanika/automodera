@@ -23,7 +23,6 @@
 package uk.ac.uws.danielszabo.automodera.integrator.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -45,32 +44,39 @@ import java.nio.file.Path;
 @RequestMapping("rest/api")
 public class ApiRestController {
 
-    private final IntegratorServiceFacade integratorServiceFacade;
+  private final IntegratorServiceFacade integratorServiceFacade;
 
-    public ApiRestController(IntegratorServiceFacade integratorServiceFacade) {
-        this.integratorServiceFacade = integratorServiceFacade;
+  public ApiRestController(IntegratorServiceFacade integratorServiceFacade) {
+    this.integratorServiceFacade = integratorServiceFacade;
+  }
+
+  @CrossOrigin
+  @PostMapping("check")
+  public ResponseEntity postTest(
+      Model model,
+      @RequestParam("image") MultipartFile multipartFile,
+      @RequestParam("attachment") String attachment,
+      HttpServletRequest httpServletRequest)
+      throws IOException, JAXBException {
+
+    // respond with 403 if local node is inactive
+    if (!integratorServiceFacade.getLocalNode().isActive()) {
+      return new ResponseEntity(HttpStatus.FORBIDDEN);
     }
 
-    @CrossOrigin
-    @PostMapping("check")
-    public ResponseEntity postTest(Model model, @RequestParam("image") MultipartFile multipartFile, @RequestParam("attachment") String attachment, HttpServletRequest httpServletRequest)
-            throws IOException, JAXBException {
+    multipartFile.transferTo(Path.of("./temp/" + multipartFile.getOriginalFilename()));
+    Report report =
+        integratorServiceFacade.checkImage(
+            "./temp/" + multipartFile.getOriginalFilename(),
+            attachment,
+            httpServletRequest.getRemoteAddr());
 
-        // respond with 403 if local node is inactive
-        if (!integratorServiceFacade.getLocalNode().isActive()) {
-            return new ResponseEntity(HttpStatus.FORBIDDEN);
-        }
+    Marshaller marshallerObj = JAXBContext.newInstance(Report.class).createMarshaller();
+    StringWriter sw = new StringWriter();
+    marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-        multipartFile.transferTo(Path.of("./temp/" + multipartFile.getOriginalFilename()));
-        Report report =
-                integratorServiceFacade.checkImage("./temp/" + multipartFile.getOriginalFilename(), attachment, httpServletRequest.getRemoteAddr());
+    marshallerObj.marshal(report, sw);
 
-        Marshaller marshallerObj = JAXBContext.newInstance(Report.class).createMarshaller();
-        StringWriter sw = new StringWriter();
-        marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-        marshallerObj.marshal(report, sw);
-
-        return new ResponseEntity(sw.toString(), HttpStatus.OK);
-    }
+    return new ResponseEntity(sw.toString(), HttpStatus.OK);
+  }
 }

@@ -82,8 +82,8 @@ public class Collection {
   @NonNull
   private String archiveId;
 
-
-  //TODO make below a separate plug-in module allowing different content types for collections in the future
+  // TODO make below a separate plug-in module allowing different content types for collections in
+  // the future
 
   //  @ManyToMany(cascade = CascadeType.ALL)
   //  @JoinTable(

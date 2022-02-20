@@ -37,5 +37,4 @@ import java.util.List;
 public class AddressListMessage {
 
   @NonNull private List<String> addressList;
-
 }

@@ -24,14 +24,14 @@ package uk.ac.uws.danielszabo.automodera.common.service.hashing;
 
 public class RustPHash {
 
-	public static native float getSimilarityToFileWithHash(String file_name, String reference_hash);
+  public static native float getSimilarityToFileWithHash(String file_name, String reference_hash);
 
-	public static native String getHashForFile(String file_name);
+  public static native String getHashForFile(String file_name);
 
-	public static native float getSimilarityScore(String hash1, String hash2);
+  public static native float getSimilarityScore(String hash1, String hash2);
 
-	static {
-//		System.getProperty("java.library.path", "lib");
-		System.loadLibrary("phash");
-	}
+  static {
+    //		System.getProperty("java.library.path", "lib");
+    System.loadLibrary("phash");
+  }
 }

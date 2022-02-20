@@ -47,214 +47,213 @@ import java.util.stream.Collectors;
 @Service
 public class OperatorServiceFacadeImpl implements OperatorServiceFacade {
 
-    // 1 year
-    public static final long CERTIFICATE_EXPIRATION_DATE_OFFSET = (1000L * 60 * 60 * 24 * 365);
+  // 1 year
+  public static final long CERTIFICATE_EXPIRATION_DATE_OFFSET = (1000L * 60 * 60 * 24 * 365);
 
-    private final LocalNodeService localNodeService;
+  private final LocalNodeService localNodeService;
 
-    private final NetworkService networkService;
+  private final NetworkService networkService;
 
-    private final HashCollectionService hashCollectionService;
+  private final HashCollectionService hashCollectionService;
 
-    public OperatorServiceFacadeImpl(
-            HashService hashService,
-            LocalNodeService localNodeService,
-            NetworkService networkService,
-            HashCollectionService hashCollectionService) {
-        this.localNodeService = localNodeService;
-        this.networkService = networkService;
-        this.hashCollectionService = hashCollectionService;
+  public OperatorServiceFacadeImpl(
+      HashService hashService,
+      LocalNodeService localNodeService,
+      NetworkService networkService,
+      HashCollectionService hashCollectionService) {
+    this.localNodeService = localNodeService;
+    this.networkService = networkService;
+    this.hashCollectionService = hashCollectionService;
+  }
+
+  @Override
+  public boolean handleCertificateRequest(
+      CertificateRequest certificateRequest, CertificateRequest.Status newStatus, String message)
+      throws Exception {
+    certificateRequest.setStatus(newStatus);
+    if (newStatus == CertificateRequest.Status.ISSUED) {
+      NodeCertificate cert = certificateRequest.getNode().getCertificate();
+      cert.setIssued(new Date(new java.util.Date().getTime()));
+      // TODO this should be configurable, not always 365 days
+      cert.setExpiration(
+          new Date(new java.util.Date().getTime() + CERTIFICATE_EXPIRATION_DATE_OFFSET));
+      cert.setIssuer(localNodeService.get());
+
+      // send it to the node first - if it's offline,
+      // this will throw exception and the updated
+      // request will not be saved locally
+      networkService.sendProcessedCertificateRequest(certificateRequest);
+
+      // save cert in this operator/origin node's list
+      Node localNode = localNodeService.get();
+      localNode.getIssuedCertificates().add(certificateRequest.getNode().getCertificate());
+
+      // persist local node
+      localNodeService.set(localNode);
+
+      certificateRequest.setMessage(message);
+
+      // persist request
+      networkService.saveCertificateRequest(certificateRequest);
     }
 
-    @Override
-    public boolean handleCertificateRequest(
-            CertificateRequest certificateRequest,
-            CertificateRequest.Status newStatus,
-            String message)
-            throws Exception {
-        certificateRequest.setStatus(newStatus);
-        if (newStatus == CertificateRequest.Status.ISSUED) {
-            NodeCertificate cert = certificateRequest.getNode().getCertificate();
-            cert.setIssued(new Date(new java.util.Date().getTime()));
-            // TODO this should be configurable, not always 365 days
-            cert.setExpiration(new Date(new java.util.Date().getTime() + CERTIFICATE_EXPIRATION_DATE_OFFSET));
-            cert.setIssuer(localNodeService.get());
+    // TODO dont always just return true
+    return true;
+  }
 
-            // send it to the node first - if it's offline,
-            // this will throw exception and the updated
-            // request will not be saved locally
-            networkService.sendProcessedCertificateRequest(certificateRequest);
+  @Override
+  public boolean reissueCertificateForNode(Node node) {
+    throw new UnsupportedOperationException();
+  }
 
-            // save cert in this operator/origin node's list
-            Node localNode = localNodeService.get();
-            localNode.getIssuedCertificates().add(certificateRequest.getNode().getCertificate());
-
-            // persist local node
-            localNodeService.set(localNode);
-
-            certificateRequest.setMessage(message);
-
-            // persist request
-            networkService.saveCertificateRequest(certificateRequest);
-        }
-
-        // TODO dont always just return true
-        return true;
+  @Override
+  public boolean revokeCertificateForNode(Node node) {
+    if (networkService.getCertificateById(node.getCertificate().getId()).isPresent()) {
+      networkService.removeCertificate(node.getCertificate());
+      return true;
+    } else {
+      return false;
     }
+  }
 
-    @Override
-    public boolean reissueCertificateForNode(Node node) {
-        throw new UnsupportedOperationException();
+  @Override
+  public boolean verifyCertificate(NodeCertificate certificate) {
+    // find the certificate in our own database
+    Optional<NodeCertificate> localCert = networkService.getCertificateById(certificate.getId());
+    if (localCert.isPresent()) {
+      // check validity dates
+      if (localCert.get().getExpiration().before(new Date(new java.util.Date().getTime()))
+          || (new Date(new java.util.Date().getTime()).before(localCert.get().getIssued())))
+        return false;
+
+      // date all good, check that the certificate we received matches our own version
+      return localCert.map(nodeCertificate -> nodeCertificate.equals(certificate)).orElse(false);
+    } else return false;
+  }
+
+  @Override
+  public CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest) {
+    return networkService.saveCertificateRequest(certificateRequest);
+  }
+
+  @Override
+  public List<CertificateRequest> findAllCertificateRequests() {
+    return networkService.findAllCertificateRequests();
+  }
+
+  @Override
+  public Optional<CertificateRequest> findCertificateRequestById(String id) {
+    return networkService.findCertificateRequestById(id);
+  }
+
+  @Override
+  public List<Collection> retrieveAllHashCollections() {
+    return hashCollectionService.findAll();
+  }
+
+  @Override
+  public Optional<Collection> retrieveHashCollectionById(String id) {
+    return hashCollectionService.findById(id);
+  }
+
+  @Override
+  public List<Collection> retrieveHashCollectionsByTopic(String string) {
+    return hashCollectionService.findAllByTopic(string);
+  }
+
+  @Override
+  public List<Collection> retrieveHashCollectionsByArchive(Node node) throws Exception {
+    return networkService.requestCollectionRepertoireFromArchive(node);
+  }
+
+  @Override
+  public List<Node> findAllNodes() throws Exception {
+    return networkService.getAllKnownNodes();
+  }
+
+  @Override
+  public Optional<Node> findKnownNodeById(String id) {
+    return networkService.getKnownNodeById(id);
+  }
+
+  @Override
+  public Node saveNode(Node node) {
+    return networkService.saveNode(node);
+  }
+
+  @Override
+  public void deleteNode(Node node) {
+    networkService.removeNode(node);
+  }
+
+  @Override
+  public void saveNetworkConfiguration(NetworkConfiguration networkConfiguration) {
+    networkService.saveNetworkConfiguration(networkConfiguration);
+  }
+
+  @Override
+  public NetworkConfiguration getNetworkConfiguration() {
+    return networkService.getNetworkConfiguration();
+  }
+
+  @Override
+  public AddressListMessage getArchiveAddressesMessage() {
+    return new AddressListMessage(
+        networkService.getAllKnownNodes().stream()
+            .filter(n -> n.getNodeType() == NodeType.ARCHIVE)
+            .map(Node::getHost)
+            .collect(Collectors.toList()));
+  }
+
+  @Override
+  public AddressListMessage getIntegratorAddressesMessage() {
+    return new AddressListMessage(
+        networkService.getAllKnownNodes().stream()
+            .filter(n -> n.getNodeType() == NodeType.INTEGRATOR)
+            .map(Node::getHost)
+            .collect(Collectors.toList()));
+  }
+
+  @Override
+  public Node getLocalNode() {
+    Node node = localNodeService.get();
+    if (node != null) {
+      Hibernate.initialize(node.getCertificate().getIssuer());
     }
+    return node;
+  }
 
-    @Override
-    public boolean revokeCertificateForNode(Node node) {
-        if (networkService.getCertificateById(node.getCertificate().getId()).isPresent()) {
-            networkService.removeCertificate(node.getCertificate());
-            return true;
-        } else {
-            return false;
-        }
-    }
+  @Override
+  public void fetchAllNodeStatus() throws Exception {
+    networkService.fetchAllNodeStatus();
+  }
 
-    @Override
-    public boolean verifyCertificate(NodeCertificate certificate) {
-        // find the certificate in our own database
-        Optional<NodeCertificate> localCert = networkService.getCertificateById(certificate.getId());
-        if (localCert.isPresent()) {
-            // check validity dates
-            if (localCert.get().getExpiration().before(new Date(new java.util.Date().getTime()))
-                    || (new Date(new java.util.Date().getTime()).before(localCert.get().getIssued())))
-                return false;
+  @Override
+  public void shutDown() {
+    OperatorServer.exit();
+  }
 
-            // date all good, check that the certificate we received matches our own version
-            return localCert.map(nodeCertificate -> nodeCertificate.equals(certificate)).orElse(false);
-        } else return false;
-    }
-
-    @Override
-    public CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest) {
-        return networkService.saveCertificateRequest(certificateRequest);
-    }
-
-    @Override
-    public List<CertificateRequest> findAllCertificateRequests() {
-        return networkService.findAllCertificateRequests();
-    }
-
-    @Override
-    public Optional<CertificateRequest> findCertificateRequestById(String id) {
-        return networkService.findCertificateRequestById(id);
-    }
-
-    @Override
-    public List<Collection> retrieveAllHashCollections() {
-        return hashCollectionService.findAll();
-    }
-
-    @Override
-    public Optional<Collection> retrieveHashCollectionById(String id) {
-        return hashCollectionService.findById(id);
-    }
-
-    @Override
-    public List<Collection> retrieveHashCollectionsByTopic(String string) {
-        return hashCollectionService.findAllByTopic(string);
-    }
-
-    @Override
-    public List<Collection> retrieveHashCollectionsByArchive(Node node) throws Exception {
-        return networkService.requestCollectionRepertoireFromArchive(node);
-    }
-
-    @Override
-    public List<Node> findAllNodes() throws Exception {
-        return networkService.getAllKnownNodes();
-    }
-
-    @Override
-    public Optional<Node> findKnownNodeById(String id) {
-        return networkService.getKnownNodeById(id);
-    }
-
-    @Override
-    public Node saveNode(Node node) {
-        return networkService.saveNode(node);
-    }
-
-    @Override
-    public void deleteNode(Node node) {
-        networkService.removeNode(node);
-    }
-
-    @Override
-    public void saveNetworkConfiguration(NetworkConfiguration networkConfiguration) {
-        networkService.saveNetworkConfiguration(networkConfiguration);
-    }
-
-    @Override
-    public NetworkConfiguration getNetworkConfiguration() {
-        return networkService.getNetworkConfiguration();
-    }
-
-    @Override
-    public AddressListMessage getArchiveAddressesMessage() {
-        return new AddressListMessage(
-                networkService.getAllKnownNodes().stream()
-                        .filter(n -> n.getNodeType() == NodeType.ARCHIVE)
-                        .map(Node::getHost)
-                        .collect(Collectors.toList()));
-    }
-
-    @Override
-    public AddressListMessage getIntegratorAddressesMessage() {
-        return new AddressListMessage(
-                networkService.getAllKnownNodes().stream()
-                        .filter(n -> n.getNodeType() == NodeType.INTEGRATOR)
-                        .map(Node::getHost)
-                        .collect(Collectors.toList()));
-    }
-
-    @Override
-    public Node getLocalNode() {
-        Node node = localNodeService.get();
-        if (node != null) {
-            Hibernate.initialize(node.getCertificate().getIssuer());
-        }
-        return node;
-    }
-
-    @Override
-    public void fetchAllNodeStatus() throws Exception {
-        networkService.fetchAllNodeStatus();
-    }
-
-    @Override
-    public void shutDown() {
-        OperatorServer.exit();
-    }
-
-    @Override
-    public void init(
-            String id,
-            String displayName,
-            String domainName,
-            String legalName,
-            String adminEmail,
-            String addressLine1,
-            String addressLine2,
-            String postCode,
-            String country) {
-        localNodeService.init(
-                id,
-                NodeType.ORIGIN,
-                displayName,
-                domainName,
-                legalName,
-                adminEmail,
-                addressLine1,
-                addressLine2,
-                postCode,
-                country);
-    }
+  @Override
+  public void init(
+      String id,
+      String displayName,
+      String domainName,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      String addressLine2,
+      String postCode,
+      String country) {
+    localNodeService.init(
+        id,
+        NodeType.ORIGIN,
+        displayName,
+        domainName,
+        legalName,
+        adminEmail,
+        addressLine1,
+        addressLine2,
+        postCode,
+        country);
+  }
 }

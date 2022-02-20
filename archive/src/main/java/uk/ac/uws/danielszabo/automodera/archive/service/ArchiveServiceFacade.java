@@ -36,102 +36,99 @@ import java.util.Optional;
 
 public interface ArchiveServiceFacade {
 
+  CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest);
 
-    CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest);
+  Optional<CertificateRequest> findCertificateRequestById(String id);
 
-    Optional<CertificateRequest> findCertificateRequestById(String id);
+  List<Collection> retrieveAllHashCollections();
 
-    List<Collection> retrieveAllHashCollections();
+  Optional<Collection> retrieveHashCollectionById(String id);
 
-    Optional<Collection> retrieveHashCollectionById(String id);
+  List<Node> retrieveAllNodes();
 
-    List<Node> retrieveAllNodes();
+  Optional<Node> findKnownNodeById(String id);
 
-    Optional<Node> findKnownNodeById(String id);
+  Node saveNode(Node node);
 
-    Node saveNode(Node node);
+  void deleteNode(Node node);
 
-    void deleteNode(Node node);
+  void saveCertificate(NodeCertificate certificate);
 
-    void saveCertificate(NodeCertificate certificate);
+  Collection generateHashCollection(
+      String path,
+      String id,
+      String name,
+      String description,
+      List<String> strings,
+      boolean forceRecalc)
+      throws IOException;
 
-    Collection generateHashCollection(
-            String path,
-            String id,
-            String name,
-            String description,
-            List<String> strings,
-            boolean forceRecalc)
-            throws IOException;
+  List<Collection> findAllHashCollections();
 
-    List<Collection> findAllHashCollections();
+  Optional<Collection> findHashCollectionById(String id);
 
-    Optional<Collection> findHashCollectionById(String id);
+  boolean checkCertificate(NodeCertificate certificate, String remoteAddr);
 
-    boolean checkCertificate(NodeCertificate certificate, String remoteAddr);
+  CollectionRepertoire getHashCollectionReport();
 
-    CollectionRepertoire getHashCollectionReport();
+  void storeNodeInfo(String subscriberId) throws Exception;
 
-    void storeNodeInfo(String subscriberId) throws Exception;
+  /**
+   * Send out all the enabled collections wrapped in a repertoire object to every available
+   * integrator
+   */
+  void sendCollectionRepertoireToAllIntegrators();
 
-    /**
-     * Send out all the enabled collections wrapped in a repertoire
-     * object to every available integrator
-     */
-    void sendCollectionRepertoireToAllIntegrators();
+  /**
+   * Send out all the enabled collections wrapped in a repertoire object to the specified integrator
+   */
+  void sendCollectionRepertoireToIntegrator(Node integrator) throws TargetNodeUnreachableException;
 
+  /**
+   * Send out all the specified collections wrapped in a repertoire object to every available
+   * integrator
+   */
+  void sendCollectionRepertoireToAllIntegrators(List<String> collections);
 
-    /**
-     * Send out all the enabled collections wrapped in a repertoire
-     * object to the specified integrator
-     */
-    void sendCollectionRepertoireToIntegrator(Node integrator) throws TargetNodeUnreachableException;
+  /**
+   * Send out all the specified collections wrapped in a repertoire object to the specified
+   * integrator
+   */
+  void sendCollectionRepertoireToIntegrator(List<String> collections, Node integrator)
+      throws TargetNodeUnreachableException;
 
-    /**
-     * Send out all the specified collections wrapped in a repertoire
-     * object to every available integrator
-     */
-    void sendCollectionRepertoireToAllIntegrators(List<String> collections);
+  Node getLocalNode();
 
-    /**
-     * Send out all the specified collections wrapped in a repertoire
-     * object to the specified integrator
-     */
-    void sendCollectionRepertoireToIntegrator(List<String> collections, Node integrator) throws TargetNodeUnreachableException;
+  void shutDown();
 
-    Node getLocalNode();
+  void init(
+      String id,
+      String displayName,
+      String domainName,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      String addressLine2,
+      String postCode,
+      String country);
 
-    void shutDown();
+  List<Collection> retrieveHashCollectionsByArchive(Node n) throws Exception;
 
-    void init(
-            String id,
-            String displayName,
-            String domainName,
-            String legalName,
-            String adminEmail,
-            String addressLine1,
-            String addressLine2,
-            String postCode,
-            String country);
+  NetworkConfiguration getNetworkConfiguration();
 
-    List<Collection> retrieveHashCollectionsByArchive(Node n) throws Exception;
+  List<Collection> retrieveHashCollectionsByTopic(String topic) throws Exception;
 
-    NetworkConfiguration getNetworkConfiguration();
+  List<CertificateRequest> findAllCertificateRequests();
 
-    List<Collection> retrieveHashCollectionsByTopic(String topic) throws Exception;
+  NetworkConfiguration fetchNetworkConfigurationAndConnect(String host) throws Exception;
 
-    List<CertificateRequest> findAllCertificateRequests();
+  NetworkConfiguration fetchNetworkConfiguration(String host) throws TargetNodeUnreachableException;
 
-    NetworkConfiguration fetchNetworkConfigurationAndConnect(String host) throws Exception;
+  void clearNetworkConfiguration();
 
-    NetworkConfiguration fetchNetworkConfiguration(String host) throws TargetNodeUnreachableException;
+  void enableHashCollectionById(String s);
 
-    void clearNetworkConfiguration();
+  void disableHashCollectionById(String s);
 
-    void enableHashCollectionById(String s);
-
-    void disableHashCollectionById(String s);
-
-    void removeHashCollectionById(String s);
-
+  void removeHashCollectionById(String s);
 }

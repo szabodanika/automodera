@@ -39,11 +39,7 @@ import java.sql.Date;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 // must list all possible content types unfortunately
-@XmlSeeAlso({
-  Date.class,
-  CertificateRequest.class,
-  CollectionRepertoire.class
-})
+@XmlSeeAlso({Date.class, CertificateRequest.class, CollectionRepertoire.class})
 public final class Message {
 
   @NonNull

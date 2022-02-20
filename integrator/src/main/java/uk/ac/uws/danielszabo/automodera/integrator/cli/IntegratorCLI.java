@@ -45,123 +45,123 @@ import java.io.StringWriter;
 import java.util.List;
 
 @Import({
-        RestServiceImpl.class,
-        HashServiceImpl.class,
-        LocalNodeServiceImpl.class,
-        NetworkServiceImpl.class,
+  RestServiceImpl.class,
+  HashServiceImpl.class,
+  LocalNodeServiceImpl.class,
+  NetworkServiceImpl.class,
 })
 @Slf4j
 @ShellComponent
-@ConditionalOnProperty(
-        name = "cli.enable",
-        havingValue = "true")
+@ConditionalOnProperty(name = "cli.enable", havingValue = "true")
 public class IntegratorCLI extends BaseNodeCLI {
 
-    private final IntegratorServiceFacade integratorServiceFacade;
+  private final IntegratorServiceFacade integratorServiceFacade;
 
-    public IntegratorCLI(
-            LocalNodeService localNodeService,
-            NetworkService networkService,
-            IntegratorServiceFacade integratorServiceFacade) {
-        super(localNodeService, networkService);
-        this.integratorServiceFacade = integratorServiceFacade;
-    }
+  public IntegratorCLI(
+      LocalNodeService localNodeService,
+      NetworkService networkService,
+      IntegratorServiceFacade integratorServiceFacade) {
+    super(localNodeService, networkService);
+    this.integratorServiceFacade = integratorServiceFacade;
+  }
 
-    // for example:
-    @ShellMethod("Manage Subscriptions")
-    public void subs(
-            @ShellOption(defaultValue = "false") boolean list,
-            @ShellOption(defaultValue = "false") boolean add,
-            @ShellOption(defaultValue = "false") boolean remove,
-            @ShellOption(defaultValue = "") String topic) {
+  // for example:
+  @ShellMethod("Manage Subscriptions")
+  public void subs(
+      @ShellOption(defaultValue = "false") boolean list,
+      @ShellOption(defaultValue = "false") boolean add,
+      @ShellOption(defaultValue = "false") boolean remove,
+      @ShellOption(defaultValue = "") String topic) {
 
-        if (list) {
-            log.info("Subscriptions");
-            integratorServiceFacade.getSubscriptions().forEach(System.out::println);
-        } else if (add) {
-            if (!topic.isBlank()) {
-                try {
-                    integratorServiceFacade.addSubscription(topic);
-                } catch (Exception e) {
-                    log.error("Failed to communicate subscription with archives");
-                    e.printStackTrace();
-                }
-            } else {
-                log.error("Please specify non-empty topic ID");
-            }
-        } else if (remove) {
-            if (!topic.isBlank()) {
-                integratorServiceFacade.removeSubscription(topic);
-                log.info("Successfully unsubscribed from ");
-            }
-        }
-    }
-
-    @ShellMethod("Manage Hash Collections")
-    public void hash(
-            @ShellOption(defaultValue = "false") boolean list,
-            @ShellOption(defaultValue = "false") boolean show,
-            @ShellOption(defaultValue = "sync") boolean sync,
-            @ShellOption(defaultValue = "") String id) {
-
-        if (list) {
-            List<Collection> collections;
-            if (!(collections = integratorServiceFacade.findAllHashCollections()).isEmpty()) {
-                for (Collection hc : collections) {
-                    // TODO make this a little nicer
-                    log.info(hc.toString());
-                }
-            } else {
-                log.info("No hash collections found");
-            }
-
-        } else if (show) {
-            if (id.isBlank()) {
-                log.error("Please specify non-empty id");
-                return;
-            }
-            integratorServiceFacade.findCollectionById(id).ifPresent(h -> log.info(h.toString()));
-        } else if (sync) {
-            try {
-                integratorServiceFacade.requestAllCollectionRepertoires();
-            } catch (Exception e) {
-                log.error("Failed to update hash collections");
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @ShellMethod("Manage Hash Collections")
-    public void check(String image, @ShellOption(defaultValue = "false") boolean xml) {
+    if (list) {
+      log.info("Subscriptions");
+      integratorServiceFacade.getSubscriptions().forEach(System.out::println);
+    } else if (add) {
+      if (!topic.isBlank()) {
         try {
-            if (xml) {
-                Marshaller marshallerObj = JAXBContext.newInstance(Report.class).createMarshaller();
-                StringWriter sw = new StringWriter();
-                marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-                marshallerObj.marshal(integratorServiceFacade.checkImage(image, null, "Integrator Console CLI"), sw);
-
-                System.out.println(sw);
-
-            } else {
-                log.info(integratorServiceFacade.checkImage(image, null, "Integrator Console CLI").toString());
-            }
-        } catch (IOException | JAXBException e) {
-            e.printStackTrace();
+          integratorServiceFacade.addSubscription(topic);
+        } catch (Exception e) {
+          log.error("Failed to communicate subscription with archives");
+          e.printStackTrace();
         }
+      } else {
+        log.error("Please specify non-empty topic ID");
+      }
+    } else if (remove) {
+      if (!topic.isBlank()) {
+        integratorServiceFacade.removeSubscription(topic);
+        log.info("Successfully unsubscribed from ");
+      }
     }
+  }
 
-    @ShellMethod("Lists current node info of every archive")
-    public void archives() {
-        log.info("Archives");
-        List<Node> archiveList;
-        if (!(archiveList = integratorServiceFacade.getAllArchives()).isEmpty()) {
-            for (Node n : archiveList) {
-                // TODO make this a little nicer
-                log.info(n.toString());
-            }
-        } else {
-            log.info("No archives found");
+  @ShellMethod("Manage Hash Collections")
+  public void hash(
+      @ShellOption(defaultValue = "false") boolean list,
+      @ShellOption(defaultValue = "false") boolean show,
+      @ShellOption(defaultValue = "sync") boolean sync,
+      @ShellOption(defaultValue = "") String id) {
+
+    if (list) {
+      List<Collection> collections;
+      if (!(collections = integratorServiceFacade.findAllHashCollections()).isEmpty()) {
+        for (Collection hc : collections) {
+          // TODO make this a little nicer
+          log.info(hc.toString());
         }
+      } else {
+        log.info("No hash collections found");
+      }
+
+    } else if (show) {
+      if (id.isBlank()) {
+        log.error("Please specify non-empty id");
+        return;
+      }
+      integratorServiceFacade.findCollectionById(id).ifPresent(h -> log.info(h.toString()));
+    } else if (sync) {
+      try {
+        integratorServiceFacade.requestAllCollectionRepertoires();
+      } catch (Exception e) {
+        log.error("Failed to update hash collections");
+        e.printStackTrace();
+      }
     }
+  }
+
+  @ShellMethod("Manage Hash Collections")
+  public void check(String image, @ShellOption(defaultValue = "false") boolean xml) {
+    try {
+      if (xml) {
+        Marshaller marshallerObj = JAXBContext.newInstance(Report.class).createMarshaller();
+        StringWriter sw = new StringWriter();
+        marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+        marshallerObj.marshal(
+            integratorServiceFacade.checkImage(image, null, "Integrator Console CLI"), sw);
+
+        System.out.println(sw);
+
+      } else {
+        log.info(
+            integratorServiceFacade.checkImage(image, null, "Integrator Console CLI").toString());
+      }
+    } catch (IOException | JAXBException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @ShellMethod("Lists current node info of every archive")
+  public void archives() {
+    log.info("Archives");
+    List<Node> archiveList;
+    if (!(archiveList = integratorServiceFacade.getAllArchives()).isEmpty()) {
+      for (Node n : archiveList) {
+        // TODO make this a little nicer
+        log.info(n.toString());
+      }
+    } else {
+      log.info("No archives found");
+    }
+  }
 }

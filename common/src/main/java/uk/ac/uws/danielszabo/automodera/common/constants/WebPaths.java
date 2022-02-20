@@ -24,26 +24,25 @@ package uk.ac.uws.danielszabo.automodera.common.constants;
 
 public class WebPaths {
 
-    // rest endpoints for automated communication between nodes
+  // rest endpoints for automated communication between nodes
 
-    public static final String REST_BASE_PATH = "/rest";
-    public static final String NET_PATH = REST_BASE_PATH + "/net";
+  public static final String REST_BASE_PATH = "/rest";
+  public static final String NET_PATH = REST_BASE_PATH + "/net";
 
-    public static final String INFO_PATH = NET_PATH + "/info";
-    public static final String STATUS_PATH = NET_PATH + "/status";
-    public static final String CONFIG_PATH = NET_PATH + "/config";
-    public static final String ADDRESS_LIST_PATH = NET_PATH + "/address_list";
-    public static final String ARCHIVE_ADDRESS_LIST_PATH = ADDRESS_LIST_PATH + "/archive";
-    public static final String INTEGRATOR_ADDRESS_LIST_PATH = ADDRESS_LIST_PATH + "/integrator";
+  public static final String INFO_PATH = NET_PATH + "/info";
+  public static final String STATUS_PATH = NET_PATH + "/status";
+  public static final String CONFIG_PATH = NET_PATH + "/config";
+  public static final String ADDRESS_LIST_PATH = NET_PATH + "/address_list";
+  public static final String ARCHIVE_ADDRESS_LIST_PATH = ADDRESS_LIST_PATH + "/archive";
+  public static final String INTEGRATOR_ADDRESS_LIST_PATH = ADDRESS_LIST_PATH + "/integrator";
 
-    public static final String CERTIFICATE_PATH = NET_PATH + "/certificate";
-    public static final String REQUEST_PATH = CERTIFICATE_PATH + "/request";
-    public static final String PROCESSED_PATH = CERTIFICATE_PATH + "/processedrequest";
-    public static final String CERTVERIFY_PATH = CERTIFICATE_PATH + "/verify";
+  public static final String CERTIFICATE_PATH = NET_PATH + "/certificate";
+  public static final String REQUEST_PATH = CERTIFICATE_PATH + "/request";
+  public static final String PROCESSED_PATH = CERTIFICATE_PATH + "/processedrequest";
+  public static final String CERTVERIFY_PATH = CERTIFICATE_PATH + "/verify";
 
-    public static final String COLLECTIONS_PATH = REST_BASE_PATH + "/collections";
-    public static final String REPERTOIRE_PATH = COLLECTIONS_PATH + "/repertoire";
-    public static final String PUBLISH_PATH = COLLECTIONS_PATH + "/publish";
-    public static final String DOWNLOAD_PATH = COLLECTIONS_PATH + "/download";
-
+  public static final String COLLECTIONS_PATH = REST_BASE_PATH + "/collections";
+  public static final String REPERTOIRE_PATH = COLLECTIONS_PATH + "/repertoire";
+  public static final String PUBLISH_PATH = COLLECTIONS_PATH + "/publish";
+  public static final String DOWNLOAD_PATH = COLLECTIONS_PATH + "/download";
 }

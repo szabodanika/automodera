@@ -46,9 +46,7 @@ import uk.ac.uws.danielszabo.automodera.common.service.rest.RestServiceImpl;
 })
 @Slf4j
 @ShellComponent
-@ConditionalOnProperty(
-        name = "cli.enable",
-        havingValue = "true")
+@ConditionalOnProperty(name = "cli.enable", havingValue = "true")
 public abstract class BaseNodeCLI {
 
   // these services need to be private

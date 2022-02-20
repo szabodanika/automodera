@@ -32,7 +32,6 @@ import uk.ac.uws.danielszabo.automodera.common.model.network.node.Node;
 import uk.ac.uws.danielszabo.automodera.integrator.model.Report;
 import uk.ac.uws.danielszabo.automodera.integrator.model.IntegrationContext;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -40,98 +39,99 @@ import java.util.Optional;
 
 public interface IntegratorServiceFacade {
 
-    boolean verifyCertificate(NodeCertificate certificate);
+  boolean verifyCertificate(NodeCertificate certificate);
 
-    CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest);
+  CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest);
 
-    List<CertificateRequest> retrieveAllCertificateRequests();
+  List<CertificateRequest> retrieveAllCertificateRequests();
 
-    Optional<CertificateRequest> findCertificateRequestById(String id);
+  Optional<CertificateRequest> findCertificateRequestById(String id);
 
-    List<Collection> retrieveAllHashCollections();
+  List<Collection> retrieveAllHashCollections();
 
-    Optional<Collection> retrieveHashCollectionById(String id);
+  Optional<Collection> retrieveHashCollectionById(String id);
 
-    List<Collection> retrieveHashCollectionByTopic(String string);
+  List<Collection> retrieveHashCollectionByTopic(String string);
 
-    List<Collection> retrieveHashCollectionByArchive(Node topic);
+  List<Collection> retrieveHashCollectionByArchive(Node topic);
 
-    List<Node> getAllKnownNodes();
+  List<Node> getAllKnownNodes();
 
-    Optional<Node> getKnownNodeById(String id);
+  Optional<Node> getKnownNodeById(String id);
 
-    Node saveNode(Node node);
+  Node saveNode(Node node);
 
-    void deleteNode(Node node);
+  void deleteNode(Node node);
 
-    List<String> getSubscriptions();
+  List<String> getSubscriptions();
 
-    void saveCertificate(NodeCertificate certificate);
+  void saveCertificate(NodeCertificate certificate);
 
-    List<Collection> findAllHashCollections();
+  List<Collection> findAllHashCollections();
 
-    Optional<Collection> findCollectionById(String id);
+  Optional<Collection> findCollectionById(String id);
 
-    boolean checkCertificate(NodeCertificate certificate, String remoteAddr);
+  boolean checkCertificate(NodeCertificate certificate, String remoteAddr);
 
-    Report checkImage(String image, String attachment, String source) throws IOException;
+  Report checkImage(String image, String attachment, String source) throws IOException;
 
-    void requestAllCollectionRepertoires() throws Exception;
+  void requestAllCollectionRepertoires() throws Exception;
 
-    List<Collection> requestCollectionRepertoireFromArchive(Node archive) throws TargetNodeUnreachableException;
+  List<Collection> requestCollectionRepertoireFromArchive(Node archive)
+      throws TargetNodeUnreachableException;
 
-    void addSubscription(String string);
+  void addSubscription(String string);
 
-    List<Node> getAllArchives();
+  List<Node> getAllArchives();
 
-    Collection downloadHashCollection(String host, String id) throws Exception;
+  Collection downloadHashCollection(String host, String id) throws Exception;
 
-    void removeSubscription(String topic);
+  void removeSubscription(String topic);
 
-    Node getLocalNode();
+  Node getLocalNode();
 
-    void shutDown();
+  void shutDown();
 
-    void init(
-            String id,
-            String displayName,
-            String domainName,
-            String legalName,
-            String adminEmail,
-            String addressLine1,
-            String addressLine2,
-            String postCode,
-            String country);
+  void init(
+      String id,
+      String displayName,
+      String domainName,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      String addressLine2,
+      String postCode,
+      String country);
 
-    List<Collection> requestCollectionRepertoireFormArchive(Node n) throws Exception;
+  List<Collection> requestCollectionRepertoireFormArchive(Node n) throws Exception;
 
-    NetworkConfiguration getNetworkConfiguration();
+  NetworkConfiguration getNetworkConfiguration();
 
-    List<Collection> getCollecitonsByTopic(String topic) throws Exception;
+  List<Collection> getCollecitonsByTopic(String topic) throws Exception;
 
-    List<CertificateRequest> getAllCertificateRequests();
+  List<CertificateRequest> getAllCertificateRequests();
 
-    void connectToNetwork(String host) throws Exception;
+  void connectToNetwork(String host) throws Exception;
 
-    List<Collection> retrieveDownloadedHashCollections();
+  List<Collection> retrieveDownloadedHashCollections();
 
-    List<String> getAllTopics();
+  List<String> getAllTopics();
 
-    Map<String, Map<String, Object>> getAllTopicsWithCollections();
+  Map<String, Map<String, Object>> getAllTopicsWithCollections();
 
-    boolean isSubscribedToAny(List<String> topicList);
+  boolean isSubscribedToAny(List<String> topicList);
 
-    boolean isSubscribedTo(String topic);
+  boolean isSubscribedTo(String topic);
 
-    void processCollectionRepertoire(CollectionRepertoire collectionRepertoire);
+  void processCollectionRepertoire(CollectionRepertoire collectionRepertoire);
 
-    NetworkConfiguration fetchNetworkConfigurationAndConnect(String host) throws Exception;
+  NetworkConfiguration fetchNetworkConfigurationAndConnect(String host) throws Exception;
 
-    NetworkConfiguration fetchNetworkConfiguration(String host) throws TargetNodeUnreachableException;
+  NetworkConfiguration fetchNetworkConfiguration(String host) throws TargetNodeUnreachableException;
 
-    void clearNetworkConfiguration();
+  void clearNetworkConfiguration();
 
-    IntegrationContext getIntegrationConfiguration();
+  IntegrationContext getIntegrationConfiguration();
 
-    List<Report> getAllReports();
+  List<Report> getAllReports();
 }

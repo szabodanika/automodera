@@ -119,36 +119,36 @@ public class ArchiveCLI extends BaseNodeCLI {
     }
   }
 
-//  // for example:
-//  @ShellMethod("Manage Subscriptions")
-//  public void subs(
-//      @ShellOption(defaultValue = "false") boolean list,
-//      @ShellOption(defaultValue = "false") boolean sync) {
-//
-//    if (list) {
-//      log.info("Subscriptions");
-//      List<Strin> hashCollections;
-//      try {
-//        if (!(hashCollections = archiveServiceFacade.getSubscriptions()).isEmpty()) {
-//          for (Subscription s : hashCollections) {
-//            // TODO make this a little nicer
-//            log.info(s.toString());
-//          }
-//        } else {
-//          log.info("No subscription found");
-//        }
-//      } catch (Exception e) {
-//        log.error("Failed to retrieve subscriptions");
-//        e.printStackTrace();
-//      }
-//    } else if (sync) {
-//      try {
-//        log.info("Syncing hash collections...");
-//        archiveServiceFacade.sendCollectionRepertoireToAllIntegrators();
-//      } catch (Exception e) {
-//        log.error("Failed to sync hash collections");
-//        e.printStackTrace();
-//      }
-//    }
-//  }
+  //  // for example:
+  //  @ShellMethod("Manage Subscriptions")
+  //  public void subs(
+  //      @ShellOption(defaultValue = "false") boolean list,
+  //      @ShellOption(defaultValue = "false") boolean sync) {
+  //
+  //    if (list) {
+  //      log.info("Subscriptions");
+  //      List<Strin> hashCollections;
+  //      try {
+  //        if (!(hashCollections = archiveServiceFacade.getSubscriptions()).isEmpty()) {
+  //          for (Subscription s : hashCollections) {
+  //            // TODO make this a little nicer
+  //            log.info(s.toString());
+  //          }
+  //        } else {
+  //          log.info("No subscription found");
+  //        }
+  //      } catch (Exception e) {
+  //        log.error("Failed to retrieve subscriptions");
+  //        e.printStackTrace();
+  //      }
+  //    } else if (sync) {
+  //      try {
+  //        log.info("Syncing hash collections...");
+  //        archiveServiceFacade.sendCollectionRepertoireToAllIntegrators();
+  //      } catch (Exception e) {
+  //        log.error("Failed to sync hash collections");
+  //        e.printStackTrace();
+  //      }
+  //    }
+  //  }
 }

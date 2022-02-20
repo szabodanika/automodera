@@ -40,146 +40,144 @@ import java.util.Optional;
 @Service
 public class LocalNodeServiceImpl implements LocalNodeService {
 
-    private final ApplicationEventPublisher applicationEventPublisher;
+  private final ApplicationEventPublisher applicationEventPublisher;
 
-    private final LocalNodeRepository localNodeRepository;
+  private final LocalNodeRepository localNodeRepository;
 
-    private final NodeRepository nodeRepository;
+  private final NodeRepository nodeRepository;
 
-    private final NodeFactory nodeFactory;
+  private final NodeFactory nodeFactory;
 
-    public LocalNodeServiceImpl(
-            ApplicationEventPublisher applicationEventPublisher,
-            LocalNodeRepository localNodeRepository,
-            NodeRepository nodeRepository,
-            NodeFactory nodeFactory) {
-        this.applicationEventPublisher = applicationEventPublisher;
-        this.localNodeRepository = localNodeRepository;
-        this.nodeRepository = nodeRepository;
-        this.nodeFactory = nodeFactory;
+  public LocalNodeServiceImpl(
+      ApplicationEventPublisher applicationEventPublisher,
+      LocalNodeRepository localNodeRepository,
+      NodeRepository nodeRepository,
+      NodeFactory nodeFactory) {
+    this.applicationEventPublisher = applicationEventPublisher;
+    this.localNodeRepository = localNodeRepository;
+    this.nodeRepository = nodeRepository;
+    this.nodeFactory = nodeFactory;
+  }
+
+  @Override
+  public Node get() {
+    Optional<LocalNode> optionalNode = localNodeRepository.get();
+    if (optionalNode.isEmpty()) {
+      return null;
+    } else {
+      Node node = optionalNode.get().getLocal();
+      node.setOnline(true);
+      return node;
     }
+  }
 
-    @Override
-    public Node get() {
-        Optional<LocalNode> optionalNode = localNodeRepository.get();
-        if (optionalNode.isEmpty()) {
-            return null;
-        } else {
-            Node node = optionalNode.get().getLocal();
-            node.setOnline(true);
-            return node;
-        }
+  @Override
+  public Node set(Node self) {
+    if (self == null) {
+      log.error("Cannot overwrite local config with null.");
+      return null;
+    } else {
+      LocalNodeUpdatedEvent event = new LocalNodeUpdatedEvent(this, self);
+      if (localNodeRepository.get().isEmpty()) {
+        localNodeRepository.save(new LocalNode(self));
+      }
+      applicationEventPublisher.publishEvent(event);
+      return nodeRepository.save(self);
     }
+  }
 
-    @Override
-    public Node set(Node self) {
-        if (self == null) {
-            log.error("Cannot overwrite local config with null.");
-            return null;
-        } else {
-            LocalNodeUpdatedEvent event = new LocalNodeUpdatedEvent(this, self);
-            if (localNodeRepository.get().isEmpty()) {
-                localNodeRepository.save(new LocalNode(self));
-            }
-            applicationEventPublisher.publishEvent(event);
-            return nodeRepository.save(self);
-        }
+  @Override
+  public Node init(
+      String id,
+      NodeType nodeType,
+      String name,
+      String domain,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      String addressLine2,
+      String postCode,
+      String country) {
+    Node node;
+    switch (nodeType) {
+      case INTEGRATOR -> node =
+          nodeFactory.getIntegratorNode(
+              id,
+              name,
+              domain,
+              legalName,
+              adminEmail,
+              addressLine1,
+              addressLine2,
+              postCode,
+              country);
+      case ARCHIVE -> node =
+          nodeFactory.getArchiveNode(
+              id,
+              name,
+              domain,
+              legalName,
+              adminEmail,
+              addressLine1,
+              addressLine2,
+              postCode,
+              country);
+      case OPERATOR -> node =
+          nodeFactory.getOperatorNode(
+              id,
+              name,
+              domain,
+              legalName,
+              adminEmail,
+              addressLine1,
+              addressLine2,
+              postCode,
+              country);
+      case ORIGIN -> node =
+          nodeFactory.getOriginNode(
+              id,
+              name,
+              domain,
+              legalName,
+              adminEmail,
+              addressLine1,
+              addressLine2,
+              postCode,
+              country);
+      default -> throw new IllegalStateException("Unexpected value: " + nodeType);
     }
+    set(node);
+    return node;
+  }
 
-    @Override
-    public Node init(
-            String id,
-            NodeType nodeType,
-            String name,
-            String domain,
-            String legalName,
-            String adminEmail,
-            String addressLine1,
-            String addressLine2,
-            String postCode,
-            String country) {
-        Node node;
-        switch (nodeType) {
-            case INTEGRATOR -> node =
-                    nodeFactory.getIntegratorNode(
-                            id,
-                            name,
-                            domain,
-                            legalName,
-                            adminEmail,
-                            addressLine1,
-                            addressLine2,
-                            postCode,
-                            country);
-            case ARCHIVE -> node =
-                    nodeFactory.getArchiveNode(
-                            id,
-                            name,
-                            domain,
-                            legalName,
-                            adminEmail,
-                            addressLine1,
-                            addressLine2,
-                            postCode,
-                            country);
-            case OPERATOR -> node =
-                    nodeFactory.getOperatorNode(
-                            id,
-                            name,
-                            domain,
-                            legalName,
-                            adminEmail,
-                            addressLine1,
-                            addressLine2,
-                            postCode,
-                            country);
-            case ORIGIN -> node =
-                    nodeFactory.getOriginNode(
-                            id,
-                            name,
-                            domain,
-                            legalName,
-                            adminEmail,
-                            addressLine1,
-                            addressLine2,
-                            postCode,
-                            country);
-            default -> throw new IllegalStateException("Unexpected value: " + nodeType);
-        }
-        set(node);
-        return node;
-    }
+  @Override
+  public void addSubscription(String topic) {
+    Node node = get();
 
+    // need to wrap list in arraylist because spring will
+    // return something that does not allow operations
+    List<String> subscriptionList = new ArrayList<>(node.getSubscriptions());
+    subscriptionList.add(topic);
+    node.setSubscriptions(subscriptionList);
 
-    @Override
-    public void addSubscription(String topic) {
-        Node node = get();
+    set(node);
+  }
 
-        // need to wrap list in arraylist because spring will
-        // return something that does not allow operations
-        List<String> subscriptionList = new ArrayList<>(node.getSubscriptions());
-        subscriptionList.add(topic);
-        node.setSubscriptions(subscriptionList);
+  @Override
+  public void removeSubscription(String topic) {
+    Node node = get();
 
-        set(node);
-    }
+    // need to wrap list in arraylist because spring will
+    // return something that does not allow operations
+    List<String> subscriptionList = new ArrayList<>(node.getSubscriptions());
+    subscriptionList.remove(topic);
+    node.setSubscriptions(subscriptionList);
 
+    set(node);
+  }
 
-    @Override
-    public void removeSubscription(String topic) {
-        Node node = get();
-
-        // need to wrap list in arraylist because spring will
-        // return something that does not allow operations
-        List<String> subscriptionList = new ArrayList<>(node.getSubscriptions());
-        subscriptionList.remove(topic);
-        node.setSubscriptions(subscriptionList);
-
-        set(node);
-    }
-
-    @Override
-    public List<String> getSubscriptions(String topic) {
-        return get().getSubscriptions();
-    }
+  @Override
+  public List<String> getSubscriptions(String topic) {
+    return get().getSubscriptions();
+  }
 }

@@ -22,61 +22,70 @@
 
 package uk.ac.uws.danielszabo.automodera.common.constants;
 
-
 /**
- * This class is not to be used in data transfer or data persistence
- * it is merely a collection of topics that are recognised by the platform by default
- * and is used only on the view layer.
+ * This class is not to be used in data transfer or data persistence it is merely a collection of
+ * topics that are recognised by the platform by default and is used only on the view layer.
  */
 public enum Topic {
 
+  // TODO add more topics
 
-    //TODO add more topics
+  EXAMPLE_TOXIC_TOPIC(
+      "EXAMPLE_TOXIC_TOPIC", "Toxic", "Description of the Toxic topic", Category.TOXIC),
+  EXAMPLE_INDECENT_TOPIC(
+      "EXAMPLE_INDECENT_TOPIC", "Indecent", "Description of the Indecent topic", Category.INDECENT),
+  EXAMPLE_ADULT_TOPIC(
+      "EXAMPLE_ADULT_TOPIC", "Adult", "Description of the Adult topic", Category.ADULT),
+  EXAMPLE_OFFENSIVE_TOPIC(
+      "EXAMPLE_OFFENSIVE_TOPIC",
+      "Offensive",
+      "Description of the Offensive topic",
+      Category.OFFENSIVE),
+  EXAMPLE_HARMFUL_TOPIC(
+      "EXAMPLE_HARMFUL_TOPIC", "Harmful", "Description of the Harmful topic", Category.HARMFUL),
+  EXAMPLE_DANGEROUS_TOPIC(
+      "EXAMPLE_DANGEROUS_TOPIC",
+      "Dangerous",
+      "Description of the Dangerous topic",
+      Category.DANGEROUS),
+  EXAMPLE_ILLEGAL_TOPIC(
+      "EXAMPLE_ILLEGAL_TOPIC", "Illegal", "Description of the Illegal topic", Category.ILLEGAL);
 
-    EXAMPLE_TOXIC_TOPIC("EXAMPLE_TOXIC_TOPIC", "Toxic", "Description of the Toxic topic", Category.TOXIC),
-    EXAMPLE_INDECENT_TOPIC("EXAMPLE_INDECENT_TOPIC", "Indecent", "Description of the Indecent topic", Category.INDECENT),
-    EXAMPLE_ADULT_TOPIC("EXAMPLE_ADULT_TOPIC", "Adult", "Description of the Adult topic", Category.ADULT),
-    EXAMPLE_OFFENSIVE_TOPIC("EXAMPLE_OFFENSIVE_TOPIC", "Offensive", "Description of the Offensive topic", Category.OFFENSIVE),
-    EXAMPLE_HARMFUL_TOPIC("EXAMPLE_HARMFUL_TOPIC", "Harmful", "Description of the Harmful topic", Category.HARMFUL),
-    EXAMPLE_DANGEROUS_TOPIC("EXAMPLE_DANGEROUS_TOPIC", "Dangerous", "Description of the Dangerous topic", Category.DANGEROUS),
-    EXAMPLE_ILLEGAL_TOPIC("EXAMPLE_ILLEGAL_TOPIC", "Illegal", "Description of the Illegal topic", Category.ILLEGAL);
+  String id;
+  String displayName;
+  String description;
+  Category category;
 
+  Topic(String id, String displayName, String description, Category category) {
+    this.id = id;
+    this.displayName = displayName;
+    this.description = description;
+    this.category = category;
+  }
 
-    String id;
-    String displayName;
-    String description;
-    Category category;
+  public String getId() {
+    return id.toLowerCase();
+  }
 
-    Topic(String id, String displayName, String description, Category category) {
-        this.id = id;
-        this.displayName = displayName;
-        this.description = description;
-        this.category = category;
-    }
+  public String getDisplayName() {
+    return displayName;
+  }
 
-    public String getId() {
-        return id.toLowerCase();
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getCategory() {
-        return category.name();
-    }
+  public String getCategory() {
+    return category.name();
+  }
 }
 
 enum Category {
-    TOXIC,
-    INDECENT,
-    ADULT,
-    OFFENSIVE,
-    HARMFUL,
-    DANGEROUS,
-    ILLEGAL
+  TOXIC,
+  INDECENT,
+  ADULT,
+  OFFENSIVE,
+  HARMFUL,
+  DANGEROUS,
+  ILLEGAL
 }

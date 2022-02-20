@@ -35,29 +35,35 @@ import uk.ac.uws.danielszabo.automodera.common.model.network.NetworkConfiguratio
 @Slf4j
 @Import({NetworkConfiguration.class})
 @SpringBootApplication
-@EntityScan(basePackages = {"uk.ac.uws.danielszabo.automodera.common", "uk.ac.uws.danielszabo.automodera.integrator"})
+@EntityScan(
+    basePackages = {
+      "uk.ac.uws.danielszabo.automodera.common",
+      "uk.ac.uws.danielszabo.automodera.integrator"
+    })
 @ComponentScan(basePackages = {"uk.ac.uws.danielszabo"})
-@EnableJpaRepositories(basePackages = {"uk.ac.uws.danielszabo.automodera.common.repository",
-        "uk.ac.uws.danielszabo.automodera.integrator.repository"}
-)
+@EnableJpaRepositories(
+    basePackages = {
+      "uk.ac.uws.danielszabo.automodera.common.repository",
+      "uk.ac.uws.danielszabo.automodera.integrator.repository"
+    })
 public class IntegratorServer {
 
-    private static SpringApplication application;
+  private static SpringApplication application;
 
-    private static ConfigurableApplicationContext applicationContext;
+  private static ConfigurableApplicationContext applicationContext;
 
-    public IntegratorServer(ConfigurableApplicationContext applicationContext) {
-        IntegratorServer.applicationContext = applicationContext;
-    }
+  public IntegratorServer(ConfigurableApplicationContext applicationContext) {
+    IntegratorServer.applicationContext = applicationContext;
+  }
 
-    public static void main(String[] args) {
-        application = new SpringApplication(IntegratorServer.class);
-        application.run(args);
-    }
+  public static void main(String[] args) {
+    application = new SpringApplication(IntegratorServer.class);
+    application.run(args);
+  }
 
-    public static void exit() {
-        log.info("Shutting down...");
-        applicationContext.close();
-        System.exit(0);
-    }
+  public static void exit() {
+    log.info("Shutting down...");
+    applicationContext.close();
+    System.exit(0);
+  }
 }

@@ -42,87 +42,89 @@ import java.util.Optional;
 @RequestMapping("rest/collections/")
 public class CollectionRestController {
 
-    private final ArchiveServiceFacade archiveServiceFacade;
+  private final ArchiveServiceFacade archiveServiceFacade;
 
-    public CollectionRestController(ArchiveServiceFacade archiveServiceFacade) {
-        this.archiveServiceFacade = archiveServiceFacade;
+  public CollectionRestController(ArchiveServiceFacade archiveServiceFacade) {
+    this.archiveServiceFacade = archiveServiceFacade;
+  }
+
+  @PostMapping(
+      value = "repertoire",
+      produces = MediaType.APPLICATION_XML_VALUE,
+      consumes = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity postCollections(@RequestBody Message message, HttpServletRequest request) {
+    // respond with 403 if local node is inactive
+    if (!archiveServiceFacade.getLocalNode().isActive()) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    @PostMapping(
-            value = "repertoire",
-            produces = MediaType.APPLICATION_XML_VALUE,
-            consumes = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity postCollections(@RequestBody Message message, HttpServletRequest request) {
-        // respond with 403 if local node is inactive
-        if (!archiveServiceFacade.getLocalNode().isActive()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+    if (archiveServiceFacade.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
+      log.info("Received collection listing request from " + message.getCertificate().getId());
+      return new ResponseEntity<>(archiveServiceFacade.getHashCollectionReport(), HttpStatus.OK);
+    } else {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+  }
 
-        if (archiveServiceFacade.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
-            log.info("Received collection listing request from " + message.getCertificate().getId());
-            return new ResponseEntity<>(archiveServiceFacade.getHashCollectionReport(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+  @PostMapping(
+      value = "download",
+      produces = MediaType.APPLICATION_XML_VALUE,
+      consumes = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity postHCDownload(@RequestBody Message message, HttpServletRequest request) {
+    // respond with 403 if local node is inactive
+    if (!archiveServiceFacade.getLocalNode().isActive()) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    @PostMapping(
-            value = "download",
-            produces = MediaType.APPLICATION_XML_VALUE,
-            consumes = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity postHCDownload(@RequestBody Message message, HttpServletRequest request) {
-        // respond with 403 if local node is inactive
-        if (!archiveServiceFacade.getLocalNode().isActive()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+    if (archiveServiceFacade.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
+      log.info(
+          "Received hash collection download request from " + message.getCertificate().getId());
 
-        if (archiveServiceFacade.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
-            log.info(
-                    "Received hash collection download request from " + message.getCertificate().getId());
+      String HCId = (String) message.getContent();
 
-            String HCId = (String) message.getContent();
+      Optional<Collection> optionalHashCollection =
+          archiveServiceFacade.retrieveHashCollectionById(HCId);
+      if (optionalHashCollection.isPresent()) {
 
-            Optional<Collection> optionalHashCollection =
-                    archiveServiceFacade.retrieveHashCollectionById(HCId);
-            if (optionalHashCollection.isPresent()) {
-
-                return new ResponseEntity<>(optionalHashCollection.get(), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+        return new ResponseEntity<>(optionalHashCollection.get(), HttpStatus.OK);
+      } else {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+      }
+    } else {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
+  }
 
-//    @PostMapping(
-//            value = "subscribe",
-//            produces = MediaType.APPLICATION_XML_VALUE,
-//            consumes = MediaType.APPLICATION_XML_VALUE)
-//    public ResponseEntity postSubscribe(@RequestBody Message message, HttpServletRequest request) {
-//        // respond with 403 if local node is inactive
-//        if (!archiveServiceFacade.getLocalNode().isActive()) {
-//            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-//        }
-//
-//        if (archiveServiceFacade.checkCertificate(message.getCertificate(), request.getRemoteAddr())) {
-//
-//            try {
-//                archiveServiceFacade.storeNodeInfo(request.getRemoteAddr());
-//                archiveServiceFacade.sendCollectionRepertoireToIntegrator(subscription);
-//            } catch (Exception e) {
-//                log.error("Failed to store subscription");
-//                e.printStackTrace();
-//                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-//            }
-//            log.info(
-//                    "Received subscription request from "
-//                            + message.getCertificate().getId()
-//                            + " for topic "
-//                            + subscription.getTopic());
-//            return new ResponseEntity<>(HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-//        }
-//    }
+  //    @PostMapping(
+  //            value = "subscribe",
+  //            produces = MediaType.APPLICATION_XML_VALUE,
+  //            consumes = MediaType.APPLICATION_XML_VALUE)
+  //    public ResponseEntity postSubscribe(@RequestBody Message message, HttpServletRequest
+  // request) {
+  //        // respond with 403 if local node is inactive
+  //        if (!archiveServiceFacade.getLocalNode().isActive()) {
+  //            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+  //        }
+  //
+  //        if (archiveServiceFacade.checkCertificate(message.getCertificate(),
+  // request.getRemoteAddr())) {
+  //
+  //            try {
+  //                archiveServiceFacade.storeNodeInfo(request.getRemoteAddr());
+  //                archiveServiceFacade.sendCollectionRepertoireToIntegrator(subscription);
+  //            } catch (Exception e) {
+  //                log.error("Failed to store subscription");
+  //                e.printStackTrace();
+  //                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+  //            }
+  //            log.info(
+  //                    "Received subscription request from "
+  //                            + message.getCertificate().getId()
+  //                            + " for topic "
+  //                            + subscription.getTopic());
+  //            return new ResponseEntity<>(HttpStatus.OK);
+  //        } else {
+  //            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+  //        }
+  //    }
 }
