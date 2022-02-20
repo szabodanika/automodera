@@ -27,88 +27,138 @@
     <link href="/bootstrap-5.0.2-dist/css/bootstrap.css"
           rel="stylesheet">
     <!-- Bootstrap 5.0.1 JS-->
-    <script href="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
 
     <!--    Bootstrap Icon Pack 1.7.2 -->
     <link rel="stylesheet" href="/bootstrap-icons-1.7.2/bootstrap-icons.css">
+
+    <!--    jQuery 3.6.0 -->
+    <script type="text/javascript" src="/jquery/jquery-3.6.0.min.js"></script>
+
+    <!--    DataTables -->
+    <link rel="stylesheet" type="text/css" href="/datatables/datatables.css"/>
+    <script type="text/javascript" src="/datatables/datatables.js"></script>
 </head>
+
+
 <body class="bg-light">
-<span th:include="integrator-nav.html"></span>
-<div class="container-sm p-4 bg-white shadow-sm" style="max-width: 1000px">
-        <div th:if="${collection != null}"
-             class="col">
-            <h2 class="mb-3">
-                Collection Info
-            </h2>
-            <table class="table table-sm">
+<span th:include="nav.html"></span>
+<div class="container p-4 bg-white shadow-sm">
+    <div th:if="${collection != null}"
+         class="col">
+        <h5 class="mb-3">
+            Collection Info
+        </h5>
+        <hr>
+        <table class="table table-sm">
+            <tr>
+                <td class="bg-light">
+                    Archive
+                </td>
+                <td>
+                    <a th:text="${collection.archiveId}"
+                       th:href="${'/info/' + collection.archiveId}"></a>
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    ID
+                </td>
+                <td th:text="${collection.id}"
+                    th:href="${'/info/' + collection.archiveId}">
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Name
+                </td>
+                <td th:text="${collection.name}"></td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Version
+                </td>
+                <td th:text="${collection.version}"></td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Description
+                </td>
+                <td th:text="${collection.description}"></td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Creation Date
+                </td>
+                <td th:text="${collection.created}"></td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Enabled
+                </td>
+                <td th:text="${collection.enabled}"></td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Topics
+                </td>
+                <td>
+                    <th:block
+                            th:each="topic : ${collection.topicList}">
+                        <a th:text="${topic}"
+                           th:href="${'/topic/' + topic}"></a>
+
+                    </th:block>
+                </td>
+            </tr>
+        </table>
+        <h5 class="mb-3">
+            Images
+        </h5>
+        <hr>
+        <table
+                id="images-table"
+                class="table table-sm table-striped table-hover table-bordered">
+            <thead>
+            <tr>
+                <th>
+                    Image
+                </th>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Hash
+                </th>
+            </tr>
+            </thead>
+            <th:block
+                    th:each="image : ${collection.imageList}">
                 <tr>
-                    <td>
-                        Archive
-                    </td>
-                    <td>
-                        <a th:text="${collection.archiveId}"
-                           th:href="${'/info?nodeId=' + collection.archiveId}"></a>
-                    </td>
+                    <td style="font-family: monospace" th:text="${image.id}">
+                    <td th:text="${image.date}">
+                    <td style="font-family: monospace;  text-overflow: ellipsis;"
+                        th:text="${image.hash.length() + 'B ' +  image.hash.substring(0, 20) + '... (+' + (image.hash.length() - 20) + 'B)'}">
                 </tr>
-                <tr>
-                    <td>
-                        ID
-                    </td>
-                    <td th:text="${collection.id}"
-                        th:href="${'/operator/info?nodeId=' + collection.archiveId}">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Name
-                    </td>
-                    <td th:text="${collection.name}"></td>
-                </tr>
-                <tr>
-                    <td>
-                        Version
-                    </td>
-                    <td th:text="${collection.version}"></td>
-                </tr>
-                <tr>
-                    <td>
-                        Description
-                    </td>
-                    <td th:text="${collection.description}"></td>
-                </tr>
-                <tr>
-                    <td>
-                        Creation Date
-                    </td>
-                    <td th:text="${collection.created}"></td>
-                </tr>
-                <tr>
-                    <td>
-                        Enabled
-                    </td>
-                    <td th:text="${collection.enabled}"></td>
-                </tr>
-                <tr>
-                    <td>
-                        Topics
-                    </td>
-                    <td>
-                        <th:block
-                                th:each="topic : ${collection.topicList}">
-                            <a th:text="${topic}"
-                               th:href="${'/topic?topic=' + topic}"></a>
-                            <br>
-                        </th:block>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div th:if="${collection == null}">
-            <p>
-                Collection not found!
-            </p>
-        </div>
+            </th:block>
+
+        </table>
     </div>
+    <div th:if="${collection == null}">
+        <p>
+            Collection not found!
+        </p>
+    </div>
+</div>
+
+</div>
+<span th:include="common-footer.html"></span>
 </body>
+
+<script>
+    $(document).ready(function () {
+        $('#images-table').DataTable({});
+    });
+</script>
 
 </html>

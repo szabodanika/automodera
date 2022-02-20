@@ -75,6 +75,12 @@
                                accept="image/png, image/jpeg"
                                id="image"
                                name="image">
+
+                        <input id="attachment"
+                               name="attachment"
+                               type="text"
+                               class="form-control"
+                               placeholder="Attachment"/>
                     </div>
                     <div class="d-grid gap-2 col-6 mx-auto">
                         <button
@@ -86,9 +92,9 @@
 
                 </form>
                 <hr>
-                <h3>
+                <h4>
                     3. Result
-                </h3>
+                </h4>
                 <pre id="result" class="bg-light p-2 rounded-2">
 
                 </pre>
@@ -106,9 +112,10 @@
 
             jQuery.each(jQuery('#image')[0].files, function (i, file) {
                 data.append('image', file);
+                data.append('attachment', $("#attachment").val())
             });
 
-            var actionUrl = "http://" + $("#server").val() + "/api/check";
+            var actionUrl = "http://" + $("#server").val() + "/rest/api/check";
             $.ajax({
                 type: "POST",
                 url: actionUrl,

@@ -1,15 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~
+  ~  Copyright (c) Daniel Szabo 2021.
+  ~
+  ~  GitHub: https://github.com/szabodanika
+  ~  Email: daniel.szabo99@outlook.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>hashnet</artifactId>
-        <groupId>uk.ac.uws.danielszabo</groupId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
 
+    <modelVersion>4.0.0</modelVersion>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
+
+    <parent>
+        <artifactId>parent</artifactId>
+        <groupId>uk.ac.uws.danielszabo.automodera</groupId>
+        <version>${revision}</version>
+    </parent>
+
+    <name>Automodera Common Library</name>
     <artifactId>common</artifactId>
+    <version>${revision}</version>
 
     <dependencies>
         <dependency>
@@ -32,6 +61,15 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
             <version>2.5.7</version>
         </dependency>
+
+        <!-- security for web gui-->
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+            <version>2.5.7</version>
+        </dependency>
+
 
         <!-- testing-->
         <dependency>
@@ -76,4 +114,41 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+
+            <!-- this will prevent jar generation from this module-->
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-jar-plugin</artifactId>-->
+<!--                <version>3.2.2</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>default-jar</id>-->
+<!--                        <phase/>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.6.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <!--  do not try to repackage the jar because it doesnt exist -->
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 </project>

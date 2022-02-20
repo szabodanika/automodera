@@ -27,19 +27,29 @@
     <link href="/bootstrap-5.0.2-dist/css/bootstrap.css"
           rel="stylesheet">
     <!-- Bootstrap 5.0.1 JS-->
-    <script href="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
 
     <!--    Bootstrap Icon Pack 1.7.2 -->
     <link rel="stylesheet" href="/bootstrap-icons-1.7.2/bootstrap-icons.css">
+
+    <!--    jQuery 3.6.0 -->
+    <script type="text/javascript" src="/jquery/jquery-3.6.0.min.js"></script>
+
+    <!--    DataTables -->
+    <link rel="stylesheet" type="text/css" href="/datatables/datatables.css"/>
+    <script type="text/javascript" src="/datatables/datatables.js"></script>
 </head>
 
-<body class="bg-light">
-<span th:include="integrator-nav.html"></span>
-<div class="container-sm p-4 bg-white shadow-sm" style="max-width: 1000px">
-        <h6 class="mb-3" th:text="${'Collections in ' + topic}">
 
-        </h6>
-        <table class="table table-sm table-striped table-hover table-bordered">
+<body class="bg-light">
+<span th:include="nav.html"></span>
+<div class="container p-4 bg-white shadow-sm"  >
+    <h5 class="mb-3" th:text="${'Collections in ' + topic}">
+    </h5>
+    <hr>
+    <table class="table table-sm table-striped table-hover table-bordered"
+           id="collections-table">
+        <thead>
             <tr>
                 <th>
                     ID
@@ -54,30 +64,45 @@
                     Topics
                 </th>
             </tr>
-            <th:block th:each="collection : ${collections}">
-                <tr>
-                    <td >
-                        <a th:text="${collection.id}" th:href="${'/collection?nodeId=' + collection.archiveId +
-                           '&collectionId=' + collection.id}"></a>
-                    </td>
-                    <td th:text="${collection.name}"></td>
-                    <td th:text="${collection.created}"></td>
-                    <td>
-                        <th:block th:each="topic : ${collection.topicList}">
-                            <a th:text="${topic}"
-                               th:href="${'/topic?topic=' + topic}"></a>
-                            <br>
-                        </th:block>
-                    </td>
-                </tr>
-            </th:block>
-        </table>
-        <div th:if="${topic == null}">
-            <p>
-                Topic not found!
-            </p>
-        </div>
+        </thead>
+        <th:block th:each="collection : ${collections}">
+            <tr>
+                <td>
+                    <a th:text="${collection.id}" th:href="${'/collection/' + collection.archiveId +
+                           '/' + collection.id}"></a>
+                </td>
+                <td th:text="${collection.name}"></td>
+                <td th:text="${collection.created}"></td>
+                <td>
+                    <th:block th:each="topic : ${collection.topicList}">
+                        <a th:text="${topic}"
+                           th:href="${'/topic/' + topic}"></a>
+                    </th:block>
+                </td>
+            </tr>
+        </th:block>
+    </table>
+    <div th:if="${topic == null}">
+        <p>
+            Topic not found!
+        </p>
     </div>
+</div>
+<span th:include="common-footer.html"></span>
 </body>
-
+<script>
+    $(document).ready(function () {
+        $('#collections-table').DataTable({
+            columnDefs: [
+                {orderable: false, targets: 0}
+            ],
+            // !!!! DO NOT PUT [ [ and ] ] WITHOUT SPACES IT CAUSES THYMELEAF PARSING ERROR !!!!
+            // !!!! DO NOT PUT [ [ and ] ] WITHOUT SPACES IT CAUSES THYMELEAF PARSING ERROR !!!!
+            // !!!! DO NOT PUT [ [ and ] ] WITHOUT SPACES IT CAUSES THYMELEAF PARSING ERROR !!!!
+            'order': [
+                [1, 'asc']
+            ]
+        });
+    });
+</script>
 </html>
