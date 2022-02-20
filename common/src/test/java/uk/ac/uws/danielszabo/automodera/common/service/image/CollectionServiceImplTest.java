@@ -47,70 +47,70 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CollectionServiceImplTest {
-
-  @Mock private HashCollectionRepository hashCollectionRepository;
-
-  private HashCollectionService hashCollectionService;
-
-  private HashService hashService;
-
-  @BeforeEach
-  public void beforeEach() {
-    hashService = new HashServiceImpl();
-    hashCollectionService = new HashCollectionServiceImpl(hashCollectionRepository, hashService);
-  }
-
-  @Test
-  public void testGenerateHashCollection() throws IOException {
-
-    // default case
-
-    Node testNode =
-        new Node(
-            "testnode1",
-            "Test Node 1",
-            NodeType.INTEGRATOR,
-            "testnode1.test",
-            new Date(new java.util.Date().getTime()),
-            new ArrayList<>(),
-            new ArrayList<>());
-
-    when(hashCollectionRepository.save(any())).then(returnsFirstArg());
-
-    Collection collection =
-        hashCollectionService.generateHashCollection(
-            "./src/test/resources",
-            "test-collection",
-            "Test Collection",
-            "Description",
-            testNode,
-            List.of("topic1"),
-            false);
-
-    assertEquals("test-collection", collection.getId());
-    assertEquals("Test Collection", collection.getName());
-    assertEquals("Description", collection.getDescription());
-    assertEquals(List.of("topic1"), collection.getTopicList());
-    assertEquals(9, collection.getImageList().size());
-    assertTrue(collection.isEnabled());
-    assertNotNull(collection.getCreated());
-    assertNotNull(collection.getUpdated());
-    assertEquals(1, collection.getVersion());
-    assertEquals(collection.getArchiveId(), testNode.getId());
-    assertEquals(collection.getArchive(), testNode);
-
-    // images not accessible
-
-    assertDoesNotThrow(
-        () -> {
-          hashCollectionService.generateHashCollection(
-              "nonexistentpath",
-              "test-collection",
-              "Test Collection",
-              "Description",
-              testNode,
-              List.of("topic1"),
-              false);
-        });
-  }
+//
+//  @Mock private HashCollectionRepository hashCollectionRepository;
+//
+//  private HashCollectionService hashCollectionService;
+//
+//  private HashService hashService;
+//
+//  @BeforeEach
+//  public void beforeEach() {
+//    hashService = new HashServiceImpl();
+//    hashCollectionService = new HashCollectionServiceImpl(hashCollectionRepository, hashService);
+//  }
+//
+//  @Test
+//  public void testGenerateHashCollection() throws IOException {
+//
+//    // default case
+//
+//    Node testNode =
+//        new Node(
+//            "testnode1",
+//            "Test Node 1",
+//            NodeType.INTEGRATOR,
+//            "testnode1.test",
+//            new Date(new java.util.Date().getTime()),
+//            new ArrayList<>(),
+//            new ArrayList<>());
+//
+//    when(hashCollectionRepository.save(any())).then(returnsFirstArg());
+//
+//    Collection collection =
+//        hashCollectionService.generateHashCollection(
+//            "./src/test/resources",
+//            "test-collection",
+//            "Test Collection",
+//            "Description",
+//            testNode,
+//            List.of("topic1"),
+//            false);
+//
+//    assertEquals("test-collection", collection.getId());
+//    assertEquals("Test Collection", collection.getName());
+//    assertEquals("Description", collection.getDescription());
+//    assertEquals(List.of("topic1"), collection.getTopicList());
+//    assertEquals(9, collection.getImageList().size());
+//    assertTrue(collection.isEnabled());
+//    assertNotNull(collection.getCreated());
+//    assertNotNull(collection.getUpdated());
+//    assertEquals(1, collection.getVersion());
+//    assertEquals(collection.getArchiveId(), testNode.getId());
+//    assertEquals(collection.getArchive(), testNode);
+//
+//    // images not accessible
+//
+//    assertDoesNotThrow(
+//        () -> {
+//          hashCollectionService.generateHashCollection(
+//              "nonexistentpath",
+//              "test-collection",
+//              "Test Collection",
+//              "Description",
+//              testNode,
+//              List.of("topic1"),
+//              false);
+//        });
+//  }
 }

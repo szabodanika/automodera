@@ -87,6 +87,20 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>
+                        -Djava.library.path=lib
+                    </jvmArguments>
+                    <fork>true</fork>
+                    <skip>false</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 
@@ -96,6 +110,14 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
+            </resource>
+            <resource>
+                <filtering>false</filtering>
+                <directory>lib</directory>
+                <includes>
+                    <include>libphash.dylib</include>
+                    <include>phash.dll</include>
+                </includes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
