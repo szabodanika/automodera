@@ -1,0 +1,83 @@
+<!--
+  ~ Copyright (c) Daniel Szabo 2021.
+  ~
+  ~ GitHub: https://github.com/szabodanika
+  ~ Email: daniel.szabo99@outlook.com
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" class="bg-light">
+
+<head>
+    <!-- Bootstrap 5.0.1 css-->
+    <link href="/bootstrap-5.0.2-dist/css/bootstrap.css"
+          rel="stylesheet">
+    <!-- Bootstrap 5.0.1 JS-->
+    <script href="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+
+    <!--    Bootstrap Icon Pack 1.7.2 -->
+    <link rel="stylesheet" href="/bootstrap-icons-1.7.2/bootstrap-icons.css">
+</head>
+
+<body class="bg-light">
+<span th:include="nav.html"></span>
+<div class="container p-4 bg-white shadow-sm"  >
+        <div class="row">
+            <div class="col-2">
+            </div>
+            <div class="col">
+                <h5 class="mb-3">
+                    Initialise Network
+                </h5>
+                <hr>
+                <form method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                    <div class="mb-3">
+                        <label for="displayName" class="form-label">Name</label>
+                        <input type="text" class="form-control form-control-sm" id="displayName" name="displayName" required>
+                        <div class="form-text">Display name of the network</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="environment" class="form-label">Environment</label>
+                        <select class="form-select form-select-sm" id="environment" name="environment">
+                            <option value="dev">Development</option>
+                            <option value="prod">Production</option>
+                        </select>
+                        <div class="form-text">Use Development environment for extra debugging features
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="version" class="form-label">Version</label>
+                        <select class="form-select form-select-sm" id="version" name="version">
+                            <option value="2">0.2</option>
+                        </select>
+                        <div class="form-text">HashNet Version used in this network</div>
+                    </div>
+                    <div class="d-grid gap-2 col-3 mx-auto">
+                        <button type="submit" class="btn btn-secondary btn-sm">Initialise Network</button>
+                    </div>
+
+                </form>
+            </div>
+            <div class="col-2">
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

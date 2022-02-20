@@ -1,0 +1,279 @@
+<!--
+  ~ Copyright (c) Daniel Szabo 2021.
+  ~
+  ~ GitHub: https://github.com/szabodanika
+  ~ Email: daniel.szabo99@outlook.com
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" class="bg-light">
+
+<head>
+    <!-- Bootstrap 5.0.1 css-->
+    <link href="/bootstrap-5.0.2-dist/css/bootstrap.css"
+          rel="stylesheet">
+    <!-- Bootstrap 5.0.1 JS-->
+    <script type="text/javascript" src="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+
+    <!--    Bootstrap Icon Pack 1.7.2 -->
+    <link rel="stylesheet" href="/bootstrap-icons-1.7.2/bootstrap-icons.css">
+
+    <!--    jQuery 3.6.0 -->
+    <script type="text/javascript" src="/jquery/jquery-3.6.0.min.js"></script>
+
+    <!--    DataTables -->
+    <link rel="stylesheet" type="text/css" href="/datatables/datatables.css"/>
+    <script type="text/javascript" src="/datatables/datatables.js"></script>
+</head>
+
+
+<body class="bg-light">
+<span th:include="nav.html"></span>
+<div class="container p-4 bg-white shadow-sm">
+    <div class="col">
+        <h6 class="mb-3">
+            Create new Collection
+        </h6>
+        <hr>
+        <form method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <div class="row">
+                <div class="col">
+                    <div class="mb-3">
+                        <label for="id" class="form-label" disabled>ID</label>
+                        <input type="text"
+                               disabled
+                               class="form-control form-control-sm"
+                               id="id"
+                               th:value="${node.id} + '/'"
+                        >
+                        <div class="form-text">This will be the unique identifier of this collection
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="mb-3">
+                        <label for="displayName" class="form-label">Display Name</label>
+                        <input type="text" class="form-control form-control-sm" id="displayName" name="displayName"
+                               required>
+                        <div class="form-text">This will be displayed as the name of this collection
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <input type="text" class="form-control form-control-sm" id="description" name="description"
+                               required>
+                        <div class="form-text">Please describe the contents of this collection</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    <div class="mb-3">
+                        <label for="topics" class="form-label">Topics</label>
+                        <textarea list="topicOptions" type="text" class="form-control form-control-sm" id="topics"
+                               name="topics"
+                               required
+                        rows="3">
+                        </textarea>
+                        <div class="form-text">Please list topic IDs divided by commas ('topic1,topic2,topic3')</div>
+                        <datalist id="topicOptions">
+                            <th:block
+                                    th:each="topic : ${topics}">
+                                <option th:value="${topic.id}"
+                                        th:text="${topic.displayName}">
+                                </option>
+                            </th:block>
+                        </datalist>
+                    </div>
+                </div>
+                <div class="col">
+
+
+                    Default topics
+                    <table
+                            id="topics-table"
+                            class="table table-sm table-hover">
+                        <thead>
+                        <tr>
+                            <th>
+                                Topic Name
+                            </th>
+                            <th>
+                                Topic ID (use these)
+                            </th>
+                            <th>
+                                Topic Description
+                            </th>
+                            <th>
+                                Topic Category
+                            </th>
+                        </tr>
+                        </thead>
+
+                        <th:block
+                                th:each="topic : ${topics}">
+                            <tr>
+                                <td th:text="${topic.displayName}">
+
+                                </td>
+                                <td th:text="${topic.id}">
+
+                                </td>
+                                <td th:text="${topic.description}">
+
+                                </td>
+                                <td th:text="${topic.category}">
+
+                                </td>
+                            </tr>
+                        </th:block>
+                    </table>
+                </div>
+            </div>
+
+
+            Showing contents of:
+            <pre th:text="${rootPath}"></pre>
+            <table
+                    id="files-table"
+                    class="table table-sm table-hover">
+                <thead>
+                <tr>
+                    <th>
+                        Select
+                    </th>
+                    <th>
+                        Directory
+                    </th>
+                    <th style="width: 400px;">
+                        Files
+                    </th>
+                    <th>
+                        Count
+                    </th>
+                    <th>
+                        Size
+                    </th>
+                    <th>
+                        Collection
+                    </th>
+                </tr>
+                </thead>
+                <th:block th:each="dir, i: ${ dirList}">
+                    <tr>
+                        <td>
+                            <div class="form-check ms-3">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       name="path"
+                                       th:id="${'radio-' + i.count}"
+                                       th:value="${dir.directory()}"
+                                       th:attr="onclick=|setid('${node.id}', '${dir.directory()}')|"
+                                       th:disabled="${dir.linked()}"
+                                       required
+                                >
+                            </div>
+                        </td>
+                        <td>
+                            <span style="font-family: monospace" th:text="${dir.directory()}"></span>
+                        </td>
+                        <td>
+                            <button type="button"
+                                    th:id="${'filetable-togglebutton-' + i.count}"
+                                    th:attr="onclick=|togglefiles('${i.count}')|"
+                                    class="btn btn-sm btn-secondary"
+                            >
+                                Show files
+                            </button>
+                            <div
+                                    style="display: none; height: 200px; width: 400px; overflow-y: scroll"
+                                    class="bg-light m-2"
+                                    th:id="${'filetable-' + i.count}">
+                                <table
+                                        class="table table-sm">
+                                    <tr th:each="file : ${dir.files()}">
+                                        <td
+                                                style="font-size:small;
+                                                font-family: monospace"
+                                                th:text="${file.split(';')[0]}">
+                                        <td
+                                                style="font-size:small;
+                                                font-family: monospace"
+                                                th:text="${file.split(';')[1]}">
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                        <td th:text="${dir.files().size()}">
+                        <td th:text="${dir.sizekB() + ' MB'}">
+                        <td>
+                            <a th:if="${dir.linked()}"
+                               th:href="${'collection/'+node.getId() + dir.directory()}"
+                               th:text="${node.getId() + dir.directory()}">
+                            </a>
+                            <span th:if="${!dir.linked()}">
+                                Unlinked
+                            </span>
+                        </td>
+                    </tr>
+                </th:block>
+            </table>
+
+            <div class="d-grid gap-2 col-6 mx-auto mt-5">
+                <button class="btn btn-sm btn-secondary" type="submit">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+<span th:include="common-footer.html"></span>
+</body>
+<script>
+    function togglefiles(i) {
+        if ($('#filetable-' + i).is(":hidden")) {
+            $('#filetable-' + i).show();
+            $('#filetable-togglebutton-' + i).text('Hide files');
+        } else {
+            $('#filetable-' + i).hide();
+            $('#filetable-togglebutton-' + i).text('Show files');
+        }
+    }
+
+    function setid(nodeid, directory) {
+        $('#id').val(nodeid + directory);
+        console.log(nodeid + directory);
+    }
+
+
+    $(document).ready(function () {
+        $('#files-table').DataTable({
+            // columnDefs: [
+            //     {orderable: false, targets: 0}
+            // ],
+            // !!!! DO NOT PUT [ [ and ] ] WITHOUT SPACES IT CAUSES THYMELEAF PARSING ERROR !!!!
+            // !!!! DO NOT PUT [ [ and ] ] WITHOUT SPACES IT CAUSES THYMELEAF PARSING ERROR !!!!
+            // !!!! DO NOT PUT [ [ and ] ] WITHOUT SPACES IT CAUSES THYMELEAF PARSING ERROR !!!!
+            // 'order': [
+            //     [1, 'asc']
+            // ]
+        });
+    });
+</script>
+
+</html>

@@ -27,223 +27,257 @@
     <link href="/bootstrap-5.0.2-dist/css/bootstrap.css"
           rel="stylesheet">
     <!-- Bootstrap 5.0.1 JS-->
-    <script href="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
 
     <!--    Bootstrap Icon Pack 1.7.2 -->
     <link rel="stylesheet" href="/bootstrap-icons-1.7.2/bootstrap-icons.css">
+
+    <!--    jQuery 3.6.0 -->
+    <script type="text/javascript" src="/jquery/jquery-3.6.0.min.js"></script>
+
+    <!--    DataTables -->
+    <link rel="stylesheet" type="text/css" href="/datatables/datatables.css"/>
+    <script type="text/javascript" src="/datatables/datatables.js"></script>
 </head>
 
-<body class="bg-light">
-<span th:include="integrator-nav.html"></span>
-<div class="container-sm p-4 bg-white shadow-sm" style="max-width: 1000px">
-        <div th:if="${node != null}"
-             class="col">
-            <h6 class="mb-3">
-                Info
-            </h6>
-            <table class="table table-sm table-bordered bg-light">
-                <tr>
-                    <td>
-                        ID
-                    </td>
-                    <td th:text="${node.id}"></td>
-                </tr>
-                <tr>
-                    <td>
-                        Name
-                    </td>
-                    <td th:text="${node.name}"></td>
 
-                </tr>
-                <tr>
-                    <td>
-                        Type
-                    </td>
-                    <td th:text="${node.nodeType}"></td>
-                </tr>
-                <tr>
-                    <td>
-                        Host
-                    </td>
-                    <td>
-                        <a th:text="${node.host}"
-                           th:href="${'http://' + node.host}">
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Status
-                    </td>
-                    <td th:if="${node.active && node.online}"
-                        class="text-success">
-                        <i class="bi bi-cloud-fill"></i>
-                        Online (Active)
-                    </td>
-                    <td th:if="${!node.active && node.online}"
-                        class="text-warning">
-                        <i class="bi bi-cloud-moon"></i>
-                        Online (Inactive)
-                    </td>
-                    <td th:if="${!node.online}"
-                        class="text-danger">
-                        <i class="bi bi-cloud-slash"></i>
-                        Offline
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Activation Date
-                    </td>
-                    <td th:text="${node.createdAt}"></td>
-                </tr>
-            </table>
+<body class="bg-light">
+<span th:include="nav.html"></span>
+<div class="container p-4 bg-white shadow-sm"  >
+    <div th:if="${node != null}"
+         class="col">
+        <h5 class="mb-3">
+            Info
+        </h5>
+        <hr>
+        <table class="table table-sm">
+            <tr>
+                <td class="bg-light">
+                    ID
+                </td>
+                <td th:text="${node.id}"></td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Name
+                </td>
+                <td th:text="${node.name}"></td>
+
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Type
+                </td>
+                <td th:text="${node.nodeType}"></td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Host
+                </td>
+                <td>
+                    <a th:text="${node.host}"
+                       th:href="${'http://' + node.host}">
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Status
+                </td>
+                <td th:if="${node.active && node.online}"
+                    class="">
+                    <i class="text-success bi bi-check-circle-fill"></i>
+                    Online (Active)
+                </td>
+                <td th:if="${!node.active && node.online}"
+                    class="">
+                    <i class="text-warning bi bi-dash-circle-fill"></i>
+                    Online (Inactive)
+                </td>
+                <td th:if="${!node.online}"
+                    class="">
+                    <i class="bi text-danger bi-x-circle-fill"></i>
+                    Offline
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Activation Date
+                </td>
+                <td th:text="${node.createdAt}"></td>
+            </tr>
+        </table>
+        <h5 class="mb-3">
+            Certificate
+        </h5>
+        <hr>
+        <table class="table table-sm ">
+            <tr>
+                <td class="bg-light">
+                    Legal Name
+                </td>
+                <td th:text="${node.certificate.legalName}"></td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Address Line 1
+                </td>
+                <td th:text="${node.certificate.addressLine1}"></td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Address Line 2
+                </td>
+                <td th:text="${node.certificate.addressLine2}"></td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Post Code
+                </td>
+                <td th:text="${node.certificate.postCode}"></td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Country
+                </td>
+                <td th:text="${node.certificate.country}"></td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Admin Email
+                </td>
+                <td>
+                    <a th:text="${node.certificate.adminEmail}"
+                       th:href="${'mailto:' + node.certificate.adminEmail}">
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Host Name
+                </td>
+                <td>
+                    <a th:text="${node.certificate.host}"
+                       th:href="${'http://' + node.certificate.host}">
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Expiration Date
+                </td>
+                <td th:if="${node.certificate.expiration != null}"
+                    th:text="${node.certificate.expiration}"></td>
+                <td th:if="${node.certificate.expiration == null}">
+                    NULL
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Issue Date
+                </td>
+                <td th:if="${node.certificate.issued != null}"
+                    th:text="${node.certificate.issued}"></td>
+                <td th:if="${node.certificate.issued == null}">
+                    NULL
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Network
+                    Rights
+                </td>
+                <td>
+                    <span th:text="${networkRight}"
+                        th:each=" networkRight : ${node.certificate.networkRights}"
+                        class="me-2 badge bg-secondary">
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="bg-light">
+                    Issued
+                    By
+                </td>
+                <td th:if="${node.certificate.issuer != null}">
+                    <a th:href="${'/info/' + node.certificate.issuer.id}"
+                       th:text="${node.certificate.issuer.id}">
+                    </a>
+                </td>
+                <td th:if="${node.certificate.issuer == null}">
+                    NULL
+                </td>
+            </tr>
+        </table>
+        <div th:if="${node.nodeType.toString() == 'ARCHIVE'}">
+            <h5 class="mb-3">
+                Published Collections
+            </h5>
             <hr>
-            <h6 class="mb-3">
-                Certificate
-            </h6>
-            <table class="table table-sm table-bordered bg-light">
+            <table
+                    class="table table-sm table-striped table-hover table-bordered"
+                    id="collections-table"
+            >
+                <thead>
                 <tr>
-                    <td>
-                        Legal Name
-                    </td>
-                    <td th:text="${node.certificate.legalName}"></td>
+                    <th>
+                        ID
+                    </th>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Date
+                    </th>
+                    <th>
+                        Topics
+                    </th>
                 </tr>
-                <tr>
-                    <td>
-                        Address Line 1
-                    </td>
-                    <td th:text="${node.certificate.addressLine1}"></td>
-                </tr>
-                <tr>
-                    <td>
-                        Address Line 2
-                    </td>
-                    <td th:text="${node.certificate.addressLine2}"></td>
-                </tr>
-                <tr>
-                    <td>
-                        Post Code
-                    </td>
-                    <td th:text="${node.certificate.postCode}"></td>
-                </tr>
-                <tr>
-                    <td>
-                        Country
-                    </td>
-                    <td th:text="${node.certificate.country}"></td>
-                </tr>
-                <tr>
-                    <td>
-                        Admin Email
-                    </td>
-                    <td>
-                        <a th:text="${node.certificate.adminEmail}"
-                           th:href="${'mailto:' + node.certificate.adminEmail}">
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Host Name
-                    </td>
-                    <td>
-                        <a th:text="${node.certificate.host}"
-                           th:href="${'http://' + node.certificate.host}">
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Expiration Date
-                    </td>
-                    <td th:if="${node.certificate.expiration != null}"
-                        th:text="${node.certificate.expiration}"></td>
-                    <td th:if="${node.certificate.expiration == null}">
-                        NULL
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Issue Date
-                    </td>
-                    <td th:if="${node.certificate.issued != null}"
-                        th:text="${node.certificate.issued}"></td>
-                    <td th:if="${node.certificate.issued == null}">
-                        NULL
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Network
-                        Rights
-                    </td>
-                    <td th:text="${node.certificate.networkRights}"></td>
-                </tr>
-                <tr>
-                    <td>
-                        Issued
-                        By
-                    </td>
-                    <td th:if="${node.certificate.issuer != null}">
-                        <a th:href="${'/info?nodeId=' + node.certificate.issuer.id}"
-                           th:text="${node.certificate.issuer.id}">
-                        </a>
-                    </td>
-                    <td th:if="${node.certificate.issuer == null}">
-                        NULL
-                    </td>
-                </tr>
-            </table>
-            <div th:if="${node.nodeType.toString() == 'ARCHIVE'}">
-                <hr>
-                <h4 class="mb-3">
-                    Published Collections
-                </h4>
-                <table class="table table-sm table-striped table-hover table-bordered">
+                </thead>
+                <th:block
+                        th:each="collection : ${collections}">
                     <tr>
-                        <th>
-                            ID
-                        </th>
-                        <th>
-                            Name
-                        </th>
-                        <th>
-                            Date
-                        </th>
-                        <th>
-                            Topics
-                        </th>
+                        <td>
+                            <a th:text="${collection.id}"
+                               th:href="${'/collection/' + collection.id}"></a>
+                        </td>
+                        <td th:text="${collection.name}"></td>
+                        <td th:text="${collection.created}"></td>
+                        <td>
+                            <th:block
+                                    th:each="topic : ${collection.topicList}">
+                                <a th:text="${topic}"
+                                   th:href="${'/topic/' + topic}"></a>
+                                <br>
+                            </th:block>
+                        </td>
                     </tr>
-                    <th:block
-                            th:each="collection : ${collections}">
-                        <tr>
-                            <td>
-                                <a th:text="${collection.id}"
-                                   th:href="${'/collection?nodeId=' + node.id +
-                           '&collectionId=' + collection.id}"></a>
-                            </td>
-                            <td th:text="${collection.name}"></td>
-                            <td th:text="${collection.created}"></td>
-                            <td>
-                                <th:block
-                                        th:each="topic : ${collection.topicList}">
-                                    <a th:text="${topic}"
-                                       th:href="${'/topic?topic=' + topic}"></a>
-                                    <br>
-                                </th:block>
-                            </td>
-                        </tr>
-                    </th:block>
-                </table>
-            </div>
-        </div>
-        <div th:if="${node == null}">
-            <p>
-                Node not found!
-            </p>
+                </th:block>
+            </table>
         </div>
     </div>
+    <div th:if="${node == null}">
+        <p>
+            Node not found!
+        </p>
+    </div>
+</div>
+<span th:include="common-footer.html"></span>
 </body>
+<script>
+    $(document).ready(function () {
+        $('#collections-table').DataTable({
+            columnDefs: [
+                {orderable: false, targets: 0}
+            ],
+            // !!!! DO NOT PUT [ [ and ] ] WITHOUT SPACES IT CAUSES THYMELEAF PARSING ERROR !!!!
+            // !!!! DO NOT PUT [ [ and ] ] WITHOUT SPACES IT CAUSES THYMELEAF PARSING ERROR !!!!
+            // !!!! DO NOT PUT [ [ and ] ] WITHOUT SPACES IT CAUSES THYMELEAF PARSING ERROR !!!!
+            'order': [
+                [1, 'asc']
+            ]
+        });
+    });
+</script>
 
 </html>

@@ -1,0 +1,49 @@
+/*
+ *
+ *  Copyright (c) Daniel Szabo 2022.
+ *
+ *  GitHub: https://github.com/szabodanika
+ *  Email: daniel.szabo99@outlook.com
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+package uk.ac.uws.danielszabo.automodera.common.service.hashing;
+
+import dev.brachtendorf.jimagehash.hash.Hash;
+import dev.brachtendorf.jimagehash.hashAlgorithms.HashingAlgorithm;
+import dev.brachtendorf.jimagehash.hashAlgorithms.PerceptiveHash;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.io.IOException;
+
+@Slf4j
+@Service
+public class HashServiceImpl implements HashService {
+
+	@Override
+	public String pHash(File image) throws IOException {
+		log.debug("Hashing " + image.getName());
+		return RustPHash.getHashForFile(image.getPath());
+	}
+
+	@Override
+	public double simScore(String hash1, String hash2) {
+		log.debug("Calculating similarity score for  " + hash1 + " and " + hash2);
+		return RustPHash.getSimilarityScore(hash1, hash2);
+	}
+}

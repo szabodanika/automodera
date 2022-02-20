@@ -26,57 +26,68 @@
     <link href="/bootstrap-5.0.2-dist/css/bootstrap.css"
           rel="stylesheet">
     <!-- Bootstrap 5.0.1 JS-->
-    <script href="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
 
     <!--    Bootstrap Icon Pack 1.7.2 -->
     <link rel="stylesheet" href="/bootstrap-icons-1.7.2/bootstrap-icons.css">
+
+    <!--    jQuery 3.6.0 -->
+    <script type="text/javascript" src="/jquery/jquery-3.6.0.min.js"></script>
+
+    <!--    DataTables -->
+    <link rel="stylesheet" type="text/css" href="/datatables/datatables.css"/>
+    <script type="text/javascript" src="/datatables/datatables.js"></script>
 </head>
 
+
 <body class="bg-light">
-<span th:include="operator-nav.html"></span>
-<div class="container-sm p-4 bg-white shadow-sm" style="max-width: 1000px">
-        <div th:if="${network != null}" class="col">
-            <h6 class="mb-3">
-                Network
-            </h6>
-            <table class="table table-sm table-bordered bg-light">
+<span th:include="nav.html"></span>
+<div class="container-sm pt-3 bg-white shadow-sm"  >
+    <div class="card-body pt-2 pb-5"><h5 class="mb-3">
+        Network
+    </h5>
+        <hr>
+        <div th:if="${network != null}">
+            <table class="table table-sm">
                 <tr>
-                    <td>
+                    <td class=" bg-light">
                         ID
                     </td>
                     <td th:text="${network.id}"></td>
                 </tr>
                 <tr>
-                    <td>
+                    <td class=" bg-light">
                         Name
                     </td>
                     <td th:text="${network.name}"></td>
-
                 </tr>
                 <tr>
-                    <td>
+                    <td class=" bg-light">
                         Environment
                     </td>
                     <td th:text="${network.environment}"></td>
                 </tr>
                 <tr>
-                    <td>
+                    <td class=" bg-light">
                         Origin
                     </td>
                     <td th:text="${network.origin}"></td>
                 </tr>
                 <tr>
-                    <td>
+                    <td class=" bg-light">
                         Version
                     </td>
                     <td th:text="${network.version}"></td>
                 </tr>
             </table>
-            <hr>
-            <h6 class="mb-3">
+            <h5 class="mb-3">
                 Nodes
-            </h6>
-            <table class="table table-sm table-striped table-hover table-bordered">
+            </h5>
+            <hr>
+            <table
+                    id="nodes-table"
+                    class="table table-sm table-striped table-hover table-bordered">
+                <thead>
                 <tr>
                     <th>
                         ID
@@ -94,10 +105,11 @@
                         Status
                     </th>
                 </tr>
+                </thead>
                 <th:block th:each="node : ${nodes}">
                     <tr>
                         <td>
-                            <a th:text="${node.id}" th:href="${'/info?nodeId=' + node.id}"></a>
+                            <a th:text="${node.id}" th:href="${'/info/' + node.id}"></a>
                         </td>
                         <td th:text="${node.nodeType}"></td>
                         <td th:text="${node.name}"></td>
@@ -106,26 +118,34 @@
                                th:href="${'http://' + node.certificate.host}">
                             </a>
                         </td>
-                        <td th:if="${node.active && node.online}"
-                            class="text-success">
-                            <i class="bi bi-cloud-fill"></i>
+                        <td th:if="${node.active && node.online}">
+                            <i class="text-success bi bi-check-circle-fill"></i>
                             Online (Active)
                         </td>
-                        <td th:if="${!node.active && node.online}"
-                            class="text-warning">
-                            <i class="bi bi-cloud-moon"></i>
+                        <td th:if="${!node.active && node.online}">
+                            <i class="text-warning bi bi-dash-circle-fill"></i>
                             Online (Inactive)
                         </td>
-                        <td th:if="${!node.online}"
-                            class="text-danger">
-                            <i class="bi bi-cloud-slash"></i>
+                        <td th:if="${!node.online}">
+                            <i class="text-danger bi bi-x-circle-fill"></i>
                             Offline
                         </td>
                     </tr>
                 </th:block>
             </table>
         </div>
+        <div th:if="${network == null}">
+            You are not connected to a network yet.
+        </div>
     </div>
+</div>
+<span th:include="common-footer.html"></span>
 </body>
+
+<script>
+    $(document).ready(function () {
+        $('#nodes-table').DataTable({});
+    });
+</script>
 
 </html>

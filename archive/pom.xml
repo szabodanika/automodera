@@ -25,18 +25,22 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>hashnet</artifactId>
-        <groupId>uk.ac.uws.danielszabo</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <artifactId>parent</artifactId>
+        <groupId>uk.ac.uws.danielszabo.automodera</groupId>
+        <version>${revision}</version>
     </parent>
+
+    <name>Automodera Archive Node</name>
+    <artifactId>archive</artifactId>
+    <version>${revision}</version>
+
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>archive</artifactId>
     <dependencies>
         <dependency>
-            <groupId>uk.ac.uws.danielszabo</groupId>
+            <groupId>uk.ac.uws.danielszabo.automodera</groupId>
             <artifactId>common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
@@ -90,16 +94,48 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>
+                        -Djava.library.path=lib
+                    </jvmArguments>
+                    <fork>true</fork>
+                    <skip>false</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 
-<!--        &lt;!&ndash; used to inject maven properties in to application.properties file&ndash;&gt;-->
-<!--        <resources>-->
-<!--            <resource>-->
-<!--                <directory>src/main/resources</directory>-->
-<!--                <filtering>true</filtering>-->
-<!--            </resource>-->
-<!--        </resources>-->
+        <!-- used to inject maven properties in to application.properties file-->
+        <!-- don't filter web stuff because it breaks fonts and other static resources-->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <filtering>false</filtering>
+                <directory>lib</directory>
+                <includes>
+                    <include>libphash.dylib</include>
+                    <include>phash.dll</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>application.properties</include>
+                    <include>application-prod.properties</include>
+                    <include>application-dev.properties</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
 
 </project>
