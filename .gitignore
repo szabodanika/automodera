@@ -20,6 +20,7 @@ buildNumber.properties
 *.sqlite
 *.jpeg
 *.png
+*.DS_Store
 /jars
 /.idea/
 
