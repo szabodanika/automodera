@@ -34,8 +34,8 @@
 </head>
 
 <body class="bg-light">
-<div class="container-sm p-4 bg-white shadow-sm" style="max-width: 1000px">
-        <h1 class="mb-3">
+<div class="container-sm mt-5 p-4 bg-white shadow-sm"  >
+        <h1 class="mb-3 text-danger">
             Error
         </h1>
         <h3 th:if="${exception!=null}" th:text="${exception.getMessage()}"></h3>
@@ -70,16 +70,15 @@
             </tr>
             <tr>
                 <td>Trace</td>
-                <td>
+                <td style="max-width: 200px; max-height: 200px; overflow: scroll">
                     <pre th:text="${trace}"/>
                 </td>
             </tr>
         </table>
 
-        <!--    <p class="text-muted" th:text="${}"></p>-->
-        <a class="btn btn-primary mt-3" href="/">
-            Go Home
-        </a>
+        <div class="d-grid gap-2 col-3 mx-auto">
+            <a type="submit" class="btn btn-secondary" href="/">Go back</a>
+        </div>
     </div>
 </body>
 
