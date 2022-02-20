@@ -32,20 +32,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("login")
 public class LoginController {
 
-    private final Environment env;
+  private final Environment env;
 
-    public LoginController(Environment env) {
-        this.env = env;
-    }
+  public LoginController(Environment env) {
+    this.env = env;
+  }
 
-    @GetMapping("")
-    public String getLogin(Model model) {
+  @GetMapping("")
+  public String getLogin(Model model) {
 
-        // maven build data for footer
-        model.addAttribute("buildName", env.getProperty("build.name"));
-        model.addAttribute("buildVersion", env.getProperty("build.version"));
-        model.addAttribute("buildTimestamp", env.getProperty("build.timestamp"));
-        return "common-login";
-    }
-
+    // maven build data for footer
+    model.addAttribute("buildName", env.getProperty("build.name"));
+    model.addAttribute("buildVersion", env.getProperty("build.version"));
+    model.addAttribute("buildTimestamp", env.getProperty("build.timestamp"));
+    return "common-login";
+  }
 }

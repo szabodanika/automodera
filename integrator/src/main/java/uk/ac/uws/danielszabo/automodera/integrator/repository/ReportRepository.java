@@ -27,6 +27,4 @@ import org.springframework.stereotype.Repository;
 import uk.ac.uws.danielszabo.automodera.integrator.model.Report;
 
 @Repository
-public interface ReportRepository extends JpaRepository<Report, Long> {
-
-}
+public interface ReportRepository extends JpaRepository<Report, Long> {}

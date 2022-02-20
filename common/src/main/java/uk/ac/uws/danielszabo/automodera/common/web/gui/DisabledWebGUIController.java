@@ -30,16 +30,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@ConditionalOnProperty(
-        value = "webgui.enabled",
-        havingValue = "false"
-    )
+@ConditionalOnProperty(value = "webgui.enabled", havingValue = "false")
 @RequestMapping("disabled")
 public class DisabledWebGUIController {
 
-    @GetMapping("")
-    public ResponseEntity getIndex() {
-        return new ResponseEntity(HttpStatus.LOCKED);
-    }
-
+  @GetMapping("")
+  public ResponseEntity getIndex() {
+    return new ResponseEntity(HttpStatus.LOCKED);
+  }
 }

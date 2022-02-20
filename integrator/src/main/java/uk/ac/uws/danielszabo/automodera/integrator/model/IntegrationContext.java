@@ -22,7 +22,6 @@
 
 package uk.ac.uws.danielszabo.automodera.integrator.model;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,15 +38,14 @@ import java.util.List;
 @Component
 public class IntegrationContext {
 
-    private boolean active = false;
+  private boolean active = false;
 
-    @Value("#{'${integration.addresses}'.split(';')}")
-    private List<String> enabledInputAddresses;
+  @Value("#{'${integration.addresses}'.split(';')}")
+  private List<String> enabledInputAddresses;
 
-    @Value("${integration.rate.requests}")
-    private int requestLimitCount;
+  @Value("${integration.rate.requests}")
+  private int requestLimitCount;
 
-    @Value("${integration.rate.period}")
-    private int requestLimitPeriod;
-
+  @Value("${integration.rate.period}")
+  private int requestLimitPeriod;
 }

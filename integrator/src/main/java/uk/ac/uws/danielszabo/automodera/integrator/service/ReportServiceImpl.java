@@ -28,23 +28,22 @@ import uk.ac.uws.danielszabo.automodera.integrator.repository.ReportRepository;
 
 import java.util.List;
 
-
 @Service
 public class ReportServiceImpl implements ReportService {
 
-    private final ReportRepository reportRepository;
+  private final ReportRepository reportRepository;
 
-    public ReportServiceImpl(ReportRepository reportRepository) {
-        this.reportRepository = reportRepository;
-    }
+  public ReportServiceImpl(ReportRepository reportRepository) {
+    this.reportRepository = reportRepository;
+  }
 
-    @Override
-    public List<Report> getAll() {
-        return reportRepository.findAll();
-    }
+  @Override
+  public List<Report> getAll() {
+    return reportRepository.findAll();
+  }
 
-    @Override
-    public Report save(Report report) {
-        return reportRepository.save(report);
-    }
+  @Override
+  public Report save(Report report) {
+    return reportRepository.save(report);
+  }
 }

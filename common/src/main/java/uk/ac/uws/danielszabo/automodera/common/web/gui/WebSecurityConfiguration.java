@@ -22,7 +22,6 @@
 
 package uk.ac.uws.danielszabo.automodera.common.web.gui;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.context.annotation.Configuration;
@@ -37,68 +36,64 @@ import uk.ac.uws.danielszabo.automodera.common.constants.WebPaths;
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final Environment env;
+  private final Environment env;
 
-    public WebSecurityConfiguration(Environment env) {
-        this.env = env;
+  public WebSecurityConfiguration(Environment env) {
+    this.env = env;
+  }
+
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    // if web gui is disabled, only allow rest api access
+    if (env.getProperty("webgui.enable").equals("false")) {
+      log.info("Web GUI access DISABLED");
+      http.authorizeRequests()
+          .antMatchers(
+              // allow rest controllers
+              WebPaths.REST_BASE_PATH + "/**")
+          .permitAll()
+          .anyRequest()
+          .authenticated()
+          .and()
+          // custom login page
+          .formLogin()
+          .loginPage("/disabled")
+          .permitAll();
+    } else if (env.getProperty("webgui.enable").equals("true")) {
+      log.info("Web GUI access ENABLED");
+      http.csrf()
+          .ignoringAntMatchers(
+              // don't request csrf token for rest endpoints
+              WebPaths.REST_BASE_PATH + "/**")
+          .and()
+          .authorizeRequests()
+          .antMatchers(
+              // allow rest controllers
+              WebPaths.REST_BASE_PATH + "/**",
+              // and static resources
+              "/bootstrap-5.0.2-dist/**",
+              "/bootstrap-icons-1.7.2/**",
+              "/datatables/**",
+              "/jquery/**")
+          .permitAll()
+          .anyRequest()
+          .authenticated()
+          .and()
+          // custom login page
+          .formLogin()
+          .loginPage("/login")
+          .permitAll()
+          .and()
+          .logout()
+          .permitAll();
     }
+  }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        // if web gui is disabled, only allow rest api access
-        if (env.getProperty("webgui.enable").equals("false")) {
-            log.info("Web GUI access DISABLED");
-            http
-                    .authorizeRequests()
-                    .antMatchers(
-                            // allow rest controllers
-                            WebPaths.REST_BASE_PATH + "/**"
-                    )
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated()
-                    .and()
-                    // custom login page
-                    .formLogin()
-                    .loginPage("/disabled")
-                    .permitAll();
-        } else if (env.getProperty("webgui.enable").equals("true")) {
-            log.info("Web GUI access ENABLED");
-            http
-                    .csrf()
-                    .ignoringAntMatchers(
-                            // don't request csrf token for rest endpoints
-                            WebPaths.REST_BASE_PATH + "/**")
-                    .and()
-                    .authorizeRequests()
-                    .antMatchers(
-                            // allow rest controllers
-                            WebPaths.REST_BASE_PATH + "/**",
-                            // and static resources
-                            "/bootstrap-5.0.2-dist/**",
-                            "/bootstrap-icons-1.7.2/**",
-                            "/datatables/**",
-                            "/jquery/**"
-                    ).permitAll()
-                    .anyRequest().authenticated()
-                    .and()
-                    // custom login page
-                    .formLogin()
-                    .loginPage("/login")
-                    .permitAll()
-                    .and()
-                    .logout()
-                    .permitAll();
-        }
-    }
-
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser(env.getProperty("webgui.admin.username"))
-                .password("{noop}" + env.getProperty("webgui.admin.password"))
-                .roles("ADMIN");
-    }
-
-
+  @Override
+  public void configure(AuthenticationManagerBuilder auth) throws Exception {
+    auth.inMemoryAuthentication()
+        .withUser(env.getProperty("webgui.admin.username"))
+        .password("{noop}" + env.getProperty("webgui.admin.password"))
+        .roles("ADMIN");
+  }
 }

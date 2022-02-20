@@ -28,8 +28,7 @@ import java.util.List;
 
 public interface ReportService {
 
-    List<Report> getAll();
+  List<Report> getAll();
 
-    Report save(Report report);
-
+  Report save(Report report);
 }
