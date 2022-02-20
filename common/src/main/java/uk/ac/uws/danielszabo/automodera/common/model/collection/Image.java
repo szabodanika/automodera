@@ -31,7 +31,6 @@ import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.File;
-import java.math.BigInteger;
 import java.sql.Date;
 
 @Getter

@@ -23,13 +23,11 @@
 package uk.ac.uws.danielszabo.automodera.common.model.network.node;
 
 import lombok.*;
-import uk.ac.uws.danielszabo.automodera.common.model.collection.SubscriptionListStringConverter;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
 
 @Getter
 @Setter
@@ -46,5 +44,4 @@ public class LocalNode {
   @OneToOne(cascade = CascadeType.ALL)
   @NonNull
   private Node local;
-
 }

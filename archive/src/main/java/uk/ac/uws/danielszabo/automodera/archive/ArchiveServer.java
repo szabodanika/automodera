@@ -36,7 +36,8 @@ import uk.ac.uws.danielszabo.automodera.common.service.hashing.RustPHash;
 @Slf4j
 @Import({NetworkConfiguration.class, RustPHash.class})
 @SpringBootApplication
-@EntityScan(basePackages = {"uk.ac.uws.danielszabo.automodera.common", "uk.ac.uws.danielszabo.archive"})
+@EntityScan(
+    basePackages = {"uk.ac.uws.danielszabo.automodera.common", "uk.ac.uws.danielszabo.archive"})
 @ComponentScan(basePackages = {"uk.ac.uws.danielszabo"})
 @EnableJpaRepositories("uk.ac.uws.danielszabo.automodera.common.repository")
 public class ArchiveServer {

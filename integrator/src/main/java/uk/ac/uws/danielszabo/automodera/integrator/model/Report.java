@@ -29,7 +29,6 @@ import uk.ac.uws.danielszabo.automodera.common.model.collection.TopicListStringC
 import uk.ac.uws.danielszabo.automodera.common.util.SQLDateAdapter;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.sql.Date;
@@ -45,78 +44,79 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Report {
 
-    // TODO this has to be tuned for each algorithm
-    // or each algorithm have to be tuned for these numbers
-    public enum MatchProbability {
-        NONE(0.6),
-        LOW(0.7),
-        MODERATE(0.8),
-        HIGH(0.9),
-        EXACT(1);
+  // TODO this has to be tuned for each algorithm
+  // or each algorithm have to be tuned for these numbers
+  public enum MatchProbability {
+    NONE(0.6),
+    LOW(0.7),
+    MODERATE(0.8),
+    HIGH(0.9),
+    EXACT(1);
 
-        public double maxValue;
+    public double maxValue;
 
-        MatchProbability(double maxValue) {
-            this.maxValue = maxValue;
-        }
-
-        public static MatchProbability getMatchProbability(double highestMatchScore) {
-            for (MatchProbability matchProbability : MatchProbability.values()) {
-                if (highestMatchScore <= matchProbability.maxValue) {
-                    return matchProbability;
-                }
-            }
-            throw new OutOfRangeException(highestMatchScore, 0d, 1d);
-        }
+    MatchProbability(double maxValue) {
+      this.maxValue = maxValue;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @NonNull
-    private Long id;
-
-    //  @Column(name = "highestmatch_id")
-    //  @NonNull
-    //  private String highestMathchId;
-    //
-    //  @JoinColumn(name = "highestmatch_id", insertable = false, updatable = false)
-    //  @ManyToOne(targetEntity = Image.class, fetch = FetchType.EAGER)
-    //  @XmlTransient
-    //  @NotFound(action = NotFoundAction.IGNORE)
-    //  @NonNull private Image highestMatch;
-
-    @ManyToOne
-    @NonNull
-    private Image highestMatch;
-
-    @NonNull
-    private double highestMatchScore;
-
-    @Enumerated(EnumType.STRING)
-    private MatchProbability matchProbability;
-
-    private String attachment;
-
-    private String source;
-
-    @NonNull
-    @XmlJavaTypeAdapter(SQLDateAdapter.class)
-    private Date date;
-
-    @XmlElementWrapper(name = "topicList")
-    @XmlElement(name = "topic")
-    @NonNull
-    @Convert(converter = TopicListStringConverter.class)
-    private List<String> topicList;
-
-    public Report(Image highestMatch, double highestMatchScore, List<String> topicList, String attachment, String source) {
-        this.highestMatch = highestMatch;
-        this.highestMatchScore = highestMatchScore;
-        this.topicList = topicList;
-        date = new Date(new java.util.Date().getTime());
-        this.matchProbability = Report.MatchProbability.getMatchProbability(highestMatchScore);
-        this.attachment = attachment;
-        this.source = source;
+    public static MatchProbability getMatchProbability(double highestMatchScore) {
+      for (MatchProbability matchProbability : MatchProbability.values()) {
+        if (highestMatchScore <= matchProbability.maxValue) {
+          return matchProbability;
+        }
+      }
+      throw new OutOfRangeException(highestMatchScore, 0d, 1d);
     }
+  }
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @NonNull
+  private Long id;
+
+  //  @Column(name = "highestmatch_id")
+  //  @NonNull
+  //  private String highestMathchId;
+  //
+  //  @JoinColumn(name = "highestmatch_id", insertable = false, updatable = false)
+  //  @ManyToOne(targetEntity = Image.class, fetch = FetchType.EAGER)
+  //  @XmlTransient
+  //  @NotFound(action = NotFoundAction.IGNORE)
+  //  @NonNull private Image highestMatch;
+
+  @ManyToOne @NonNull private Image highestMatch;
+
+  @NonNull private double highestMatchScore;
+
+  @Enumerated(EnumType.STRING)
+  private MatchProbability matchProbability;
+
+  private String attachment;
+
+  private String source;
+
+  @NonNull
+  @XmlJavaTypeAdapter(SQLDateAdapter.class)
+  private Date date;
+
+  @XmlElementWrapper(name = "topicList")
+  @XmlElement(name = "topic")
+  @NonNull
+  @Convert(converter = TopicListStringConverter.class)
+  private List<String> topicList;
+
+  public Report(
+      Image highestMatch,
+      double highestMatchScore,
+      List<String> topicList,
+      String attachment,
+      String source) {
+    this.highestMatch = highestMatch;
+    this.highestMatchScore = highestMatchScore;
+    this.topicList = topicList;
+    date = new Date(new java.util.Date().getTime());
+    this.matchProbability = Report.MatchProbability.getMatchProbability(highestMatchScore);
+    this.attachment = attachment;
+    this.source = source;
+  }
 }

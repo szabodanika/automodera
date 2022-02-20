@@ -40,30 +40,30 @@ import uk.ac.uws.danielszabo.automodera.integrator.service.IntegratorServiceFaca
 @RequestMapping("rest/net/certificate")
 public class CertificateRestController {
 
-    private final IntegratorServiceFacade integratorServiceFacade;
+  private final IntegratorServiceFacade integratorServiceFacade;
 
-    public CertificateRestController(IntegratorServiceFacade integratorServiceFacade) {
-        this.integratorServiceFacade = integratorServiceFacade;
-    }
+  public CertificateRestController(IntegratorServiceFacade integratorServiceFacade) {
+    this.integratorServiceFacade = integratorServiceFacade;
+  }
 
-    @PostMapping(
-            value = "processedrequest",
-            consumes = MediaType.APPLICATION_XML_VALUE,
-            produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity postRequest(@RequestBody Message message) {
-        CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
-        if (integratorServiceFacade
-                .findCertificateRequestById(certificateRequest.getId())
-                .isPresent()) {
+  @PostMapping(
+      value = "processedrequest",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity postRequest(@RequestBody Message message) {
+    CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
+    if (integratorServiceFacade
+        .findCertificateRequestById(certificateRequest.getId())
+        .isPresent()) {
 
-            NodeCertificate certificate = certificateRequest.getNode().getCertificate();
+      NodeCertificate certificate = certificateRequest.getNode().getCertificate();
 
-            integratorServiceFacade.saveCertificate(certificate);
-            integratorServiceFacade.saveCertificateRequest(certificateRequest);
+      integratorServiceFacade.saveCertificate(certificate);
+      integratorServiceFacade.saveCertificateRequest(certificateRequest);
 
-            log.info("Received processed certificate from " + message.getCertificate().getId());
+      log.info("Received processed certificate from " + message.getCertificate().getId());
 
-            return new ResponseEntity(HttpStatus.OK);
-        } else return new ResponseEntity(HttpStatus.FORBIDDEN);
-    }
+      return new ResponseEntity(HttpStatus.OK);
+    } else return new ResponseEntity(HttpStatus.FORBIDDEN);
+  }
 }

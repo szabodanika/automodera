@@ -40,48 +40,48 @@ import java.util.Optional;
 @RequestMapping("rest/net")
 public class NetworkRestController {
 
-    private final OperatorServiceFacade operatorServiceFacade;
+  private final OperatorServiceFacade operatorServiceFacade;
 
-    private final MessageFactory messageFactory;
+  private final MessageFactory messageFactory;
 
-    public NetworkRestController(
-            OperatorServiceFacade operatorServiceFacade, MessageFactory messageFactory) {
-        this.operatorServiceFacade = operatorServiceFacade;
-        this.messageFactory = messageFactory;
+  public NetworkRestController(
+      OperatorServiceFacade operatorServiceFacade, MessageFactory messageFactory) {
+    this.operatorServiceFacade = operatorServiceFacade;
+    this.messageFactory = messageFactory;
+  }
+
+  @PostMapping(
+      value = "config",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity postConfigRequest(HttpServletRequest request) {
+    // respond with 403 if local node is inactive
+    if (!operatorServiceFacade.getLocalNode().isActive()) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    @PostMapping(
-            value = "config",
-            consumes = MediaType.APPLICATION_XML_VALUE,
-            produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity postConfigRequest(HttpServletRequest request) {
-        // respond with 403 if local node is inactive
-        if (!operatorServiceFacade.getLocalNode().isActive()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+    log.info("Network configuration requested by " + request.getRemoteAddr());
+    return new ResponseEntity<>(operatorServiceFacade.getNetworkConfiguration(), HttpStatus.OK);
+  }
 
-        log.info("Network configuration requested by " + request.getRemoteAddr());
-        return new ResponseEntity<>(operatorServiceFacade.getNetworkConfiguration(), HttpStatus.OK);
+  @PostMapping(
+      value = "resolveid",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity postResolveId(@RequestBody Message message, HttpServletRequest request) {
+    // respond with 403 if local node is inactive
+    if (!operatorServiceFacade.getLocalNode().isActive()) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    @PostMapping(
-            value = "resolveid",
-            consumes = MediaType.APPLICATION_XML_VALUE,
-            produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity postResolveId(@RequestBody Message message, HttpServletRequest request) {
-        // respond with 403 if local node is inactive
-        if (!operatorServiceFacade.getLocalNode().isActive()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-
-        log.info("Id resolution requested by " + request.getRemoteAddr());
-        Optional<Node> optionalNode =
-                operatorServiceFacade.findKnownNodeById((String) message.getContent());
-        if (optionalNode.isPresent()) {
-            return new ResponseEntity<>(
-                    messageFactory.getMessage(optionalNode.get().getHost()), HttpStatus.OK);
-        } else {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
+    log.info("Id resolution requested by " + request.getRemoteAddr());
+    Optional<Node> optionalNode =
+        operatorServiceFacade.findKnownNodeById((String) message.getContent());
+    if (optionalNode.isPresent()) {
+      return new ResponseEntity<>(
+          messageFactory.getMessage(optionalNode.get().getHost()), HttpStatus.OK);
+    } else {
+      return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
+  }
 }

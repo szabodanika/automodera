@@ -139,5 +139,4 @@ public class Node {
     result = 31 * result + createdAt.hashCode();
     return result;
   }
-
 }

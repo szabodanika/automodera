@@ -34,32 +34,29 @@ import java.util.List;
 
 public interface RestService {
 
-    NodeStatus downloadNodeStatus(String host);
+  NodeStatus downloadNodeStatus(String host);
 
-    Node getNodeByHost(String host) throws TargetNodeUnreachableException;
+  Node getNodeByHost(String host) throws TargetNodeUnreachableException;
 
-    void sendCertificateRequest(String operator, CertificateRequest certificateRequest)
-            throws TargetNodeUnreachableException;
+  void sendCertificateRequest(String operator, CertificateRequest certificateRequest)
+      throws TargetNodeUnreachableException;
 
-    void sendProcessedCertificateRequest(CertificateRequest certificateRequest)
-            throws TargetNodeUnreachableException;
+  void sendProcessedCertificateRequest(CertificateRequest certificateRequest)
+      throws TargetNodeUnreachableException;
 
-    NetworkConfiguration getNetworkConfiguration(String origin)
-            throws TargetNodeUnreachableException;
+  NetworkConfiguration getNetworkConfiguration(String origin) throws TargetNodeUnreachableException;
 
-    boolean requestCertificateVerification(NodeCertificate certificate)
-            throws TargetNodeUnreachableException;
+  boolean requestCertificateVerification(NodeCertificate certificate)
+      throws TargetNodeUnreachableException;
 
-    List<Collection> requestRepertoire(String host) throws TargetNodeUnreachableException;
+  List<Collection> requestRepertoire(String host) throws TargetNodeUnreachableException;
 
-    void sendCollectionRepertoireToIntegrator(List<Collection> collectionList, String host)
-            throws TargetNodeUnreachableException;
+  void sendCollectionRepertoireToIntegrator(List<Collection> collectionList, String host)
+      throws TargetNodeUnreachableException;
 
-    List<String> requestAllArchiveAddresses(String host) throws TargetNodeUnreachableException;
+  List<String> requestAllArchiveAddresses(String host) throws TargetNodeUnreachableException;
 
-    List<String> requestAllIntegratorAddresses(String host) throws TargetNodeUnreachableException;
+  List<String> requestAllIntegratorAddresses(String host) throws TargetNodeUnreachableException;
 
-    Collection downloadCollection(String host, String id)
-            throws TargetNodeUnreachableException;
-
+  Collection downloadCollection(String host, String id) throws TargetNodeUnreachableException;
 }

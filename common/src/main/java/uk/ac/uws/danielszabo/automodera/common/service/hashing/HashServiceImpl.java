@@ -22,9 +22,6 @@
 
 package uk.ac.uws.danielszabo.automodera.common.service.hashing;
 
-import dev.brachtendorf.jimagehash.hash.Hash;
-import dev.brachtendorf.jimagehash.hashAlgorithms.HashingAlgorithm;
-import dev.brachtendorf.jimagehash.hashAlgorithms.PerceptiveHash;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -35,15 +32,15 @@ import java.io.IOException;
 @Service
 public class HashServiceImpl implements HashService {
 
-	@Override
-	public String pHash(File image) throws IOException {
-		log.debug("Hashing " + image.getName());
-		return RustPHash.getHashForFile(image.getPath());
-	}
+  @Override
+  public String pHash(File image) throws IOException {
+    log.debug("Hashing " + image.getName());
+    return RustPHash.getHashForFile(image.getPath());
+  }
 
-	@Override
-	public double simScore(String hash1, String hash2) {
-		log.debug("Calculating similarity score for  " + hash1 + " and " + hash2);
-		return RustPHash.getSimilarityScore(hash1, hash2);
-	}
+  @Override
+  public double simScore(String hash1, String hash2) {
+    log.debug("Calculating similarity score for  " + hash1 + " and " + hash2);
+    return RustPHash.getSimilarityScore(hash1, hash2);
+  }
 }

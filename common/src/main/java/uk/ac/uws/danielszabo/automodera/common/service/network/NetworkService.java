@@ -35,77 +35,78 @@ import java.util.Optional;
 
 public interface NetworkService {
 
-    // Network Configuration
+  // Network Configuration
 
-    NetworkConfiguration getNetworkConfiguration();
+  NetworkConfiguration getNetworkConfiguration();
 
-    NetworkConfiguration saveNetworkConfiguration(NetworkConfiguration networkConfiguration);
+  NetworkConfiguration saveNetworkConfiguration(NetworkConfiguration networkConfiguration);
 
-    Optional<CertificateRequest> findCertificateRequestById(String id);
+  Optional<CertificateRequest> findCertificateRequestById(String id);
 
-    NetworkConfiguration fetchNetworkConfigurationAndSave(String origin) throws TargetNodeUnreachableException;
+  NetworkConfiguration fetchNetworkConfigurationAndSave(String origin)
+      throws TargetNodeUnreachableException;
 
-    // Nodes
+  // Nodes
 
-    NodeStatus downloadNodeStatus(Node node) throws Exception;
+  NodeStatus downloadNodeStatus(Node node) throws Exception;
 
-    NodeStatus downloadNodeStatus(String address) throws Exception;
+  NodeStatus downloadNodeStatus(String address) throws Exception;
 
-    List<Node> getAllNodes();
+  List<Node> getAllNodes();
 
-    Optional<Node> getKnownNodeById(String id);
+  Optional<Node> getKnownNodeById(String id);
 
-    Node saveNode(Node node);
+  Node saveNode(Node node);
 
-    void removeNode(Node node);
+  void removeNode(Node node);
 
-    Node getLocalNode();
+  Node getLocalNode();
 
-    NetworkConfiguration fetchNetworkConfiguration(String originHost) throws TargetNodeUnreachableException;
+  NetworkConfiguration fetchNetworkConfiguration(String originHost)
+      throws TargetNodeUnreachableException;
 
-    /**
-     * this should return all the nodes in the database: - local node - operator nodes - nodes
-     * subscribed to or publishing to
-     *
-     * @return list of all known nodes
-     */
-    List<Node> getAllKnownNodes();
+  /**
+   * this should return all the nodes in the database: - local node - operator nodes - nodes
+   * subscribed to or publishing to
+   *
+   * @return list of all known nodes
+   */
+  List<Node> getAllKnownNodes();
 
-    List<Node> getAllArchives();
+  List<Node> getAllArchives();
 
-    List<Node> getAllIntegrators();
+  List<Node> getAllIntegrators();
 
-    Node getNodeByHost(String host) throws TargetNodeUnreachableException;
+  Node getNodeByHost(String host) throws TargetNodeUnreachableException;
 
-    void fetchAllNodeStatus() throws Exception;
+  void fetchAllNodeStatus() throws Exception;
 
-    // HashCollections, Topics, Images
+  // HashCollections, Topics, Images
 
-    Collection downloadCollection(String host, String id)
-            throws TargetNodeUnreachableException;
+  Collection downloadCollection(String host, String id) throws TargetNodeUnreachableException;
 
-    void sendCollectionRepertoireToIntegrator(List<Collection> collectionList, String subscriberHost)
-            throws TargetNodeUnreachableException;
+  void sendCollectionRepertoireToIntegrator(List<Collection> collectionList, String subscriberHost)
+      throws TargetNodeUnreachableException;
 
-    List<Collection> requestCollectionRepertoireFromArchive(Node node)
-            throws TargetNodeUnreachableException;
+  List<Collection> requestCollectionRepertoireFromArchive(Node node)
+      throws TargetNodeUnreachableException;
 
-    // Certificate Requests
+  // Certificate Requests
 
-    List<CertificateRequest> findAllCertificateRequests();
+  List<CertificateRequest> findAllCertificateRequests();
 
-    CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest);
+  CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest);
 
-    void sendProcessedCertificateRequest(CertificateRequest certificateRequest) throws Exception;
+  void sendProcessedCertificateRequest(CertificateRequest certificateRequest) throws Exception;
 
-    // Certificates
+  // Certificates
 
-    void removeCertificate(NodeCertificate certificate);
+  void removeCertificate(NodeCertificate certificate);
 
-    boolean verifyCertificate(NodeCertificate certificate, String remoteAddr);
+  boolean verifyCertificate(NodeCertificate certificate, String remoteAddr);
 
-    Optional<NodeCertificate> getCertificateById(String id);
+  Optional<NodeCertificate> getCertificateById(String id);
 
-    CertificateRequest certificateRequest(String origin, Node localNode) throws TargetNodeUnreachableException;
-
+  CertificateRequest certificateRequest(String origin, Node localNode)
+      throws TargetNodeUnreachableException;
 }

@@ -35,7 +35,8 @@ import uk.ac.uws.danielszabo.automodera.common.model.network.NetworkConfiguratio
 @Slf4j
 @Import({NetworkConfiguration.class})
 @SpringBootApplication
-@EntityScan(basePackages = {"uk.ac.uws.danielszabo.automodera.common", "uk.ac.uws.danielszabo.operator"})
+@EntityScan(
+    basePackages = {"uk.ac.uws.danielszabo.automodera.common", "uk.ac.uws.danielszabo.operator"})
 @ComponentScan(basePackages = {"uk.ac.uws.danielszabo"})
 @EnableJpaRepositories("uk.ac.uws.danielszabo.automodera.common.repository")
 public class OperatorServer {

@@ -31,29 +31,29 @@ import java.util.Optional;
 
 public interface HashCollectionService {
 
-    Optional<Collection> findById(String id);
+  Optional<Collection> findById(String id);
 
-    List<Collection> findAllByTopic(String topic);
+  List<Collection> findAllByTopic(String topic);
 
-    List<Collection> findAll();
+  List<Collection> findAll();
 
-    Collection generateHashCollection(
-            String path,
-            String id,
-            String name,
-            String description,
-            Node archive,
-            List<String> strings,
-            boolean forceRecalc)
-            throws IOException;
+  Collection generateHashCollection(
+      String path,
+      String id,
+      String name,
+      String description,
+      Node archive,
+      List<String> strings,
+      boolean forceRecalc)
+      throws IOException;
 
-    List<Collection> findAllEnabledNoImages();
+  List<Collection> findAllEnabledNoImages();
 
-    List<Collection> findAllEnabledNoImagesByTopic(String topic);
+  List<Collection> findAllEnabledNoImagesByTopic(String topic);
 
-    List<Collection> getAllDownloaded();
+  List<Collection> getAllDownloaded();
 
-    Collection save(Collection collection);
+  Collection save(Collection collection);
 
-    void delete(Collection collection);
+  void delete(Collection collection);
 }

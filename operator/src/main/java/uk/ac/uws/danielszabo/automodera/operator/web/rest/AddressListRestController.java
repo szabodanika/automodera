@@ -28,8 +28,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.uws.danielszabo.automodera.common.model.network.message.Message;
-import uk.ac.uws.danielszabo.automodera.common.model.network.node.Node;
-import uk.ac.uws.danielszabo.automodera.common.model.network.node.NodeType;
 import uk.ac.uws.danielszabo.automodera.operator.service.OperatorServiceFacade;
 
 @Slf4j
@@ -37,45 +35,43 @@ import uk.ac.uws.danielszabo.automodera.operator.service.OperatorServiceFacade;
 @RequestMapping("rest/net/address_list")
 public class AddressListRestController {
 
-    private final OperatorServiceFacade operatorServiceFacade;
+  private final OperatorServiceFacade operatorServiceFacade;
 
-    public AddressListRestController(OperatorServiceFacade operatorServiceFacade) {
-        this.operatorServiceFacade = operatorServiceFacade;
+  public AddressListRestController(OperatorServiceFacade operatorServiceFacade) {
+    this.operatorServiceFacade = operatorServiceFacade;
+  }
+
+  @PostMapping(
+      value = "/archive",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity getArchiveAddresses(@RequestBody Message message) {
+
+    // respond with 403 if local node is inactive
+    if (!operatorServiceFacade.getLocalNode().isActive()) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    @PostMapping(
-            value = "/archive",
-            consumes = MediaType.APPLICATION_XML_VALUE,
-            produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity getArchiveAddresses(@RequestBody Message message) {
+    if (operatorServiceFacade.verifyCertificate(message.getCertificate())) {
+      return new ResponseEntity<>(
+          operatorServiceFacade.getArchiveAddressesMessage(), HttpStatus.OK);
+    } else return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+  }
 
-        // respond with 403 if local node is inactive
-        if (!operatorServiceFacade.getLocalNode().isActive()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+  @PostMapping(
+      value = "/integrator",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity getIntegratorAddresses(@RequestBody Message message) {
 
-        if (operatorServiceFacade.verifyCertificate(message.getCertificate())) {
-            return new ResponseEntity<>(
-                    operatorServiceFacade.getArchiveAddressesMessage(), HttpStatus.OK);
-        } else return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-
+    // respond with 403 if local node is inactive
+    if (!operatorServiceFacade.getLocalNode().isActive()) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    @PostMapping(
-            value = "/integrator",
-            consumes = MediaType.APPLICATION_XML_VALUE,
-            produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity getIntegratorAddresses(@RequestBody Message message) {
-
-        // respond with 403 if local node is inactive
-        if (!operatorServiceFacade.getLocalNode().isActive()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-
-        if (operatorServiceFacade.verifyCertificate(message.getCertificate())) {
-            return new ResponseEntity<>(
-                    operatorServiceFacade.getIntegratorAddressesMessage(), HttpStatus.OK);
-        } else return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-
-    }
+    if (operatorServiceFacade.verifyCertificate(message.getCertificate())) {
+      return new ResponseEntity<>(
+          operatorServiceFacade.getIntegratorAddressesMessage(), HttpStatus.OK);
+    } else return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+  }
 }

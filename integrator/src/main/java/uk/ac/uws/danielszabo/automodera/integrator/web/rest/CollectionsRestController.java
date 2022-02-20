@@ -30,45 +30,43 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uk.ac.uws.danielszabo.automodera.common.model.collection.Collection;
 import uk.ac.uws.danielszabo.automodera.integrator.service.IntegratorServiceFacade;
 import uk.ac.uws.danielszabo.automodera.common.model.network.message.Message;
 import uk.ac.uws.danielszabo.automodera.common.model.network.messages.CollectionRepertoire;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 @Slf4j
 @RestController
 @RequestMapping("rest/collections")
 public class CollectionsRestController {
 
-    private final IntegratorServiceFacade integratorServiceFacade;
+  private final IntegratorServiceFacade integratorServiceFacade;
 
-    public CollectionsRestController(IntegratorServiceFacade integratorServiceFacade) {
-        this.integratorServiceFacade = integratorServiceFacade;
+  public CollectionsRestController(IntegratorServiceFacade integratorServiceFacade) {
+    this.integratorServiceFacade = integratorServiceFacade;
+  }
+
+  @PostMapping(
+      value = "publish",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity postPublish(@RequestBody Message message, HttpServletRequest request) {
+    // respond with 403 if local node is inactive
+    if (!integratorServiceFacade.getLocalNode().isActive()) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    @PostMapping(
-            value = "publish",
-            consumes = MediaType.APPLICATION_XML_VALUE,
-            produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity postPublish(@RequestBody Message message, HttpServletRequest request) {
-        // respond with 403 if local node is inactive
-        if (!integratorServiceFacade.getLocalNode().isActive()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+    if (integratorServiceFacade.checkCertificate(
+        message.getCertificate(), request.getRemoteAddr())) {
 
-        if (integratorServiceFacade.checkCertificate(
-                message.getCertificate(), request.getRemoteAddr())) {
+      CollectionRepertoire collectionRepertoire = (CollectionRepertoire) message.getContent();
 
-            CollectionRepertoire collectionRepertoire = (CollectionRepertoire) message.getContent();
+      integratorServiceFacade.processCollectionRepertoire(collectionRepertoire);
 
-            integratorServiceFacade.processCollectionRepertoire(collectionRepertoire);
-
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+      return new ResponseEntity<>(HttpStatus.OK);
+    } else {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
+  }
 }

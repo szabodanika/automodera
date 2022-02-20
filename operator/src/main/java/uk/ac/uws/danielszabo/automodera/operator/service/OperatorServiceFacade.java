@@ -34,64 +34,60 @@ import java.util.Optional;
 
 public interface OperatorServiceFacade {
 
-    boolean handleCertificateRequest(
-            CertificateRequest certificateRequest,
-            CertificateRequest.Status newStatus,
-            String message)
-            throws Exception;
+  boolean handleCertificateRequest(
+      CertificateRequest certificateRequest, CertificateRequest.Status newStatus, String message)
+      throws Exception;
 
-    boolean reissueCertificateForNode(Node node);
+  boolean reissueCertificateForNode(Node node);
 
-    boolean revokeCertificateForNode(Node node);
+  boolean revokeCertificateForNode(Node node);
 
-    boolean verifyCertificate(NodeCertificate certificate);
+  boolean verifyCertificate(NodeCertificate certificate);
 
-    CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest);
+  CertificateRequest saveCertificateRequest(CertificateRequest certificateRequest);
 
-    List<CertificateRequest> findAllCertificateRequests();
+  List<CertificateRequest> findAllCertificateRequests();
 
-    Optional<CertificateRequest> findCertificateRequestById(String id);
+  Optional<CertificateRequest> findCertificateRequestById(String id);
 
-    List<Collection> retrieveAllHashCollections();
+  List<Collection> retrieveAllHashCollections();
 
-    Optional<Collection> retrieveHashCollectionById(String id);
+  Optional<Collection> retrieveHashCollectionById(String id);
 
-    List<Collection> retrieveHashCollectionsByTopic(String string);
+  List<Collection> retrieveHashCollectionsByTopic(String string);
 
-    List<Collection> retrieveHashCollectionsByArchive(Node topic) throws Exception;
+  List<Collection> retrieveHashCollectionsByArchive(Node topic) throws Exception;
 
-    List<Node> findAllNodes() throws Exception;
+  List<Node> findAllNodes() throws Exception;
 
-    Optional<Node> findKnownNodeById(String id);
+  Optional<Node> findKnownNodeById(String id);
 
-    Node saveNode(Node node);
+  Node saveNode(Node node);
 
-    void deleteNode(Node node);
+  void deleteNode(Node node);
 
-    void saveNetworkConfiguration(NetworkConfiguration networkConfiguration);
+  void saveNetworkConfiguration(NetworkConfiguration networkConfiguration);
 
-    NetworkConfiguration getNetworkConfiguration();
+  NetworkConfiguration getNetworkConfiguration();
 
-    AddressListMessage getArchiveAddressesMessage();
+  AddressListMessage getArchiveAddressesMessage();
 
-    AddressListMessage getIntegratorAddressesMessage();
+  AddressListMessage getIntegratorAddressesMessage();
 
-    Node getLocalNode();
+  Node getLocalNode();
 
-    void fetchAllNodeStatus() throws Exception;
+  void fetchAllNodeStatus() throws Exception;
 
-    void shutDown();
+  void shutDown();
 
-    void init(
-            String id,
-            String displayName,
-            String domainName,
-            String legalName,
-            String adminEmail,
-            String addressLine1,
-            String addressLine2,
-            String postCode,
-            String country);
-
-
+  void init(
+      String id,
+      String displayName,
+      String domainName,
+      String legalName,
+      String adminEmail,
+      String addressLine1,
+      String addressLine2,
+      String postCode,
+      String country);
 }

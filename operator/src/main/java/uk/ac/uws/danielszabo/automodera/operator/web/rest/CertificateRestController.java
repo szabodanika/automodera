@@ -41,67 +41,69 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("rest/net/certificate")
 public class CertificateRestController {
 
-    private final OperatorServiceFacade operatorServiceFacade;
+  private final OperatorServiceFacade operatorServiceFacade;
 
-    private final MessageFactory messageFactory;
+  private final MessageFactory messageFactory;
 
-    public CertificateRestController(
-            OperatorServiceFacade operatorServiceFacade, MessageFactory messageFactory) {
-        this.operatorServiceFacade = operatorServiceFacade;
-        this.messageFactory = messageFactory;
+  public CertificateRestController(
+      OperatorServiceFacade operatorServiceFacade, MessageFactory messageFactory) {
+    this.operatorServiceFacade = operatorServiceFacade;
+    this.messageFactory = messageFactory;
+  }
+
+  @PostMapping(
+      value = "request",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity postRequest(@RequestBody Message message) {
+    // respond with 403 if local node is inactive
+    if (!operatorServiceFacade.getLocalNode().isActive()) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    @PostMapping(
-            value = "request",
-            consumes = MediaType.APPLICATION_XML_VALUE,
-            produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity postRequest(@RequestBody Message message) {
-        // respond with 403 if local node is inactive
-        if (!operatorServiceFacade.getLocalNode().isActive()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+    CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
+    log.info("Received certificate signing request from " + certificateRequest.getNode().getId());
+    operatorServiceFacade.saveCertificateRequest(certificateRequest);
 
-        CertificateRequest certificateRequest = (CertificateRequest) message.getContent();
-        log.info("Received certificate signing request from " + certificateRequest.getNode().getId());
-        operatorServiceFacade.saveCertificateRequest(certificateRequest);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 
-        return new ResponseEntity<>(HttpStatus.OK);
+  @PostMapping(
+      value = "verify",
+      consumes = MediaType.APPLICATION_XML_VALUE,
+      produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity getVerification(
+      @RequestBody Message message,
+      HttpServletRequest request) { // respond with 403 if local node is inactive
+    if (!operatorServiceFacade.getLocalNode().isActive()) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    @PostMapping(
-            value = "verify",
-            consumes = MediaType.APPLICATION_XML_VALUE,
-            produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity getVerification(@RequestBody Message message, HttpServletRequest request) {// respond with 403 if local node is inactive
-        if (!operatorServiceFacade.getLocalNode().isActive()) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+    if (operatorServiceFacade.verifyCertificate(message.getCertificate())) {
+      // retrieve certificate to be verified
+      NodeCertificate nodeCertificate = (NodeCertificate) message.getContent();
+      // find node the certificate belongs to
+      Node node = operatorServiceFacade.findKnownNodeById(nodeCertificate.getId()).orElse(null);
+      Boolean result;
+      // the node is not found, so we did not issue this certificate. cannot verify that it is valid
+      if (node == null) result = false;
+      else {
+        // we found the node it was issued to, let's verify it
+        nodeCertificate.setNode(node);
+        result = operatorServiceFacade.verifyCertificate(nodeCertificate);
+      }
+      log.info(
+          "Received certificate verification request for certificate "
+              + message.getCertificate().getId()
+              + " from "
+              + request.getRemoteAddr()
+              + ": "
+              + (result ? "VALID" : "INVALID"));
 
-        if (operatorServiceFacade.verifyCertificate(message.getCertificate())) {
-            // retrieve certificate to be verified
-            NodeCertificate nodeCertificate = (NodeCertificate) message.getContent();
-            // find node the certificate belongs to
-            Node node = operatorServiceFacade.findKnownNodeById(nodeCertificate.getId()).orElse(null);
-            Boolean result;
-            // the node is not found, so we did not issue this certificate. cannot verify that it is valid
-            if (node == null) result = false;
-            else {
-                // we found the node it was issued to, let's verify it
-                nodeCertificate.setNode(node);
-                result = operatorServiceFacade.verifyCertificate(nodeCertificate);
-            }
-            log.info(
-                    "Received certificate verification request for certificate "
-                            + message.getCertificate().getId()
-                            + " from "
-                            + request.getRemoteAddr()
-                            + ": "
-                            + (result ? "VALID" : "INVALID"));
-
-            return new ResponseEntity<>(
-                    messageFactory.getMessage(result ? "VALID" : "INVALID"), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+      return new ResponseEntity<>(
+          messageFactory.getMessage(result ? "VALID" : "INVALID"), HttpStatus.OK);
+    } else {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
+  }
 }
