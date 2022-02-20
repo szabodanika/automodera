@@ -17,40 +17,49 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<nav class="navbar navbar-expand-sm navbar-dark bg-primary shadow-sm">
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark shadow-sm">
     <div class="container-fluid">
-        <ul class="navbar-nav">
+        <ul class="navbar-nav ms-5">
             <a class="navbar-brand" href="/">
                 <b>
-                    #DIST
+                    Automodera
                 </b>
+                | operator
             </a>
+        </ul>
+        <ul class="navbar-nav ms-auto me-5">
             <li class="nav-item">
-                <a class="nav-link btn btn-primary btn-sm me-2"
+                <a class="nav-link me-2 "
                    th:classappend="${#request.getServletPath()=='/'?'active':''
                        + (node != null?'':' disabled')}"
                    href="/">
-                    <i class="bi bi-house"></i>
                     Dashboard</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link btn btn-primary btn-sm me-2"
-                   th:classappend="
-                       ${#request.getServletPath()=='/nodes'?'active':''
-                           + (node != null?'':' disabled')}"
+                <a class="nav-link me-2"
+                   th:classappend="${#request.getServletPath()=='/certificates'?'active':''
+                       + (node != null?'':' disabled')}"
+                   href="/certificates">
+                    Certificates</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link me-2"
+                   th:classappend="${#request.getServletPath()=='/network'?'active':''
+                       + (node != null?'':' disabled')}"
                    href="/network">
-                    <i class="bi bi-diagram-3"></i>
                     Network
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link"
-                   th:classappend="${#request.getServletPath()=='/certreqs'?'active':''
-                       + (node != null?'':' disabled')}"
-                   href="/certreqs">
-                    <i class="bi bi-award"></i>
-                    Certificates
-                </a>
+                <form action="/logout" method="POST">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button
+                            type="submit"
+                            class="btn btn-sm btn-outline-secondary btn-link nav-link"
+                    >
+                        Log out
+                    </button>
+                </form>
             </li>
         </ul>
     </div>
