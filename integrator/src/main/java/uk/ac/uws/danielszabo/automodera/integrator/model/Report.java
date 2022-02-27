@@ -44,89 +44,88 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Report {
 
-	// TODO this has to be tuned for each algorithm
-	// or each algorithm have to be tuned for these numbers
-	public enum MatchProbability {
-		NONE(0.75),
-		LOW(0.80),
-		MODERATE(0.90),
-		HIGH(0.95),
-		EXACT(1);
+  // TODO this has to be tuned for each algorithm
+  // or each algorithm have to be tuned for these numbers
+  public enum MatchProbability {
+    NONE(0.75),
+    LOW(0.80),
+    MODERATE(0.90),
+    HIGH(0.95),
+    EXACT(1);
 
-		public double maxValue;
+    public double maxValue;
 
-		MatchProbability(double maxValue) {
-			this.maxValue = maxValue;
-		}
+    MatchProbability(double maxValue) {
+      this.maxValue = maxValue;
+    }
 
-		public static MatchProbability getMatchProbability(double highestMatchScore) {
-			for (MatchProbability matchProbability : MatchProbability.values()) {
-				if (highestMatchScore <= matchProbability.maxValue) {
-					return matchProbability;
-				}
-			}
-			throw new OutOfRangeException(highestMatchScore, 0d, 1d);
-		}
-	}
+    public static MatchProbability getMatchProbability(double highestMatchScore) {
+      for (MatchProbability matchProbability : MatchProbability.values()) {
+        if (highestMatchScore <= matchProbability.maxValue) {
+          return matchProbability;
+        }
+      }
+      throw new OutOfRangeException(highestMatchScore, 0d, 1d);
+    }
+  }
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@NonNull
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @NonNull
+  private Long id;
 
-	//  @Column(name = "highestmatch_id")
-	//  @NonNull
-	//  private String highestMathchId;
-	//
-	//  @JoinColumn(name = "highestmatch_id", insertable = false, updatable = false)
-	//  @ManyToOne(targetEntity = Image.class, fetch = FetchType.EAGER)
-	//  @XmlTransient
-	//  @NotFound(action = NotFoundAction.IGNORE)
-	//  @NonNull private Image highestMatch;
+  //  @Column(name = "highestmatch_id")
+  //  @NonNull
+  //  private String highestMathchId;
+  //
+  //  @JoinColumn(name = "highestmatch_id", insertable = false, updatable = false)
+  //  @ManyToOne(targetEntity = Image.class, fetch = FetchType.EAGER)
+  //  @XmlTransient
+  //  @NotFound(action = NotFoundAction.IGNORE)
+  //  @NonNull private Image highestMatch;
 
-	@ManyToOne
-//	@NonNull
+  @ManyToOne
+  //	@NonNull
 
-	//TODO re-enable this
-	@Transient
-	private Image highestMatch;
+  // TODO re-enable this
+  @Transient
+  private Image highestMatch;
 
-	@NonNull
-	private double highestMatchScore;
+  @NonNull private double highestMatchScore;
 
-	@Enumerated(EnumType.STRING)
-	private MatchProbability matchProbability;
+  @Enumerated(EnumType.STRING)
+  private MatchProbability matchProbability;
 
-	private String attachment;
+  private String attachment;
 
-	private String source;
+  private String source;
 
-	@NonNull
-	@XmlJavaTypeAdapter(SQLDateAdapter.class)
-	private Date date;
+  @NonNull
+  @XmlJavaTypeAdapter(SQLDateAdapter.class)
+  private Date date;
 
-	@XmlElementWrapper(name = "topicList")
-	@XmlElement(name = "topic")
-	@NonNull
-	@Convert(converter = TopicListStringConverter.class)
-	private List<String> topicList;
+  @XmlElementWrapper(name = "topicList")
+  @XmlElement(name = "topic")
+  @NonNull
+  @Convert(converter = TopicListStringConverter.class)
+  private List<String> topicList;
 
-	public Report(
-		Image highestMatch,
-		double highestMatchScore,
-		List<String> topicList,
-		String attachment,
-		String source) {
-		this.highestMatchScore = highestMatchScore;
-		date = new Date(new java.util.Date().getTime());
-		this.matchProbability = Report.MatchProbability.getMatchProbability(highestMatchScore);
+  public Report(
+      Image highestMatch,
+      double highestMatchScore,
+      List<String> topicList,
+      String attachment,
+      String source) {
+    this.highestMatchScore = highestMatchScore;
+    date = new Date(new java.util.Date().getTime());
+    this.matchProbability = Report.MatchProbability.getMatchProbability(highestMatchScore);
 
-		// it would be pointless to store these things if there is no match
-		if (matchProbability != MatchProbability.NONE) {
-			this.topicList = topicList;
-			this.highestMatch = highestMatch;
-		}
-		this.attachment = attachment;
-		this.source = source;
-	}
+    // it would be pointless to store these things if there is no match
+    if (matchProbability != MatchProbability.NONE) {
+      this.topicList = topicList;
+      this.highestMatch = highestMatch;
+    }
+    this.attachment = attachment;
+    this.source = source;
+  }
 }
