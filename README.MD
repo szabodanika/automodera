@@ -1,4 +1,6 @@
-## Automodera
+
+![cover](.github/readme_cover.jpeg)
+
 [![CodeFactor](https://www.codefactor.io/repository/github/szabodanika/automodera/badge?s=eca96e2acfb8592001f2e1918a827e850204fa7c)](https://www.codefactor.io/repository/github/szabodanika/automodera)
 [![codecov](https://codecov.io/gh/szabodanika/automodera/branch/master/graph/badge.svg?token=7FVS5ZZIPU)](https://codecov.io/gh/szabodanika/hashnet)
 [![Java CI with Maven](https://github.com/szabodanika/automodera/actions/workflows/maven.yml/badge.svg)](https://github.com/szabodanika/automodera/actions/workflows/maven.yml)
