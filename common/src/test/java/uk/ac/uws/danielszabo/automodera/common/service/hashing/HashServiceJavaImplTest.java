@@ -22,8 +22,6 @@
 
 package uk.ac.uws.danielszabo.automodera.common.service.hashing;
 
-
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HashServiceJavaImplTest {
