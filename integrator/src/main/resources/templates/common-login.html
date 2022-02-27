@@ -34,13 +34,16 @@
 </head>
 
 <body class="bg-light">
-<div class="container-sm mt-5 p-4 bg-white shadow-sm" style="max-width: 400px">
-    <h4 class="text-center">
+<div class="container-sm p-4 bg-white shadow-sm" style="max-width: 400px; margin-top: 10em">
+    <img class="img-fluid w-25 mx-auto d-block mb-2"
+         src="/image/logo_white.jpeg"
+    />
+    <h5 class="text-center">
         Welcome to your
-    </h4>
-    <h2 class="mb-3  text-center">
+    </h5>
+    <h3 class="mb-3  text-center">
         Automodera Console
-    </h2>
+    </h3>
     <div class="container">
         <form class="form-signin" method="post" action="/login">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
@@ -59,13 +62,13 @@
             <div class="d-grid gap-2 ">
                 <button class="btn btn-secondary mt-3" type="submit">
                     <i class="bi bi-shield-lock"></i>
-                    Sign in</button>
+                    Sign in
+                </button>
             </div>
 
         </form>
     </div>
 </div>
-<span th:include="common-footer.html"></span>
 </body>
 
 </html>

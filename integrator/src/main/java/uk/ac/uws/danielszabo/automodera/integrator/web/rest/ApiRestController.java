@@ -65,6 +65,13 @@ public class ApiRestController {
     }
 
     multipartFile.transferTo(Path.of("./temp/" + multipartFile.getOriginalFilename()));
+
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
     Report report =
         integratorServiceFacade.checkImage(
             "./temp/" + multipartFile.getOriginalFilename(),

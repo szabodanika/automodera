@@ -22,25 +22,62 @@
 
 package uk.ac.uws.danielszabo.automodera.common.service.hashing;
 
+import com.sun.jdi.NativeMethodException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 
 @Slf4j
 @Service
 public class HashServiceImpl implements HashService {
 
-  @Override
-  public String pHash(File image) throws IOException {
-    log.debug("Hashing " + image.getName());
-    return RustPHash.getHashForFile(image.getPath());
-  }
+	@Override
+	public float getSimilarityToFileWithHash(String file_name, String reference_hash) {
+		return RustPHash.getSimilarityToFileWithHash(file_name, new BigInteger(reference_hash, 16).toString(2));
+	}
 
-  @Override
-  public double simScore(String hash1, String hash2) {
-    log.debug("Calculating similarity score for  " + hash1 + " and " + hash2);
-    return RustPHash.getSimilarityScore(hash1, hash2);
-  }
+	@Override
+	public String pHash(File image) throws IOException {
+		log.debug("Hashing " + image.getName());
+		try {
+			return RustPHash.getHashForFile(image.getPath());
+		} catch (NativeMethodException e) {
+			throw new IOException(e);
+		}
+	}
+
+	@Override
+	public double simScore(String hash1, String hash2) {
+		log.debug("Calculating similarity score for  " + hash1 + " and " + hash2);
+
+		int sideLen = (int) Math.sqrt(hash1.length());
+
+
+		double maxValue = Double.MIN_VALUE;
+
+		StringBuilder rotated = new StringBuilder();
+
+		for (int i = 0; i < 4; i++) {
+
+			for (int l = 0; l < sideLen; l++) {
+				for (int j = 0; j < sideLen; j++) {
+					rotated.append(hash1.charAt(j * sideLen + l));
+				}
+			}
+
+			double score = RustPHash.getSimilarityScore(hash2, rotated.toString());
+			if (score > maxValue) {
+				maxValue = score;
+			}
+
+			hash1 = rotated.toString();
+			rotated = new StringBuilder();
+		}
+
+
+		return maxValue;
+	}
 }

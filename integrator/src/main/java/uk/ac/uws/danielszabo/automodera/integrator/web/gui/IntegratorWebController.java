@@ -395,7 +395,7 @@ public class IntegratorWebController {
 
   @PostMapping("test")
   public String postTest(
-      Model model, @RequestParam("image") MultipartFile multipartFile, String attachment)
+	  Model model, @RequestParam("image") MultipartFile multipartFile, String attachment)
       throws IOException {
     model.addAttribute("node", integratorServiceFacade.getLocalNode());
 

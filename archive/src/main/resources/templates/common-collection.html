@@ -138,7 +138,7 @@
                     <td style="font-family: monospace" th:text="${image.id}">
                     <td th:text="${image.date}">
                     <td style="font-family: monospace;  text-overflow: ellipsis;"
-                        th:text="${image.hash.length() + 'B ' +  image.hash.substring(0, 20) + '... (+' + (image.hash.length() - 20) + 'B)'}">
+                        th:text="${image.hash}">
                 </tr>
             </th:block>
 

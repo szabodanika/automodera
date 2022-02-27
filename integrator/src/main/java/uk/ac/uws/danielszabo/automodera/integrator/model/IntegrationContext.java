@@ -38,7 +38,7 @@ import java.util.List;
 @Component
 public class IntegrationContext {
 
-  private boolean active = false;
+  private boolean active = true;
 
   @Value("#{'${integration.addresses}'.split(';')}")
   private List<String> enabledInputAddresses;

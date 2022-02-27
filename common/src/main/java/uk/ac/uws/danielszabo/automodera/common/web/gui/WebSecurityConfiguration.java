@@ -71,6 +71,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
               // allow rest controllers
               WebPaths.REST_BASE_PATH + "/**",
               // and static resources
+              "/font/**",
+              "/image/**",
               "/bootstrap-5.0.2-dist/**",
               "/bootstrap-icons-1.7.2/**",
               "/datatables/**",
