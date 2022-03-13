@@ -1,16 +1,22 @@
 
 ![cover](.github/readme_cover.jpeg)
 
-[![CodeFactor](https://www.codefactor.io/repository/github/szabodanika/automodera/badge?s=eca96e2acfb8592001f2e1918a827e850204fa7c)](https://www.codefactor.io/repository/github/szabodanika/automodera)
-[![codecov](https://codecov.io/gh/szabodanika/automodera/branch/master/graph/badge.svg?token=7FVS5ZZIPU)](https://codecov.io/gh/szabodanika/hashnet)
+[![CodeFactor](https://www.codefactor.io/repository/github/szabodanika/automodera/badge?s=5521c386e162e0f257d9654a9b234999b6f3a0dc)](https://www.codefactor.io/repository/github/szabodanika/automodera)
+[![codecov](https://codecov.io/gh/szabodanika/hashnet/branch/master/graph/badge.svg?token=7FVS5ZZIPU)](https://codecov.io/gh/szabodanika/hashnet)
 [![Java CI with Maven](https://github.com/szabodanika/automodera/actions/workflows/maven.yml/badge.svg)](https://github.com/szabodanika/automodera/actions/workflows/maven.yml)
 [![Format](https://github.com/szabodanika/automodera/actions/workflows/google-java-format.yml/badge.svg?branch=master)](https://github.com/szabodanika/automodera/actions/workflows/google-java-format.yml)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fszabodanika%automodera.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fszabodanika%automodera?ref=badge_shield)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fszabodanika%2Fhashnet.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fszabodanika%2Fhashnet?ref=badge_shield)
 [![wakatime](https://wakatime.com/badge/user/a8d63788-9389-46c8-8e9f-39b229a3b6c1/project/b823e566-542b-4fce-be36-4391011cd82f.svg)](https://wakatime.com/badge/user/a8d63788-9389-46c8-8e9f-39b229a3b6c1/project/b823e566-542b-4fce-be36-4391011cd82f)
 
-A Publish-Subscribe Network for Distributing Perceptual Hashes of Images, written in Java.
+A Publish-Subscribe Network for Distributing Perceptual Hashes of Images, written in Java and Rust.
 
+Website: [Automodera.com](https://automodera.com)
 
+## Setup
+<details>
+  <summary>
+    How to set use
+  </summary>
 ## Setup
 
 ### 1. Clone Project
@@ -164,10 +170,8 @@ subs --add --topic string1
 check --image ./testimages/supra.jpeg --xml
 ```
 
-
-## Code Coverage
-![Code Coverage](https://codecov.io/gh/szabodanika/automodera/commit/f68f68efbe04d53cc0e96cfc228f42f1cdde520d/graphs/sunburst.svg?token=7FVS5ZZIPU "Code Coverage")
-
+  </details>
+  
 ## License and 3rd Party Software
 This project uses 3rd party libraries. View the automatically generated FOSSA report here: [3rd Party Software Report](https://app.fossa.com/reports/59e67f12-02d5-45e9-b78d-440f2614e0f0).
 Automodera is available under GNU General Public License v3.0.
