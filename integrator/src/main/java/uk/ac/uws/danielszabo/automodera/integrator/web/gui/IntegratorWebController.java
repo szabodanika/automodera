@@ -61,6 +61,7 @@ public class IntegratorWebController {
     model.addAttribute("node", integratorServiceFacade.getLocalNode());
     model.addAttribute("network", integratorServiceFacade.getNetworkConfiguration());
     model.addAttribute("date", LocalDateTime.now());
+    model.addAttribute("integrationConfig", integratorServiceFacade.getIntegrationConfiguration());
 
     CertificateRequest certificateRequest =
         integratorServiceFacade.getAllCertificateRequests().stream().findFirst().orElse(null);
@@ -78,7 +79,7 @@ public class IntegratorWebController {
     model.addAttribute("buildName", env.getProperty("build.name"));
     model.addAttribute("buildVersion", env.getProperty("build.version"));
     model.addAttribute("buildTimestamp", env.getProperty("build.timestamp"));
-    return "common-index";
+    return "index";
   }
 
   @PostMapping("status")
@@ -238,7 +239,8 @@ public class IntegratorWebController {
             }
             model.addAttribute("network", networkConfiguration);
             model.addAttribute("connectionStatus", "Test connection");
-            return "common-index";
+            model.addAttribute("integrationConfig", integratorServiceFacade.getIntegrationConfiguration());
+            return "index";
           }
         case "connect":
           {
@@ -258,7 +260,8 @@ public class IntegratorWebController {
       model.addAttribute("buildTimestamp", env.getProperty("build.timestamp"));
     } catch (Exception e) {
       model.addAttribute("connectionStatus", "Failed to fetch network configuration");
-      return "common-index";
+      model.addAttribute("integrationConfig", integratorServiceFacade.getIntegrationConfiguration());
+      return "index";
     }
     return "redirect:/";
   }
@@ -426,4 +429,24 @@ public class IntegratorWebController {
     model.addAttribute("buildTimestamp", env.getProperty("build.timestamp"));
     return "integration";
   }
+
+  @PostMapping("integration/status")
+  public String postIntegraitonStatus(Model model, @RequestParam String status) {
+    if (integratorServiceFacade.getLocalNode() != null) {
+      switch (status) {
+        case "activate":
+        {
+          integratorServiceFacade.getIntegrationConfiguration().setActive(true);
+          break;
+        }
+        case "deactivate":
+        {
+          integratorServiceFacade.getIntegrationConfiguration().setActive(false);
+          break;
+        }
+      }
+    }
+    return "redirect:/integration";
+  }
+
 }

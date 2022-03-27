@@ -187,7 +187,11 @@ public class RestServiceImpl implements RestService {
     URI requestURI = null;
 
     try {
-      requestURI = new URI(PROTOCOL, host, path, null);
+      if(host.contains(":")) {
+        requestURI = new URI(PROTOCOL, null, host.split(":")[0], Integer.parseInt(host.split(":")[1]), path, null, null);
+      } else {
+        requestURI = new URI(PROTOCOL, host, path, null);
+      }
     } catch (URISyntaxException e) {
       e.printStackTrace();
     }

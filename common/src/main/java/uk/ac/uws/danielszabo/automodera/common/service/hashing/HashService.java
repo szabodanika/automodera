@@ -27,9 +27,10 @@ import java.io.IOException;
 
 public interface HashService {
 
-	float getSimilarityToFileWithHash(String file_name, String reference_hash);
+	float getSimilarityToFileWithHash(String fileName, String referenceHash);
 
 	String pHash(File image) throws IOException;
 
 	double simScore(String hash1, String hash2);
+
 }

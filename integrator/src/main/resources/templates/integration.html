@@ -48,12 +48,12 @@
     </h5>
     <hr>
     <div class="mb-3">
-        <form action="/status" method="POST">
+        <form action="integration/status" method="POST">
 
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
             <button type="submit"
-                    class="btn btn-sm btn-secondary"
+                    class="btn btn-sm btn-primary"
                     name="status"
                     value="activate"
                     th:classappend="${integrationConfig.active?'disabled':''}">
@@ -120,7 +120,7 @@
                 Rate limit
             </td>
             <td
-                    th:text="${integrationConfig.requestLimitCount + ' requests over ' + integrationConfig.requestLimitPeriod + ' minutes'}">
+                    th:text="${integrationConfig.requestLimitCount + ' requests over ' + integrationConfig.requestLimitPeriod + ' seconds (Throttled now: ' + integrationConfig.throttled + ')'}">
             </td>
         </tr>
     </table>

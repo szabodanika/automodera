@@ -117,6 +117,7 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
 
 	@Override
 	public List<Collection> retrieveHashCollectionByArchive(Node topic) {
+
 		throw new UnsupportedOperationException();
 	}
 
@@ -508,7 +509,7 @@ public class IntegratorServiceFacadeImpl implements IntegratorServiceFacade {
 	}
 
 	@Override
-	public IntegrationContext getIntegrationConfiguration() {
+	public IntegrationContext  getIntegrationConfiguration() {
 		return integrationContext;
 	}
 

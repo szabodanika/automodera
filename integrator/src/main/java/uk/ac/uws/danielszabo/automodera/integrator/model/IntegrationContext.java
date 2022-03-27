@@ -38,6 +38,7 @@ import java.util.List;
 @Component
 public class IntegrationContext {
 
+  @Value("${integration.enabled}")
   private boolean active = true;
 
   @Value("#{'${integration.addresses}'.split(';')}")
@@ -46,6 +47,13 @@ public class IntegrationContext {
   @Value("${integration.rate.requests}")
   private int requestLimitCount;
 
+  // Allow requestLimitCount requests in requestLimitPeriod seconds
   @Value("${integration.rate.period}")
   private int requestLimitPeriod;
+
+  // multipart file upload supported at the moment only
+  @Value("${integration.mode}")
+  private String mode;
+
+  public static boolean throttled = false;
 }

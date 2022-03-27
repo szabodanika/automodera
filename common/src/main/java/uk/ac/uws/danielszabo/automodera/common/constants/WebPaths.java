@@ -24,7 +24,7 @@ package uk.ac.uws.danielszabo.automodera.common.constants;
 
 public class WebPaths {
 
-  // rest endpoints for automated communication between nodes
+  // common rest endpoints for automated communication between nodes
 
   public static final String REST_BASE_PATH = "/rest";
   public static final String NET_PATH = REST_BASE_PATH + "/net";
@@ -45,4 +45,5 @@ public class WebPaths {
   public static final String REPERTOIRE_PATH = COLLECTIONS_PATH + "/repertoire";
   public static final String PUBLISH_PATH = COLLECTIONS_PATH + "/publish";
   public static final String DOWNLOAD_PATH = COLLECTIONS_PATH + "/download";
+
 }

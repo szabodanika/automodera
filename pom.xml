@@ -28,7 +28,7 @@
     <groupId>uk.ac.uws.danielszabo.automodera</groupId>
     <artifactId>parent</artifactId>
     <version>${revision}</version>
-    <url>https://github.com/szabodanika/phashnet</url>
+    <url>https://github.com/szabodanika/automodera</url>
 
     <packaging>pom</packaging>
 
@@ -149,30 +149,6 @@
                 </executions>
             </plugin>
 
-
-            <!--            &lt;!&ndash; https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin &ndash;&gt;-->
-            <!--            <plugin>-->
-            <!--                <groupId>org.apache.maven.plugins</groupId>-->
-            <!--                <artifactId>maven-jar-plugin</artifactId>-->
-            <!--                <version>3.2.2</version>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <id>assemble-all</id>-->
-            <!--                        <phase>package</phase>-->
-            <!--                        <goals>-->
-            <!--                            <goal>single</goal>-->
-            <!--                        </goals>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--                <configuration>-->
-            <!--                    <descriptorRefs>-->
-            <!--                        <descriptorRef>jar-with-dependencies</descriptorRef>-->
-            <!--                    </descriptorRefs>-->
-            <!--                    <outputDirectory>../jars</outputDirectory>-->
-            <!--                </configuration>-->
-            <!--            </plugin>-->
-
-
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -197,4 +173,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

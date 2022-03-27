@@ -31,7 +31,6 @@ public class RustPHash {
   public static native float getSimilarityScore(String hash1, String hash2);
 
   static {
-    //		System.getProperty("java.library.path", "lib");
     System.loadLibrary("phash");
   }
 }
