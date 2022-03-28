@@ -32,6 +32,7 @@ import uk.ac.uws.danielszabo.automodera.common.constants.WebPaths;
 import uk.ac.uws.danielszabo.automodera.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.automodera.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.automodera.common.model.network.node.Node;
+import uk.ac.uws.danielszabo.automodera.common.model.network.node.NodeType;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -61,7 +62,7 @@ public class ArchiveWebController {
   public String getIndex(Model model) {
     // redirect to setup page if local node is not set
     if (archiveServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     model.addAttribute("node", archiveServiceFacade.getLocalNode());
@@ -118,7 +119,7 @@ public class ArchiveWebController {
           }
       }
     }
-    return "redirect:/";
+    return "redirect:/admin/";
   }
 
   @GetMapping("setup")
@@ -130,7 +131,7 @@ public class ArchiveWebController {
       model.addAttribute("buildTimestamp", env.getProperty("build.timestamp"));
       return "common-setup";
     }
-    return "redirect:/";
+    return "redirect:/admin/";
   }
 
   @PostMapping("setup")
@@ -164,7 +165,7 @@ public class ArchiveWebController {
   public String getInfo(Model model, @PathVariable(required = false) String nodeId) {
     // redirect to setup page if local node is not set
     if (archiveServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     if (nodeId != null) {
@@ -174,11 +175,13 @@ public class ArchiveWebController {
               n -> {
                 model.addAttribute("node", n);
                 model.addAttribute("network", archiveServiceFacade.getNetworkConfiguration());
-                try {
-                  model.addAttribute(
-                      "collections", archiveServiceFacade.retrieveHashCollectionsByArchive(n));
-                } catch (Exception e) {
-                  e.printStackTrace();
+                if(n.getNodeType() == NodeType.ARCHIVE) {
+                  try {
+                    model.addAttribute(
+                        "collections", archiveServiceFacade.retrieveHashCollectionsByArchive(n));
+                  } catch (Exception e) {
+                    e.printStackTrace();
+                  }
                 }
               });
     } else {
@@ -196,7 +199,7 @@ public class ArchiveWebController {
   public String getNetwork(Model model) throws Exception {
     // redirect to setup page if local node is not set
     if (archiveServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     model.addAttribute("node", archiveServiceFacade.getLocalNode());
@@ -215,7 +218,7 @@ public class ArchiveWebController {
   public String postNetwork(Model model, @RequestParam String origin, @RequestParam String action) {
     // redirect to setup page if local node is not set
     if (archiveServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
     // maven build data for footer
     model.addAttribute("buildName", env.getProperty("build.name"));
@@ -241,12 +244,12 @@ public class ArchiveWebController {
         case "connect":
           {
             archiveServiceFacade.fetchNetworkConfigurationAndConnect(origin);
-            return "redirect:/";
+            return "redirect:/admin/";
           }
         case "disconnect":
           {
             archiveServiceFacade.clearNetworkConfiguration();
-            return "redirect:/";
+            return "redirect:/admin/";
           }
       }
 
@@ -258,7 +261,7 @@ public class ArchiveWebController {
       model.addAttribute("connectionStatus", "Failed to fetch network configuration");
       return "common-index";
     }
-    return "redirect:/";
+    return "redirect:/admin/";
   }
 
   @GetMapping("collection/{arch}/{coll}")
@@ -266,7 +269,7 @@ public class ArchiveWebController {
       Model model, @PathVariable("arch") String archive, @PathVariable("coll") String collection) {
     // redirect to setup page if local node is not set
     if (archiveServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     //
@@ -292,7 +295,7 @@ public class ArchiveWebController {
   public String getTopic(Model model, @PathVariable String topic) throws Exception {
     // redirect to setup page if local node is not set
     if (archiveServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     model.addAttribute("node", archiveServiceFacade.getLocalNode());
@@ -310,7 +313,7 @@ public class ArchiveWebController {
   public String getCollections(Model model) {
     // redirect to setup page if local node is not set
     if (archiveServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     model.addAttribute("node", archiveServiceFacade.getLocalNode());
@@ -328,7 +331,7 @@ public class ArchiveWebController {
       Model model, @RequestParam String action, @RequestParam List<String> selected) {
     // redirect to setup page if local node is not set
     if (archiveServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     switch (action) {
@@ -360,14 +363,14 @@ public class ArchiveWebController {
         }
     }
 
-    return "redirect:/collections";
+    return "redirect:/admin/collections";
   }
 
   @GetMapping("publish")
   public String getPublish(Model model) {
     // redirect to setup page if local node is not set
     if (archiveServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     Path absolutePath = Paths.get("input").toAbsolutePath();
@@ -414,18 +417,18 @@ public class ArchiveWebController {
                   .retrieveHashCollectionById(
                       archiveServiceFacade.getLocalNode().getId() + directory)
                   .isPresent()));
-
-      model.addAttribute("topics", Topic.values());
       model.addAttribute("dirList", dirList);
-      //            model.addAttribute("files", files);
-      //            model.addAttribute("fileCounts", fileCounts);
-      //            model.addAttribute("directories",
-      // directories.stream().skip(1).collect(Collectors.toList()));
-      model.addAttribute("rootPath", absolutePath);
-
     } catch (IOException e) {
       e.printStackTrace();
     }
+
+    model.addAttribute("topics", Topic.values());
+
+    //            model.addAttribute("files", files);
+    //            model.addAttribute("fileCounts", fileCounts);
+    //            model.addAttribute("directories",
+    // directories.stream().skip(1).collect(Collectors.toList()));
+    model.addAttribute("rootPath", absolutePath);
 
     model.addAttribute("node", archiveServiceFacade.getLocalNode());
     //        model.addAttribute("topics", archiveServiceFacade.getAllTopics());
@@ -452,6 +455,6 @@ public class ArchiveWebController {
         description,
         Arrays.asList(topics.split(",")),
         true);
-    return "redirect:/collections";
+    return "redirect:/admin/collections";
   }
 }

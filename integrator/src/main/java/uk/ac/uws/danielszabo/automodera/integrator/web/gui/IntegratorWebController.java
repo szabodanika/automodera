@@ -31,6 +31,7 @@ import uk.ac.uws.danielszabo.automodera.common.constants.WebPaths;
 import uk.ac.uws.danielszabo.automodera.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.automodera.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.automodera.common.model.network.node.Node;
+import uk.ac.uws.danielszabo.automodera.common.model.network.node.NodeType;
 import uk.ac.uws.danielszabo.automodera.integrator.model.Report;
 import uk.ac.uws.danielszabo.automodera.integrator.service.IntegratorServiceFacade;
 
@@ -56,7 +57,7 @@ public class IntegratorWebController {
   public String getIndex(Model model) {
     // redirect to setup page if local node is not set
     if (integratorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     model.addAttribute("node", integratorServiceFacade.getLocalNode());
@@ -174,8 +175,8 @@ public class IntegratorWebController {
     return "redirect:/admin/";
   }
 
-  @GetMapping("info")
-  public String getInfo(Model model, @RequestParam(required = false) String nodeId) {
+  @GetMapping("info/{nodeId}")
+  public String getInfo(Model model, @PathVariable(required = false) String nodeId) {
     // redirect to setup page if local node is not set
     if (integratorServiceFacade.getLocalNode() == null) {
       return "redirect:/admin/setup";
@@ -188,12 +189,13 @@ public class IntegratorWebController {
               n -> {
                 model.addAttribute("node", n);
                 model.addAttribute("network", integratorServiceFacade.getNetworkConfiguration());
-                try {
-                  model.addAttribute(
-                      "collections",
-                      integratorServiceFacade.requestCollectionRepertoireFormArchive(n));
-                } catch (Exception e) {
-                  e.printStackTrace();
+                if(n.getNodeType() == NodeType.ARCHIVE) {
+                  try {
+                    model.addAttribute(
+                        "collections",  integratorServiceFacade.requestCollectionRepertoireFormArchive(n));
+                  } catch (Exception e) {
+                    e.printStackTrace();
+                  }
                 }
               });
     } else {
@@ -262,6 +264,7 @@ public class IntegratorWebController {
     } catch (Exception e) {
       model.addAttribute("connectionStatus", "Failed to fetch network configuration");
       model.addAttribute("integrationConfig", integratorServiceFacade.getIntegrationConfiguration());
+      e.printStackTrace();
       return "index";
     }
     return "redirect:/admin/";

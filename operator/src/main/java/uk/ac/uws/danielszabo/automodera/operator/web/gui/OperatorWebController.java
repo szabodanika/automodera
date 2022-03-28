@@ -30,6 +30,7 @@ import uk.ac.uws.danielszabo.automodera.common.constants.WebPaths;
 import uk.ac.uws.danielszabo.automodera.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.automodera.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.automodera.common.model.network.node.Node;
+import uk.ac.uws.danielszabo.automodera.common.model.network.node.NodeType;
 import uk.ac.uws.danielszabo.automodera.operator.OperatorServer;
 import uk.ac.uws.danielszabo.automodera.operator.service.OperatorServiceFacade;
 
@@ -52,7 +53,7 @@ public class OperatorWebController {
   public String getIndex(Model model) {
     // redirect to setup page if local node is not set
     if (operatorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     model.addAttribute("node", operatorServiceFacade.getLocalNode());
@@ -96,7 +97,7 @@ public class OperatorWebController {
           break;
         }
     }
-    return "redirect:/";
+    return "redirect:/admin/";
   }
 
   @GetMapping("setup")
@@ -108,7 +109,7 @@ public class OperatorWebController {
       model.addAttribute("buildTimestamp", env.getProperty("build.timestamp"));
       return "common-setup";
     }
-    return "redirect:/";
+    return "redirect:/admin/";
   }
 
   @PostMapping("setup")
@@ -133,14 +134,14 @@ public class OperatorWebController {
         addressLine2,
         postCode,
         country);
-    return "redirect:/";
+    return "redirect:/admin/";
   }
 
   @GetMapping("info/{nodeId}")
   public String getInfo(Model model, @PathVariable String nodeId) {
     // redirect to setup page if local node is not set
     if (operatorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     if (nodeId != null) {
@@ -149,11 +150,13 @@ public class OperatorWebController {
           .ifPresent(
               n -> {
                 model.addAttribute("node", n);
-                try {
-                  model.addAttribute(
-                      "collections", operatorServiceFacade.retrieveHashCollectionsByArchive(n));
-                } catch (Exception e) {
-                  e.printStackTrace();
+                if(n.getNodeType() == NodeType.ARCHIVE) {
+                  try {
+                    model.addAttribute(
+                        "collections",  operatorServiceFacade.retrieveHashCollectionsByArchive(n));
+                  } catch (Exception e) {
+                    e.printStackTrace();
+                  }
                 }
               });
     } else {
@@ -171,7 +174,7 @@ public class OperatorWebController {
   public String getNetInit(Model model) {
     // redirect to setup page if local node is not set
     if (operatorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     model.addAttribute("node", operatorServiceFacade.getLocalNode());
@@ -193,19 +196,19 @@ public class OperatorWebController {
         new NetworkConfiguration(
             displayName, environment, version, operatorServiceFacade.getLocalNode().getHost());
     operatorServiceFacade.saveNetworkConfiguration(networkConfiguration);
-    return "redirect:/network";
+    return "redirect:/admin/network";
   }
 
   @GetMapping("network")
   public String getNetwork(Model model) throws Exception {
     // redirect to setup page if local node is not set
     if (operatorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     // redirect to network setup page if needed
     if (operatorServiceFacade.getNetworkConfiguration() == null) {
-      return "redirect:/netinit";
+      return "redirect:/admin/netinit";
     }
 
     model.addAttribute("node", operatorServiceFacade.getLocalNode());
@@ -224,11 +227,11 @@ public class OperatorWebController {
       Model model, @PathVariable("arch") String archive, @PathVariable("coll") String collection) {
     // redirect to setup page if local node is not set
     if (operatorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
     // redirect to network setup page if needed
     if (operatorServiceFacade.getNetworkConfiguration() == null) {
-      return "redirect:/netinit";
+      return "redirect:/admin/netinit";
     }
     Node node = operatorServiceFacade.findKnownNodeById(archive).orElse(null);
     if (node != null) {
@@ -251,7 +254,7 @@ public class OperatorWebController {
   public String getTopic(Model model, @PathVariable String topic) {
     // redirect to setup page if local node is not set
     if (operatorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     model.addAttribute("node", operatorServiceFacade.getLocalNode());
@@ -269,7 +272,7 @@ public class OperatorWebController {
   public String getCertificates(Model model) {
     // redirect to setup page if local node is not set
     if (operatorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     model.addAttribute("node", operatorServiceFacade.getLocalNode());
@@ -286,7 +289,7 @@ public class OperatorWebController {
   public String getCertReq(Model model, @PathVariable String certReqId) {
     // redirect to setup page if local node is not set
     if (operatorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     model.addAttribute("node", operatorServiceFacade.getLocalNode());

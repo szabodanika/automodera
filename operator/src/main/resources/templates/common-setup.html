@@ -27,16 +27,24 @@
     <link href="/bootstrap-5.0.2-dist/css/bootstrap.css"
           rel="stylesheet">
     <!-- Bootstrap 5.0.1 JS-->
-    <script href="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
 
     <!--    Bootstrap Icon Pack 1.7.2 -->
     <link rel="stylesheet" href="/bootstrap-icons-1.7.2/bootstrap-icons.css">
+
+    <!--    jQuery 3.6.0 -->
+    <script type="text/javascript" src="/jquery/jquery-3.6.0.min.js"></script>
+
+    <!--    DataTables -->
+    <link rel="stylesheet" type="text/css" href="/datatables/datatables.css"/>
+    <script type="text/javascript" src="/datatables/datatables.js"></script>
 </head>
+
 
 <body class="bg-light">
 <div class="container p-4 bg-white shadow-sm mt-5"  >
     <div class="col">
-        <h5 class="mb-3">
+        <h5 class="mb-3" id="title">
             Initialise Local System
         </h5>
         <hr>
@@ -133,5 +141,26 @@
 </div>
 <span th:include="common-footer.html"></span>
 </body>
+<script>
+    testInputClickCounter = 0;
+
+    $('#title').on('click', titleClicked);
+
+    function titleClicked() {
+        testInputClickCounter ++;
+        if(testInputClickCounter == 3) {
+            console.log("Inserting test values")
+            $('#id').val("test-node")
+            $('#displayName').val("TestNode")
+            $('#legalName').val("Test Node")
+            $('#addressLine1').val("Test Address Line 1")
+            $('#addressLine2').val("Test Address Line 2")
+            $('#postCode').val("Test Postcode")
+            $('#country').val("Test Country")
+            $('#domainName').val("127.0.0.1:9000")
+            $('#adminEmail').val("admin@test.mail")
+        }
+    }
+</script>
 
 </html>

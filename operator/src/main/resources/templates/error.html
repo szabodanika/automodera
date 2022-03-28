@@ -27,11 +27,19 @@
     <link href="/bootstrap-5.0.2-dist/css/bootstrap.css"
           rel="stylesheet">
     <!-- Bootstrap 5.0.1 JS-->
-    <script href="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
 
     <!--    Bootstrap Icon Pack 1.7.2 -->
     <link rel="stylesheet" href="/bootstrap-icons-1.7.2/bootstrap-icons.css">
+
+    <!--    jQuery 3.6.0 -->
+    <script type="text/javascript" src="/jquery/jquery-3.6.0.min.js"></script>
+
+    <!--    DataTables -->
+    <link rel="stylesheet" type="text/css" href="/datatables/datatables.css"/>
+    <script type="text/javascript" src="/datatables/datatables.js"></script>
 </head>
+
 
 <body class="bg-light">
 <div class="container-sm mt-5 p-4 bg-white shadow-sm"  >
@@ -44,40 +52,40 @@
         <p class="text-muted" th:text="${exception}"></p>
 
         <table class="table table-sm">
-            <tr>
+            <tr th:if="timestamp != null">
                 <td>Date</td>
                 <td th:text="${timestamp}"/>
             </tr>
-            <tr>
+            <tr th:if="path != null">
                 <td>Path</td>
                 <td th:text="${path}"/>
             </tr>
-            <tr>
+            <tr th:if="error != null">
                 <td>Error</td>
                 <td th:text="${error}"/>
             </tr>
-            <tr>
+            <tr th:if="status != null">
                 <td>Status</td>
                 <td th:text="${status}"/>
             </tr>
-            <tr>
+            <tr th:if="message != null">
                 <td>Message</td>
                 <td th:text="${message}"/>
             </tr>
-            <tr>
+            <tr th:if="exception != null">
                 <td>Exception</td>
                 <td th:text="${exception}"/>
             </tr>
-            <tr>
+            <tr th:if="trace != null">
                 <td>Trace</td>
-                <td style="max-width: 200px; max-height: 200px; overflow: scroll">
+                <td style="max-width: 200px; max-height: 200px; overflow: auto">
                     <pre th:text="${trace}"/>
                 </td>
             </tr>
         </table>
 
         <div class="d-grid gap-2 col-3 mx-auto">
-            <a type="submit" class="btn btn-secondary" href="/admin/">Go back</a>
+            <a type="submit" class="btn btn-primary" href="/admin/">Go back</a>
         </div>
     </div>
 </body>

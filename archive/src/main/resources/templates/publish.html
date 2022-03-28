@@ -88,9 +88,9 @@
                     <div class="mb-3">
                         <label for="topics" class="form-label">Topics</label>
                         <textarea list="topicOptions" type="text" class="form-control form-control-sm" id="topics"
-                               name="topics"
-                               required
-                        rows="3">
+                                  name="topics"
+                                  required
+                                  rows="3">
                         </textarea>
                         <div class="form-text">Please list topic IDs divided by commas ('topic1,topic2,topic3')</div>
                         <datalist id="topicOptions">
@@ -116,7 +116,7 @@
                                 Topic Name
                             </th>
                             <th>
-                                Topic ID (use these)
+                                Topic ID
                             </th>
                             <th>
                                 Topic Description
@@ -149,9 +149,14 @@
             </div>
 
 
-            Showing contents of:
+            <span th:if="${dirList != null}">
+                   Showing contents of:
             <pre th:text="${rootPath}"></pre>
+            </span>
+
+
             <table
+                    th:if="${dirList != null}"
                     id="files-table"
                     class="table table-sm table-hover">
                 <thead>
@@ -176,6 +181,7 @@
                     </th>
                 </tr>
                 </thead>
+
                 <th:block th:each="dir, i: ${ dirList}">
                     <tr>
                         <td>
@@ -234,8 +240,11 @@
                         </td>
                     </tr>
                 </th:block>
-            </table>
 
+            </table>
+            <p th:if="${dirList == null}">
+                Please place your images in the /input folder organised into subfolders
+            </p>
             <div class="d-grid gap-2 col-6 mx-auto mt-5">
                 <button class="btn btn-sm btn-secondary" type="submit">Create</button>
             </div>

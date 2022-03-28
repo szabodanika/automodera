@@ -108,7 +108,7 @@ public class NetworkServiceImpl implements NetworkService {
   public boolean verifyCertificate(NodeCertificate certificate, String remoteAddr) {
     try {
       // check that certificate was sent by the node it was issued to
-      if (InetAddress.getByName(certificate.getHost()).getHostAddress().equals(remoteAddr)) {
+      if (InetAddress.getByName(certificate.getHost().split(":")[0]).getHostAddress().equals(remoteAddr)) {
         // check if we are verifying an origin node certificate (self certificate)
         if (certificate.getHost().equals(networkConfigurationRepository.get().get().getOrigin())) {
           // it will be OK as long as it comes from the correct address
