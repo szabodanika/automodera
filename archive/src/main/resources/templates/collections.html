@@ -44,7 +44,7 @@
 <span th:include="nav.html"></span>
 <div class="container p-4 bg-white shadow-sm" >
     <div class="card-body pt-2 pb-5">
-        <form action="collections/edit" method="post">
+        <form action="/admin/collections/edit" method="post">
 
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
@@ -67,7 +67,7 @@
 
             <a class="btn btn-sm btn-secondary
          mb-3"
-               href="publish">
+               href="/admin/publish">
                 <i class="bi bi-file-earmark-plus"></i>
                 Create new collection
             </a>
@@ -98,7 +98,7 @@
                     value="delete"
                     class="btn btn-sm btn-danger
              mb-3"
-                    href="publish">
+                    href="/admin/publish">
                 <i class="bi bi-trash-fill"></i>
                 Delete
             </button>
@@ -140,7 +140,7 @@
                         </td>
                         <td>
                             <a th:text="${collection.id}"
-                               th:href="${'/collection/' + collection.id}"></a>
+                               th:href="${'/admin//collection/' + collection.id}"></a>
                         </td>
                         <td th:text="${collection.name}"></td>
                         <td th:text="${collection.created}"></td>
@@ -148,7 +148,7 @@
                         <td>
                             <th:block th:each="topic, i : ${collection.topicList}">
                                 <a th:text="${topic}"
-                                   th:href="${'/topic/' + topic}"></a>
+                                   th:href="${'/admin//topic/' + topic}"></a>
                                 <!--                            <span th:if="${!i.last}">,</span>-->
                             </th:block>
                         </td>

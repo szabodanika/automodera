@@ -27,6 +27,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import uk.ac.uws.danielszabo.automodera.common.constants.WebPaths;
 import uk.ac.uws.danielszabo.automodera.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.automodera.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.automodera.common.model.network.node.Node;
@@ -39,7 +40,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
-@RequestMapping()
+@RequestMapping(WebPaths.GUI_BASE_PATH)
 public class IntegratorWebController {
 
   private final IntegratorServiceFacade integratorServiceFacade;
@@ -113,14 +114,14 @@ public class IntegratorWebController {
           }
       }
     }
-    return "redirect:/";
+    return "redirect:/admin/";
   }
 
   @GetMapping("network")
   public String getNetwork(Model model) {
     // redirect to setup page if local node is not set
     if (integratorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     model.addAttribute("node", integratorServiceFacade.getLocalNode());
@@ -143,7 +144,7 @@ public class IntegratorWebController {
       model.addAttribute("buildTimestamp", env.getProperty("build.timestamp"));
       return "common-setup";
     }
-    return "redirect:/";
+    return "redirect:/admin/";
   }
 
   @PostMapping("setup")
@@ -170,14 +171,14 @@ public class IntegratorWebController {
           postCode,
           country);
     }
-    return "redirect:/";
+    return "redirect:/admin/";
   }
 
   @GetMapping("info")
   public String getInfo(Model model, @RequestParam(required = false) String nodeId) {
     // redirect to setup page if local node is not set
     if (integratorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     if (nodeId != null) {
@@ -218,7 +219,7 @@ public class IntegratorWebController {
   public String postNetwork(Model model, @RequestParam String origin, @RequestParam String action) {
     // redirect to setup page if local node is not set
     if (integratorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
     // maven build data for footer
     model.addAttribute("buildName", env.getProperty("build.name"));
@@ -245,12 +246,12 @@ public class IntegratorWebController {
         case "connect":
           {
             integratorServiceFacade.fetchNetworkConfigurationAndConnect(origin);
-            return "redirect:/";
+            return "redirect:/admin/";
           }
         case "disconnect":
           {
             integratorServiceFacade.clearNetworkConfiguration();
-            return "redirect:/";
+            return "redirect:/admin/";
           }
       }
 
@@ -263,7 +264,7 @@ public class IntegratorWebController {
       model.addAttribute("integrationConfig", integratorServiceFacade.getIntegrationConfiguration());
       return "index";
     }
-    return "redirect:/";
+    return "redirect:/admin/";
   }
 
   @GetMapping("collection/{arch}/{coll}")
@@ -271,7 +272,7 @@ public class IntegratorWebController {
       Model model, @PathVariable("arch") String archive, @PathVariable("coll") String collection) {
     // redirect to setup page if local node is not set
     if (integratorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     Node node = integratorServiceFacade.getKnownNodeById(archive).orElse(null);
@@ -295,7 +296,7 @@ public class IntegratorWebController {
   public String getTopic(Model model, @PathVariable String topic) throws Exception {
     // redirect to setup page if local node is not set
     if (integratorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     model.addAttribute("node", integratorServiceFacade.getLocalNode());
@@ -313,7 +314,7 @@ public class IntegratorWebController {
   public String getCollections(Model model) {
     // redirect to setup page if local node is not set
     if (integratorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     model.addAttribute("node", integratorServiceFacade.getLocalNode());
@@ -330,7 +331,7 @@ public class IntegratorWebController {
   public String getSubscriptions(Model model) {
     // redirect to setup page if local node is not set
     if (integratorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     model.addAttribute("topics", integratorServiceFacade.getAllTopicsWithCollections());
@@ -348,7 +349,7 @@ public class IntegratorWebController {
   @PostMapping("subscription")
   public String postSubscription(Model model, @RequestParam String topic) {
     integratorServiceFacade.addSubscription(topic);
-    return "redirect:/subscriptions";
+    return "redirect:/admin/subscriptions";
   }
 
   @PostMapping("subscriptions/edit")
@@ -356,7 +357,7 @@ public class IntegratorWebController {
       Model model, @RequestParam String action, @RequestParam List<String> selected) {
     // redirect to setup page if local node is not set
     if (integratorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     switch (action) {
@@ -376,14 +377,14 @@ public class IntegratorWebController {
         }
     }
 
-    return "redirect:/subscriptions";
+    return "redirect:/admin/subscriptions";
   }
 
   @GetMapping("test")
   public String getTest(Model model) {
     // redirect to setup page if local node is not set
     if (integratorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     model.addAttribute("node", integratorServiceFacade.getLocalNode());
@@ -416,7 +417,7 @@ public class IntegratorWebController {
   public String getIntegration(Model model) {
     // redirect to setup page if local node is not set
     if (integratorServiceFacade.getLocalNode() == null) {
-      return "redirect:/setup";
+      return "redirect:/admin/setup";
     }
 
     model.addAttribute("node", integratorServiceFacade.getLocalNode());
@@ -446,7 +447,7 @@ public class IntegratorWebController {
         }
       }
     }
-    return "redirect:/integration";
+    return "redirect:/admin/integration";
   }
 
 }

@@ -78,10 +78,10 @@
             <th:block th:each="req : ${certreqs}">
                 <tr>
                     <td>
-                        <a th:text="${req.id}" th:href="${'/certreq/' + req.id}"></a>
+                        <a th:text="${req.id}" th:href="${'/admin/certreq/' + req.id}"></a>
                     </td>
                     <td>
-                        <a th:text="${req.node.id}" th:href="${'/info/' + req.node.id}"></a>
+                        <a th:text="${req.node.id}" th:href="${'/admin/info/' + req.node.id}"></a>
                     </td>
                     <td th:text="${req.date}">
                     </td>

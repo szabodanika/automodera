@@ -54,7 +54,7 @@
                         Node
                     </td>
                     <td th:if="${certreq.node.certificate.node.id != null}">
-                        <a th:href="${'/info/' + certreq.node.certificate.node.id}"
+                        <a th:href="${'/admin/info/' + certreq.node.certificate.node.id}"
                            th:text="${certreq.node.certificate.node.id}">
                         </a>
                     </td>
@@ -181,7 +181,7 @@
                         By
                     </td>
                     <td th:if="${certreq.node.certificate.issuer != null}">
-                        <a th:href="${'/info/' + certreq.node.certificate.issuer.id}"
+                        <a th:href="${'/admin/info/' + certreq.node.certificate.issuer.id}"
                            th:text="${certreq.node.certificate.issuer.id}">
                         </a>
                     </td>

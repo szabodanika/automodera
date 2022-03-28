@@ -225,7 +225,7 @@
                         <td th:text="${dir.sizekB() + ' MB'}">
                         <td>
                             <a th:if="${dir.linked()}"
-                               th:href="${'collection/'+node.getId() + dir.directory()}"
+                               th:href="${'/admin/collection/'+node.getId() + dir.directory()}"
                                th:text="${node.getId() + dir.directory()}">
                             </a>
                             <span th:if="${!dir.linked()}">

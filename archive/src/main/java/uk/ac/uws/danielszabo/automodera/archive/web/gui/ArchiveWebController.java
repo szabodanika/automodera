@@ -25,12 +25,10 @@ package uk.ac.uws.danielszabo.automodera.archive.web.gui;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import uk.ac.uws.danielszabo.automodera.archive.service.ArchiveServiceFacade;
 import uk.ac.uws.danielszabo.automodera.common.constants.Topic;
+import uk.ac.uws.danielszabo.automodera.common.constants.WebPaths;
 import uk.ac.uws.danielszabo.automodera.common.model.network.NetworkConfiguration;
 import uk.ac.uws.danielszabo.automodera.common.model.network.cert.CertificateRequest;
 import uk.ac.uws.danielszabo.automodera.common.model.network.node.Node;
@@ -47,7 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Controller
-// @RequestMapping("archive")
+@RequestMapping(WebPaths.GUI_BASE_PATH)
 public class ArchiveWebController {
 
   private final ArchiveServiceFacade archiveServiceFacade;

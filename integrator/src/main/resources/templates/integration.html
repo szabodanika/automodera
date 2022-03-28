@@ -48,7 +48,7 @@
     </h5>
     <hr>
     <div class="mb-3">
-        <form action="integration/status" method="POST">
+        <form action="/admin/integration/status" method="POST">
 
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
@@ -162,7 +162,7 @@
                     <th:block
                             th:each="topic : ${report.topicList}">
                         <a th:text="${topic}"
-                           th:href="${'/topic/' + topic}"></a>
+                           th:href="${'/admin/topic/' + topic}"></a>
 
                     </th:block>
                 </td>

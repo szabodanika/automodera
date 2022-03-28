@@ -45,7 +45,7 @@
 <div class="container-sm pt-3 bg-white shadow-sm"  >
 
     <div class="card-body pt-2 pb-5">
-        <form action="/subscriptions/edit" method="post">
+        <form action="/admin/subscriptions/edit" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
             <h5 class="mb-3">
@@ -109,7 +109,7 @@
                         <td>
                             <a
                                     th:text="${topic.getValue().get('displayName')}"
-                                    th:href="${'/topic/'+ topic.getKey()}"
+                                    th:href="${'/admin/topic/'+ topic.getKey()}"
                             ></a>
                         </td>
                         <td th:text="${topic.getValue().get('description')}">
@@ -129,11 +129,11 @@
             Downloaded Collections
         </h5>
         <hr>
-        <form action="/topics/edit" method="post">
+        <form action="/admin/topics/edit" method="post">
             <a
                     class="btn btn-sm btn-secondary
              mb-3"
-                    href="/test">
+                    href="/admin/test">
                 Test
             </a>
 
@@ -223,7 +223,7 @@
                         <td>
                             <th:block th:each="topic, i : ${collection.topicList}">
                                 <a th:text="${topic}"
-                                   th:href="${'/topic/' + topic}"></a>
+                                   th:href="${'/admin/topic/' + topic}"></a>
                                 <br>
                             </th:block>
                         </td>

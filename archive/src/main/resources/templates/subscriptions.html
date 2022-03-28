@@ -53,18 +53,18 @@
         <div class="btn-group" role="group" aria-label="Basic example">
             <a class="btn btn-sm btn-secondary
              mb-3"
-               href="publish">
+               href="/admin/publish">
                 Enable
             </a>
 
             <a class="btn btn-sm btn-secondary
              mb-3"
-               href="publish">
+               href="/admin/publish">
                 Disable
             </a>
         </div>
         <a class="btn btn-sm btn-danger mb-3"
-           href="publish">
+           href="/admin/publish">
             <i class="bi bi-trash-fill"></i>
             Remove
         </a>
@@ -99,7 +99,7 @@
                     </td>
                     <td>
                         <a th:text="${subscription.id}"
-                           th:href="${'/subscription/' + subscription.id}"></a>
+                           th:href="${'/admin/subscription/' + subscription.id}"></a>
                     </td>
                     <td th:text="${subscription.topic}"></td>
                     <td th:text="${subscription.subscriberId}"></td>

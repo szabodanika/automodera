@@ -46,4 +46,7 @@ public class WebPaths {
   public static final String PUBLISH_PATH = COLLECTIONS_PATH + "/publish";
   public static final String DOWNLOAD_PATH = COLLECTIONS_PATH + "/download";
 
+  // common gui endpoints
+  public static final String GUI_BASE_PATH = "/admin";
+
 }

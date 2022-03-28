@@ -57,7 +57,7 @@
                 </td>
                 <td>
                     <a th:text="${collection.archiveId}"
-                       th:href="${'/info/' + collection.archiveId}"></a>
+                       th:href="${'/admin/info/' + collection.archiveId}"></a>
                 </td>
             </tr>
             <tr>
@@ -65,7 +65,7 @@
                     ID
                 </td>
                 <td th:text="${collection.id}"
-                    th:href="${'/info/' + collection.archiveId}">
+                    th:href="${'/admin/info/' + collection.archiveId}">
                 </td>
             </tr>
             <tr>
@@ -106,7 +106,7 @@
                     <th:block
                             th:each="topic : ${collection.topicList}">
                         <a th:text="${topic}"
-                           th:href="${'/topic/' + topic}"></a>
+                           th:href="${'/admin/topic/' + topic}"></a>
 
                     </th:block>
                 </td>

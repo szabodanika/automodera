@@ -39,35 +39,35 @@
         <ul class="navbar-nav ms-auto me-5">
             <li class="nav-item">
                 <a class="nav-link me-2 "
-                   th:classappend="${#request.getServletPath()=='/'?'active':''
+                   th:classappend="${#request.getServletPath()=='/admin/'?'active':''
                        + (node != null?'':' disabled')}"
-                   href="/">
+                   href="/admin/">
                     Dashboard</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link me-2"
-                   th:classappend="${#request.getServletPath()=='/integration'?'active':''
+                   th:classappend="${#request.getServletPath()=='/admin/integration'?'active':''
                        + (node != null?'':' disabled')}"
-                   href="/integration">
+                   href="/admin/integration">
                     Integration</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link me-2"
-                   th:classappend="${#request.getServletPath()=='/subscriptions'?'active':''
+                   th:classappend="${#request.getServletPath()=='/admin/subscriptions'?'active':''
                        + (node != null?'':' disabled')}"
-                   href="/subscriptions">
+                   href="/admin/subscriptions">
                     Filtering</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link me-2"
-                   th:classappend="${#request.getServletPath()=='/network'?'active':''
+                   th:classappend="${#request.getServletPath()=='/admin/network'?'active':''
                        + (node != null?'':' disabled')}"
-                   href="/network">
+                   href="/admin/network">
                     Network
                 </a>
             </li>
             <li class="nav-item">
-                <form action="/logout" method="POST">
+                <form action="/admin/logout" method="POST">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                     <button
                             type="submit"

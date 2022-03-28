@@ -68,15 +68,15 @@
         <th:block th:each="collection : ${collections}">
             <tr>
                 <td>
-                    <a th:text="${collection.id}" th:href="${'/collection/' + collection.archiveId +
+                    <a th:text="${collection.id}" th:href="${'/admin/collection/' + collection.archiveId +
                            '/' + collection.id}"></a>
                 </td>
                 <td th:text="${collection.name}"></td>
                 <td th:text="${collection.created}"></td>
                 <td>
-                    <th:block th:each="topic : ${collection.topicList}">
+                    <th:block th:each="topic, i : ${collection.topicList}">
                         <a th:text="${topic}"
-                           th:href="${'/topic/' + topic}"></a>
+                           th:href="${'/admin/topic/' + topic}"></a>
                     </th:block>
                 </td>
             </tr>

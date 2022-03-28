@@ -27,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uk.ac.uws.danielszabo.automodera.common.constants.WebPaths;
 import uk.ac.uws.danielszabo.automodera.common.model.network.message.Message;
 import uk.ac.uws.danielszabo.automodera.common.model.network.node.NodeStatus;
 import uk.ac.uws.danielszabo.automodera.common.service.network.LocalNodeService;
@@ -36,7 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @RestController
-@RequestMapping("rest/net")
+@RequestMapping(WebPaths.NET_PATH)
 public class CommonNetworkRestController {
 
   private final NetworkService networkService;

@@ -122,7 +122,7 @@
                     Communications Service
                 </h6>
                 <div class="mb-3">
-                    <form action="/status" method="POST">
+                    <form action="/admin/status" method="POST">
 
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
@@ -148,7 +148,7 @@
                     Integration Service
                 </h6>
                 <div class="mb-3">
-                    <form action="/integration/status" method="POST">
+                    <form action="/admin/integration/status" method="POST">
 
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         <button type="submit"
@@ -171,7 +171,7 @@
                     </form>
                 </div>
 
-                <form action="/status" method="POST">
+                <form action="/admin/status" method="POST">
 
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
@@ -233,7 +233,7 @@
                     Network Settings
                 </h5>
                 <hr>
-                <form method="post" action="network">
+                <form method="post" action="/admin/network">
 
                     <input type="hidden" th:name="${_csrf.parameterName}"
                            th:value="${_csrf.token}"/>

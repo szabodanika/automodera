@@ -59,7 +59,7 @@
                             ID
                         </td>
                         <td>
-                            <a th:href="${'/info/' + node.id}"
+                            <a th:href="${'/admin/info/' + node.id}"
                                th:text="${node.id}">
                             </a>
                         </td>
@@ -122,7 +122,7 @@
                     Communications Service
                 </h6>
                 <div class="mb-3">
-                    <form action="/status" method="POST">
+                    <form action="/admin/status" method="POST">
 
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
@@ -144,7 +144,7 @@
                         </button>
                     </form>
                 </div>
-                <form action="/status" method="POST">
+                <form action="/admin/status" method="POST">
 
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 

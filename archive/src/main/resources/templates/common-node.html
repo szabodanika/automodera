@@ -200,7 +200,7 @@
                     By
                 </td>
                 <td th:if="${node.certificate.issuer != null}">
-                    <a th:href="${'/info/' + node.certificate.issuer.id}"
+                    <a th:href="${'/admin/info/' + node.certificate.issuer.id}"
                        th:text="${node.certificate.issuer.id}">
                     </a>
                 </td>
@@ -239,7 +239,7 @@
                     <tr>
                         <td>
                             <a th:text="${collection.id}"
-                               th:href="${'/collection/' + collection.id}"></a>
+                               th:href="${'/admin/collection/' + collection.id}"></a>
                         </td>
                         <td th:text="${collection.name}"></td>
                         <td th:text="${collection.created}"></td>
@@ -247,7 +247,7 @@
                             <th:block
                                     th:each="topic : ${collection.topicList}">
                                 <a th:text="${topic}"
-                                   th:href="${'/topic/' + topic}"></a>
+                                   th:href="${'/admin/topic/' + topic}"></a>
 
                             </th:block>
                         </td>

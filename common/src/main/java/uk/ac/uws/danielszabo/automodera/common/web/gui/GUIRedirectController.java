@@ -24,16 +24,15 @@ package uk.ac.uws.danielszabo.automodera.common.web.gui;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import uk.ac.uws.danielszabo.automodera.common.constants.WebPaths;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping(WebPaths.GUI_BASE_PATH + "/login")
-public class LoginController {
+@RequestMapping("/")
+public class GUIRedirectController {
 
-  @GetMapping("")
-  public String getLogin(Model model) {
-    return "common-login";
+  @GetMapping("/")
+  public String getIndex(Model model) {
+    return "redirect:/admin";
   }
+
 }
