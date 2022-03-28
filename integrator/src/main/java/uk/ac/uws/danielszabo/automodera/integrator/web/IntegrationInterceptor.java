@@ -29,7 +29,6 @@ import uk.ac.uws.danielszabo.automodera.integrator.model.IntegrationContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 @Component
 public class IntegrationInterceptor implements HandlerInterceptor {
 
@@ -38,35 +37,37 @@ public class IntegrationInterceptor implements HandlerInterceptor {
   private int requests;
 
   public IntegrationInterceptor(IntegrationContext integrationContext) {
-	this.integrationContext = integrationContext;
+    this.integrationContext = integrationContext;
 
-	new Thread(() -> {
-	  while (true) {
-		requests = integrationContext.getRequestLimitCount();
-		try {
-		  this.wait(integrationContext.getRequestLimitPeriod() * 1000L);
-		} catch (InterruptedException e) {
-		  e.printStackTrace();
-		}
-	  }
-	});
+    new Thread(
+        () -> {
+          while (true) {
+            requests = integrationContext.getRequestLimitCount();
+            try {
+              this.wait(integrationContext.getRequestLimitPeriod() * 1000L);
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+          }
+        });
   }
 
   @Override
-  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+      throws Exception {
 
-	if (requests == 0) {
-	  IntegrationContext.throttled = true;
-	}
+    if (requests == 0) {
+      IntegrationContext.throttled = true;
+    }
 
-	if (!integrationContext.isActive() || IntegrationContext.throttled || integrationContext.getEnabledInputAddresses().contains(request.getRemoteAddr())) {
-	  response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-	  return false;
-	}
-	requests--;
+    if (!integrationContext.isActive()
+        || IntegrationContext.throttled
+        || integrationContext.getEnabledInputAddresses().contains(request.getRemoteAddr())) {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+      return false;
+    }
+    requests--;
 
-	return HandlerInterceptor.super.preHandle(request, response, handler);
-
+    return HandlerInterceptor.super.preHandle(request, response, handler);
   }
-
 }

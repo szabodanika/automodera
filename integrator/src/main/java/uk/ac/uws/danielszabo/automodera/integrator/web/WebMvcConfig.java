@@ -22,7 +22,6 @@
 
 package uk.ac.uws.danielszabo.automodera.integrator.web;
 
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -34,12 +33,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
   private final IntegrationInterceptor interceptor;
 
   public WebMvcConfig(IntegrationInterceptor interceptor) {
-	this.interceptor = interceptor;
+    this.interceptor = interceptor;
   }
-
 
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
-	registry.addInterceptor(interceptor).addPathPatterns(WebPaths.REST_BASE_PATH + "/api");
+    registry.addInterceptor(interceptor).addPathPatterns(WebPaths.REST_BASE_PATH + "/api");
   }
 }

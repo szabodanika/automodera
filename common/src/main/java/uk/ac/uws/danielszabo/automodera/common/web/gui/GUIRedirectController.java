@@ -34,5 +34,4 @@ public class GUIRedirectController {
   public String getIndex(Model model) {
     return "redirect:/admin";
   }
-
 }

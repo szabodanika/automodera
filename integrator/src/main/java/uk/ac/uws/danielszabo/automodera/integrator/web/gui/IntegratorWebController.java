@@ -189,10 +189,11 @@ public class IntegratorWebController {
               n -> {
                 model.addAttribute("node", n);
                 model.addAttribute("network", integratorServiceFacade.getNetworkConfiguration());
-                if(n.getNodeType() == NodeType.ARCHIVE) {
+                if (n.getNodeType() == NodeType.ARCHIVE) {
                   try {
                     model.addAttribute(
-                        "collections",  integratorServiceFacade.requestCollectionRepertoireFormArchive(n));
+                        "collections",
+                        integratorServiceFacade.requestCollectionRepertoireFormArchive(n));
                   } catch (Exception e) {
                     e.printStackTrace();
                   }
@@ -242,7 +243,8 @@ public class IntegratorWebController {
             }
             model.addAttribute("network", networkConfiguration);
             model.addAttribute("connectionStatus", "Test connection");
-            model.addAttribute("integrationConfig", integratorServiceFacade.getIntegrationConfiguration());
+            model.addAttribute(
+                "integrationConfig", integratorServiceFacade.getIntegrationConfiguration());
             return "index";
           }
         case "connect":
@@ -263,7 +265,8 @@ public class IntegratorWebController {
       model.addAttribute("buildTimestamp", env.getProperty("build.timestamp"));
     } catch (Exception e) {
       model.addAttribute("connectionStatus", "Failed to fetch network configuration");
-      model.addAttribute("integrationConfig", integratorServiceFacade.getIntegrationConfiguration());
+      model.addAttribute(
+          "integrationConfig", integratorServiceFacade.getIntegrationConfiguration());
       e.printStackTrace();
       return "index";
     }
@@ -439,18 +442,17 @@ public class IntegratorWebController {
     if (integratorServiceFacade.getLocalNode() != null) {
       switch (status) {
         case "activate":
-        {
-          integratorServiceFacade.getIntegrationConfiguration().setActive(true);
-          break;
-        }
+          {
+            integratorServiceFacade.getIntegrationConfiguration().setActive(true);
+            break;
+          }
         case "deactivate":
-        {
-          integratorServiceFacade.getIntegrationConfiguration().setActive(false);
-          break;
-        }
+          {
+            integratorServiceFacade.getIntegrationConfiguration().setActive(false);
+            break;
+          }
       }
     }
     return "redirect:/admin/integration";
   }
-
 }

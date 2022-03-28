@@ -150,10 +150,10 @@ public class OperatorWebController {
           .ifPresent(
               n -> {
                 model.addAttribute("node", n);
-                if(n.getNodeType() == NodeType.ARCHIVE) {
+                if (n.getNodeType() == NodeType.ARCHIVE) {
                   try {
                     model.addAttribute(
-                        "collections",  operatorServiceFacade.retrieveHashCollectionsByArchive(n));
+                        "collections", operatorServiceFacade.retrieveHashCollectionsByArchive(n));
                   } catch (Exception e) {
                     e.printStackTrace();
                   }

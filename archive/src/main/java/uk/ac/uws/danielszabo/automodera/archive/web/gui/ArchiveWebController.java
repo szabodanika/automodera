@@ -175,7 +175,7 @@ public class ArchiveWebController {
               n -> {
                 model.addAttribute("node", n);
                 model.addAttribute("network", archiveServiceFacade.getNetworkConfiguration());
-                if(n.getNodeType() == NodeType.ARCHIVE) {
+                if (n.getNodeType() == NodeType.ARCHIVE) {
                   try {
                     model.addAttribute(
                         "collections", archiveServiceFacade.retrieveHashCollectionsByArchive(n));

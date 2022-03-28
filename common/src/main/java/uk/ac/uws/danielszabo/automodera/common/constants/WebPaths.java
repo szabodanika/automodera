@@ -48,5 +48,4 @@ public class WebPaths {
 
   // common gui endpoints
   public static final String GUI_BASE_PATH = "/admin";
-
 }

@@ -78,196 +78,208 @@ public class RestServiceImpl implements RestService {
 
   private final Environment env;
 
-  public RestServiceImpl(MessageFactory messageFactory, RestTemplateBuilder restTemplateBuilder, Environment env) throws Exception {
-	this.messageFactory = messageFactory;
+  public RestServiceImpl(
+      MessageFactory messageFactory, RestTemplateBuilder restTemplateBuilder, Environment env)
+      throws Exception {
+    this.messageFactory = messageFactory;
 
-	this.env = env;
-    if(Arrays.stream(env.getActiveProfiles()).toList().contains("dev")) {
-	  PROTOCOL = "http";
+    this.env = env;
+    if (Arrays.stream(env.getActiveProfiles()).toList().contains("dev")) {
+      PROTOCOL = "http";
     } else {
-	  PROTOCOL = "https";
+      PROTOCOL = "https";
     }
   }
 
   // requests all the info about a certain node
   @Override
   public Node getNodeByHost(String host) throws TargetNodeUnreachableException {
-	ResponseEntity response = postAsXML(host, WebPaths.INFO_PATH, Node.class);
-	return (Node) response.getBody();
+    ResponseEntity response = postAsXML(host, WebPaths.INFO_PATH, Node.class);
+    return (Node) response.getBody();
   }
 
   // requests only availability from a node, it is a very basic ping
   @Override
   public NodeStatus downloadNodeStatus(String host) {
-	ResponseEntity response = null;
-	try {
-	  response = postAsXML(host, WebPaths.STATUS_PATH, NodeStatus.class);
-	  return (NodeStatus) response.getBody();
-	} catch (TargetNodeUnreachableException e) {
-	  return new NodeStatus(false, false);
-	}
+    ResponseEntity response = null;
+    try {
+      response = postAsXML(host, WebPaths.STATUS_PATH, NodeStatus.class);
+      return (NodeStatus) response.getBody();
+    } catch (TargetNodeUnreachableException e) {
+      return new NodeStatus(false, false);
+    }
   }
 
   // void because certificate requests are not handled automatically
   @Override
   public void sendCertificateRequest(String operator, CertificateRequest certificateRequest)
-	  throws TargetNodeUnreachableException {
-	postAsXML(operator, WebPaths.REQUEST_PATH, certificateRequest);
+      throws TargetNodeUnreachableException {
+    postAsXML(operator, WebPaths.REQUEST_PATH, certificateRequest);
   }
 
   @Override
   public void sendProcessedCertificateRequest(CertificateRequest certificateRequest)
-	  throws TargetNodeUnreachableException {
-	postAsXML(certificateRequest.getNode().getHost(), WebPaths.PROCESSED_PATH, certificateRequest);
+      throws TargetNodeUnreachableException {
+    postAsXML(certificateRequest.getNode().getHost(), WebPaths.PROCESSED_PATH, certificateRequest);
   }
 
   @Override
   public NetworkConfiguration getNetworkConfiguration(String origin)
-	  throws TargetNodeUnreachableException {
-	ResponseEntity response = postAsXML(origin, WebPaths.CONFIG_PATH, NetworkConfiguration.class);
-	if (response != null) {
-	  return ((NetworkConfiguration) response.getBody());
-	} else return null;
+      throws TargetNodeUnreachableException {
+    ResponseEntity response = postAsXML(origin, WebPaths.CONFIG_PATH, NetworkConfiguration.class);
+    if (response != null) {
+      return ((NetworkConfiguration) response.getBody());
+    } else return null;
   }
 
   @Override
   public boolean requestCertificateVerification(NodeCertificate certificate)
-	  throws TargetNodeUnreachableException {
-	ResponseEntity response =
-		postAsXML(
-			certificate.getIssuer().getHost(),
-			WebPaths.CERTVERIFY_PATH,
-			certificate,
-			Message.class);
-	if (response != null) {
-	  return ((Message) response.getBody()).getContent().equals("VALID");
-	} else return false;
+      throws TargetNodeUnreachableException {
+    ResponseEntity response =
+        postAsXML(
+            certificate.getIssuer().getHost(),
+            WebPaths.CERTVERIFY_PATH,
+            certificate,
+            Message.class);
+    if (response != null) {
+      return ((Message) response.getBody()).getContent().equals("VALID");
+    } else return false;
   }
 
   @Override
   public List<Collection> requestRepertoire(String host) throws TargetNodeUnreachableException {
-	ResponseEntity response = postAsXML(host, WebPaths.REPERTOIRE_PATH, CollectionRepertoire.class);
-	if (response != null) {
-	  return ((CollectionRepertoire) response.getBody()).getCollectionList();
-	} else return null;
+    ResponseEntity response = postAsXML(host, WebPaths.REPERTOIRE_PATH, CollectionRepertoire.class);
+    if (response != null) {
+      return ((CollectionRepertoire) response.getBody()).getCollectionList();
+    } else return null;
   }
 
   @Override
   public void sendCollectionRepertoireToIntegrator(List<Collection> collectionList, String host)
-	  throws TargetNodeUnreachableException {
-	postAsXML(host, WebPaths.PUBLISH_PATH, new CollectionRepertoire(collectionList));
+      throws TargetNodeUnreachableException {
+    postAsXML(host, WebPaths.PUBLISH_PATH, new CollectionRepertoire(collectionList));
   }
 
   @Override
   public List<String> requestAllArchiveAddresses(String host)
-	  throws TargetNodeUnreachableException {
-	ResponseEntity response = null;
-	response = postAsXML(host, WebPaths.ARCHIVE_ADDRESS_LIST_PATH, AddressListMessage.class);
-	if (response != null) {
-	  return ((AddressListMessage) response.getBody()).getAddressList();
-	} else return null;
+      throws TargetNodeUnreachableException {
+    ResponseEntity response = null;
+    response = postAsXML(host, WebPaths.ARCHIVE_ADDRESS_LIST_PATH, AddressListMessage.class);
+    if (response != null) {
+      return ((AddressListMessage) response.getBody()).getAddressList();
+    } else return null;
   }
 
   @Override
   public List<String> requestAllIntegratorAddresses(String host)
-	  throws TargetNodeUnreachableException {
-	ResponseEntity response = null;
-	response = postAsXML(host, WebPaths.INTEGRATOR_ADDRESS_LIST_PATH, AddressListMessage.class);
-	if (response != null) {
-	  return ((AddressListMessage) response.getBody()).getAddressList();
-	} else return null;
+      throws TargetNodeUnreachableException {
+    ResponseEntity response = null;
+    response = postAsXML(host, WebPaths.INTEGRATOR_ADDRESS_LIST_PATH, AddressListMessage.class);
+    if (response != null) {
+      return ((AddressListMessage) response.getBody()).getAddressList();
+    } else return null;
   }
 
   @Override
   public Collection downloadCollection(String host, String id)
-	  throws TargetNodeUnreachableException {
-	ResponseEntity response = postAsXML(host, WebPaths.DOWNLOAD_PATH, id, Collection.class);
-	if (response != null) {
-	  return ((Collection) response.getBody());
-	} else return null;
+      throws TargetNodeUnreachableException {
+    ResponseEntity response = postAsXML(host, WebPaths.DOWNLOAD_PATH, id, Collection.class);
+    if (response != null) {
+      return ((Collection) response.getBody());
+    } else return null;
   }
 
   private <T> ResponseEntity<T> postAsXML(String host, String path)
-	  throws TargetNodeUnreachableException {
-	return postAsXML(host, path, null, Object.class);
+      throws TargetNodeUnreachableException {
+    return postAsXML(host, path, null, Object.class);
   }
 
   private <T> ResponseEntity<T> postAsXML(String host, String path, Class responseType)
-	  throws TargetNodeUnreachableException {
-	return postAsXML(host, path, null, responseType);
+      throws TargetNodeUnreachableException {
+    return postAsXML(host, path, null, responseType);
   }
 
   private <T> ResponseEntity<T> postAsXML(String host, String path, T object)
-	  throws TargetNodeUnreachableException {
-	return postAsXML(host, path, object, Object.class);
+      throws TargetNodeUnreachableException {
+    return postAsXML(host, path, object, Object.class);
   }
 
   private <T> ResponseEntity<T> postAsXML(String host, String path, T object, Class responseType)
-	  throws TargetNodeUnreachableException {
-	URI requestURI = null;
+      throws TargetNodeUnreachableException {
+    URI requestURI = null;
 
-	try {
-	  if (host.contains(":")) {
-		requestURI = new URI(PROTOCOL, null, host.split(":")[0], Integer.parseInt(host.split(":")[1]), path, null, null);
-	  } else {
-		requestURI = new URI(PROTOCOL, host, path, null);
-	  }
-	} catch (URISyntaxException e) {
-	  e.printStackTrace();
-	}
+    try {
+      if (host.contains(":")) {
+        requestURI =
+            new URI(
+                PROTOCOL,
+                null,
+                host.split(":")[0],
+                Integer.parseInt(host.split(":")[1]),
+                path,
+                null,
+                null);
+      } else {
+        requestURI = new URI(PROTOCOL, host, path, null);
+      }
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
+    }
 
-	// create headers
-	HttpHeaders headers = new HttpHeaders();
-	// set `content-type` header
-	headers.setContentType(MediaType.APPLICATION_XML);
-	headers.setAccept(List.of(new MediaType[]{MediaType.APPLICATION_XML}));
+    // create headers
+    HttpHeaders headers = new HttpHeaders();
+    // set `content-type` header
+    headers.setContentType(MediaType.APPLICATION_XML);
+    headers.setAccept(List.of(new MediaType[] {MediaType.APPLICATION_XML}));
 
-	// build the request
+    // build the request
 
-	// create XML marshaller
-	Marshaller marshallerObj = null;
-	try {
-	  marshallerObj = JAXBContext.newInstance(Message.class).createMarshaller();
-	  StringWriter sw = new StringWriter();
-	  marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-	  marshallerObj.marshal(messageFactory.getMessage(object), sw);
-	  HttpEntity<String> request = new HttpEntity<>(sw.toString(), headers);
-	  return (ResponseEntity<T>)
-		  this.restTemplate.exchange(requestURI, HttpMethod.POST, request, responseType);
-	} catch (JAXBException jaxbException) {
-	  if (jaxbException.toString().contains("known to this context")) {
-		log.error(
-			"Did you forget to add "
-				+ object.getClass().getName()
-				+ " to the @SeeAlso annotation on "
-				+ Message.class.getName()
-				+ "?");
-	  }
-	  jaxbException.printStackTrace();
-	  return null;
-	} catch (HttpServerErrorException | HttpClientErrorException exception) {
-	  exception.printStackTrace();
-	  throw new TargetNodeUnreachableException(
-		  host, exception.getStatusCode(), exception.getResponseBodyAsString());
-	} catch (ResourceAccessException exception) {
-	  exception.printStackTrace();
-	  throw new TargetNodeUnreachableException(
-		  host, HttpStatus.INTERNAL_SERVER_ERROR, "Target Node Unreachable");
-	}
+    // create XML marshaller
+    Marshaller marshallerObj = null;
+    try {
+      marshallerObj = JAXBContext.newInstance(Message.class).createMarshaller();
+      StringWriter sw = new StringWriter();
+      marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+      marshallerObj.marshal(messageFactory.getMessage(object), sw);
+      HttpEntity<String> request = new HttpEntity<>(sw.toString(), headers);
+      return (ResponseEntity<T>)
+          this.restTemplate.exchange(requestURI, HttpMethod.POST, request, responseType);
+    } catch (JAXBException jaxbException) {
+      if (jaxbException.toString().contains("known to this context")) {
+        log.error(
+            "Did you forget to add "
+                + object.getClass().getName()
+                + " to the @SeeAlso annotation on "
+                + Message.class.getName()
+                + "?");
+      }
+      jaxbException.printStackTrace();
+      return null;
+    } catch (HttpServerErrorException | HttpClientErrorException exception) {
+      exception.printStackTrace();
+      throw new TargetNodeUnreachableException(
+          host, exception.getStatusCode(), exception.getResponseBodyAsString());
+    } catch (ResourceAccessException exception) {
+      exception.printStackTrace();
+      throw new TargetNodeUnreachableException(
+          host, HttpStatus.INTERNAL_SERVER_ERROR, "Target Node Unreachable");
+    }
   }
 
   @Bean
   public RestTemplate restTemplate()
-	  throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+      throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
 
-	SSLConnectionSocketFactory scsf = new SSLConnectionSocketFactory(
-		SSLContexts.custom().loadTrustMaterial(null, new TrustSelfSignedStrategy()).build(),
-		NoopHostnameVerifier.INSTANCE);
+    SSLConnectionSocketFactory scsf =
+        new SSLConnectionSocketFactory(
+            SSLContexts.custom().loadTrustMaterial(null, new TrustSelfSignedStrategy()).build(),
+            NoopHostnameVerifier.INSTANCE);
 
-	HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+    HttpComponentsClientHttpRequestFactory requestFactory =
+        new HttpComponentsClientHttpRequestFactory();
 
-	requestFactory.setHttpClient(HttpClients.custom().setSSLSocketFactory(scsf).build());
+    requestFactory.setHttpClient(HttpClients.custom().setSSLSocketFactory(scsf).build());
 
-	return new RestTemplate(requestFactory);
+    return new RestTemplate(requestFactory);
   }
 }
