@@ -34,50 +34,49 @@ import java.math.BigInteger;
 @Service
 public class HashServiceImpl implements HashService {
 
-	@Override
-	public float getSimilarityToFileWithHash(String file_name, String reference_hash) {
-		return RustPHash.getSimilarityToFileWithHash(file_name, new BigInteger(reference_hash, 16).toString(2));
-	}
+  @Override
+  public float getSimilarityToFileWithHash(String file_name, String reference_hash) {
+    return RustPHash.getSimilarityToFileWithHash(
+        file_name, new BigInteger(reference_hash, 16).toString(2));
+  }
 
-	@Override
-	public String pHash(File image) throws IOException {
-		log.debug("Hashing " + image.getName());
-		try {
-			return RustPHash.getHashForFile(image.getPath());
-		} catch (NativeMethodException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public String pHash(File image) throws IOException {
+    log.debug("Hashing " + image.getName());
+    try {
+      return RustPHash.getHashForFile(image.getPath());
+    } catch (NativeMethodException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public double simScore(String hash1, String hash2) {
-		log.debug("Calculating similarity score for  " + hash1 + " and " + hash2);
+  @Override
+  public double simScore(String hash1, String hash2) {
+    log.debug("Calculating similarity score for  " + hash1 + " and " + hash2);
 
-		int sideLen = (int) Math.sqrt(hash1.length());
+    int sideLen = (int) Math.sqrt(hash1.length());
 
+    double maxValue = Double.MIN_VALUE;
 
-		double maxValue = Double.MIN_VALUE;
+    StringBuilder rotated = new StringBuilder();
 
-		StringBuilder rotated = new StringBuilder();
+    for (int i = 0; i < 4; i++) {
 
-		for (int i = 0; i < 4; i++) {
+      for (int l = 0; l < sideLen; l++) {
+        for (int j = 0; j < sideLen; j++) {
+          rotated.append(hash1.charAt(j * sideLen + l));
+        }
+      }
 
-			for (int l = 0; l < sideLen; l++) {
-				for (int j = 0; j < sideLen; j++) {
-					rotated.append(hash1.charAt(j * sideLen + l));
-				}
-			}
+      double score = RustPHash.getSimilarityScore(hash2, rotated.toString());
+      if (score > maxValue) {
+        maxValue = score;
+      }
 
-			double score = RustPHash.getSimilarityScore(hash2, rotated.toString());
-			if (score > maxValue) {
-				maxValue = score;
-			}
+      hash1 = rotated.toString();
+      rotated = new StringBuilder();
+    }
 
-			hash1 = rotated.toString();
-			rotated = new StringBuilder();
-		}
-
-
-		return maxValue;
-	}
+    return maxValue;
+  }
 }
