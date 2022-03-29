@@ -112,6 +112,13 @@
                 test
             </scope>
         </dependency>
+
+        <!-- for https -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.13</version>
+        </dependency>
     </dependencies>
 
     <build>
