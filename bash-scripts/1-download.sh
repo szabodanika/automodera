@@ -25,4 +25,3 @@ unzip dist.zip
 rm dist.zip
 mv ./dist/ ./automodera/
 cd ./automodera
-source ./bash-scripts/run.sh

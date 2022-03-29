@@ -20,10 +20,6 @@
 #
 #
 
-
-
-
-
 clear
 
 cleanup() {
@@ -38,8 +34,6 @@ for sig in INT QUIT HUP TERM; do
     kill -s $sig "'"$$"' "$sig"
 done
 trap cleanup EXIT
-
-source ./bash-scripts/generate-keystores.sh
 
 echo "1/4 Creating ./log and ./db folders if needed"
 mkdir ./log
