@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.6.1.Final</version>
+            <version>5.6.7.Final</version>
             <scope>compile</scope>
         </dependency>
 
@@ -59,7 +59,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <version>2.6.4</version>
+            <version>2.6.5</version>
         </dependency>
 
         <!-- security for web gui-->
@@ -67,7 +67,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-            <version>2.6.4</version>
+            <version>2.6.5</version>
         </dependency>
 
 
@@ -75,13 +75,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-test</artifactId>
-            <version>2.5.6</version>
+            <version>2.6.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>5.3.12</version>
+            <version>5.3.17</version>
             <scope>test</scope>
         </dependency>
         <!-- shell, im not sure why we need both, makes no sense -->
