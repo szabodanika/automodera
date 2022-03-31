@@ -42,28 +42,28 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
   private final Environment env;
 
   public WebSecurityConfiguration(Environment env) {
-    this.env = env;
+	this.env = env;
   }
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    // if web gui is disabled, only allow rest api access
-    if (env.getProperty("webgui.enable").equals("false")) {
-      log.info("Web GUI access DISABLED");
-      http.authorizeRequests()
-          .antMatchers(
-              // allow rest controllers
-              WebPaths.REST_BASE_PATH + "/**")
-          .permitAll()
-          .anyRequest()
-          .authenticated()
-          .and()
-          // custom login page
-          .formLogin()
-          .loginPage("/disabled")
-          .permitAll();
-    } else if (env.getProperty("webgui.enable").equals("true")) {
-      log.info("Web GUI access ENABLED");
+	// if web gui is disabled, only allow rest api access
+	if (env.getProperty("webgui.enable").equals("false")) {
+	  log.info("Web GUI access DISABLED");
+	  http.authorizeRequests()
+		  .antMatchers(
+			  // allow rest controllers
+			  WebPaths.REST_BASE_PATH + "/**")
+		  .permitAll()
+		  .anyRequest()
+		  .authenticated()
+		  .and()
+		  // custom login page
+		  .formLogin()
+		  .loginPage("/disabled")
+		  .permitAll();
+	} else if (env.getProperty("webgui.enable").equals("true")) {
+	  log.info("Web GUI access ENABLED");
       http.csrf()
           .ignoringAntMatchers(
               // don't request csrf token for rest endpoints
@@ -72,7 +72,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
           .authorizeRequests()
           .antMatchers(
               // allow rest controllers
-              WebPaths.REST_BASE_PATH + "/**")
+              WebPaths.REST_BASE_PATH + "/**",
+			  WebPaths.GUI_BASE_PATH + "/**")
           .permitAll()
           .and()
           .authorizeRequests()
@@ -90,20 +91,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
           .antMatchers(
               // allow only whitelisted ip addresses
               WebPaths.GUI_BASE_PATH + "/**")
-          .access(
-              "isAuthenticated() and "
-                  + Arrays.stream(env.getProperty("webgui.whitelist").split(";"))
-                      .map(ip -> "hasIpAddress('" + ip + "')")
-                      .collect(Collectors.joining(" or ")))
+		  .authenticated()
           .and()
           // custom login page
-          .authorizeRequests()
-          .anyRequest()
-          .access(
-              Arrays.stream(env.getProperty("webgui.whitelist").split(";"))
-                  .map(ip -> "hasIpAddress('" + ip + "')")
-                  .collect(Collectors.joining(" or ")))
-          .and()
           .formLogin()
           .loginPage("/admin/login")
           .loginProcessingUrl("/admin/login")
@@ -114,14 +104,14 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
           .logoutUrl("/admin/logout")
           .logoutSuccessUrl("/admin/login")
           .permitAll();
-    }
+	}
   }
 
   @Override
   public void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.inMemoryAuthentication()
-        .withUser(env.getProperty("webgui.admin.username"))
-        .password("{noop}" + env.getProperty("webgui.admin.password"))
-        .roles("ADMIN");
+	auth.inMemoryAuthentication()
+		.withUser(env.getProperty("webgui.admin.username"))
+		.password("{noop}" + env.getProperty("webgui.admin.password"))
+		.roles("ADMIN");
   }
 }
