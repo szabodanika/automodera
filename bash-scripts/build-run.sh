@@ -1,4 +1,4 @@
-#
+#!/bin/bash
 #
 #  Copyright (c) Daniel Szabo 2022.
 #

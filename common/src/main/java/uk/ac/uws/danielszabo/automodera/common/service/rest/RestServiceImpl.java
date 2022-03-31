@@ -79,7 +79,7 @@ public class RestServiceImpl implements RestService {
   private final Environment env;
 
   public RestServiceImpl(
-      MessageFactory messageFactory, RestTemplateBuilder restTemplateBuilder, Environment env)
+      MessageFactory messageFactory, Environment env)
       throws Exception {
     this.messageFactory = messageFactory;
 
